@@ -6,21 +6,21 @@ import datetime
 
 class FirebaseClient:
 
-    def ___init___(self):
+    def __init__(self):
         # Use a service account
-        credentials = credentials.Certificate('./conan_mower_access_key.json')
-        firebase_admin.initialize_app(credentials)
+        databaseCredentials = credentials.Certificate('./conan_mower_access_key.json')
+        firebase_admin.initialize_app(databaseCredentials)
 
         db = firestore.client()
-        
-        self.documentTraveledPath = db.collection(u'TraveledPaths').document(u'TraveledPath')
+        print("DB is: ", db)
+        self._documentTraveledPath = db.collection(u'TraveledPaths').document(u'TraveledPath')
 
         print("Connected to client.")
 
     def InsertItem(self):
         time = datetime.datetime.now()
         
-        self.documentTraveledPath.set({
+        self._documentTraveledPath.set({
             u'EndTime': time,
             u'CurrentAngle': 30,
             u'TravelledDistance': 0.2,
