@@ -1,5 +1,8 @@
 import firebaseClient as fc
 
 print("Doing the save")
-client = fc.FirebaseClient()
-client.InsertItem()
+
+traveledPathClient = fc.FirebaseClient(fc.TraveledPathSettings())
+
+path = fc.TraveledPathData(20, 30, False)
+traveledPathClient.InsertItem(path.getDictionary())
