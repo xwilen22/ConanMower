@@ -1,12 +1,14 @@
 #include <MeAuriga.h>
 #include <Wire.h>
+#include <SoftwareSerial.h>
 
 #define LEDNUM 12
 
 #include "motor.h"
 #include "ledRing.h"
+#include "manualControl.h"
 
-
+MeBluetooth bluetooth(PORT_16);
 
 MeEncoderOnBoard motorL(SLOT1);
 MeEncoderOnBoard motorR(SLOT2);
@@ -28,7 +30,7 @@ enum autonomousSM_t {
 
 autonomousSM_t autonomousSM = FORWARD;
 
-
+unsigned char btBuffer[128] = {'A'};
 int motorSpeed = 50;
 
 const int reverseLength = 200;
@@ -38,7 +40,7 @@ const int minObstacleDistance = 5;
 int turnAngle = 30;
 
 Motor motor(&motorL, &motorR);
-
+char oldCommand[2] = {'B'};
 
 
 void setup() {
@@ -48,7 +50,8 @@ void setup() {
   attachInterrupt(motorL.getIntNum(), isr_process_encoder1, RISING);
   attachInterrupt(motorR.getIntNum(), isr_process_encoder2, RISING);
   randomSeed(analogRead(0));
-  
+  bluetooth.begin(115200);    //The factory default baud rate is 115200
+
   led.setpin( 44 );
   
 }
@@ -56,16 +59,64 @@ void setup() {
 
 void loop()
 { 
+  readBT(btBuffer,&bluetooth);
 
-  autonomousStateMachine();
+
+  if(btBuffer[0] == 'M'){
+    oldCommand[0] = btBuffer[0];
+    oldCommand[1] = btBuffer[1];
+    manualController(btBuffer[1]);
+  }
+  else if(btBuffer[0] == 'A'){
+    oldCommand[0] = btBuffer[0];
+    oldCommand[1] = btBuffer[1];
+    autonomousStateMachine();
+  }
+  else{
+    btBuffer[0] = oldCommand[0];
+    btBuffer[1] = oldCommand[1];
+  }
+   
+  Serial.print(char(oldCommand[0]));
+  Serial.println(char(oldCommand[1]));
+  
   
   motorL.loop();
   motorR.loop();
 
 }
 
-void autonomousStateMachine() {
+void manualController(char command){
+  motor.brake();
   
+  switch(command){
+    case 'F':
+      motor.moveSpeed(motorSpeed);
+      fullCirlce(&led, 0,0,50);
+    break;
+
+    case 'B':
+      motor.moveSpeed(-motorSpeed);
+      fullCirlce(&led, 0,50,0);
+    break;
+    
+    case 'L':
+      motor.turnLeft(motorSpeed);
+      fullCirlce(&led, 0,50,50);
+    break;
+    
+    case 'R':
+      motor.turnRight(motorSpeed);
+    break;
+    
+    case 'S':
+      motor.brake();
+    break;
+  }
+}
+
+void autonomousStateMachine() {
+    fullCirlce(&led, 50,50,50);
     switch (autonomousSM) {
     case FORWARD:
         motor.moveSpeed(motorSpeed);

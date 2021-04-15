@@ -13,7 +13,6 @@ void colorLoop(MeRGBLed *led, int r, int g, int b) {
 
 void fullCirlce(MeRGBLed *led, int r, int g, int b) {
   for (int i=0; i<LEDNUM; i++) {
-    Serial.println(i);
     led->setColorAt(i, r, g, b);
   }
   led->show();
