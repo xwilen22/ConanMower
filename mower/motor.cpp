@@ -1,6 +1,7 @@
 
 #include "motor.h"
 
+
 Motor::Motor(MeEncoderOnBoard* leftMotor, MeEncoderOnBoard* rightMotor) :
   _pLeftMotor(leftMotor), _pRightMotor(rightMotor) {
 
@@ -49,4 +50,9 @@ void Motor::turnLeft(int moveSpeed) {
 void Motor::turnRight(int moveSpeed) {
   _pLeftMotor->runSpeed(moveSpeed);
   _pRightMotor->runSpeed(moveSpeed);
+}
+
+
+int Motor::turnAngle(int minAngle, int maxAngle){
+  return random(minAngle ,maxAngle);
 }

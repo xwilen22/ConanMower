@@ -27,7 +27,7 @@ const int reverseLength = 200;
 const int turnLength = 300;
 
 const int minObstacleDistance = 5;
-const int turnAngle = 30;
+int turnAngle = 30;
 
 Motor motor(&motorL, &motorR);
 
@@ -36,10 +36,10 @@ Motor motor(&motorL, &motorR);
 void setup() {
 
   Serial.begin(115200);
-
+  
   attachInterrupt(motorL.getIntNum(), isr_process_encoder1, RISING);
   attachInterrupt(motorR.getIntNum(), isr_process_encoder2, RISING);
-  
+  randomSeed(analogRead(0));
 
 }
 
@@ -83,7 +83,7 @@ void autonomousStateMachine() {
         
         motor.brake();
         delay(100);
-        
+        turnAngle = motor.turnAngle(45,100);
         autonomousSM = TURN;
         motor.turnLeft(motorSpeed);
         gyro.begin();

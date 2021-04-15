@@ -15,7 +15,7 @@ class Motor
     void moveSpeed(int moveSpeed);
     void turnLeft(int moveSpeed);
     void turnRight(int moveSpeed);
-
+    int turnAngle(int minAngle,int maxAngle);
 
   private:
     MeEncoderOnBoard* _pLeftMotor;
