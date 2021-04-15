@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    public <dimen name="text_header">25sp</dimen>
+    public <dimen name="text_button">18sp</dimen>
+
+    public <dimen name="distance_large">30dp</dimen>
+    public <dimen name="distance_medium">20dp</dimen>
+    public <dimen name="distance_small">15dp</dimen>
+
+    public <dimen name="padding_small">5dp</dimen>
+</resources>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.PathFragment"
+    android:background="@color/background">
+
+    <TextView
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/distance_small"
+        android:textColor="@color/white"
+        android:text="@string/path"
+        android:textSize="@dimen/text_header"
+        android:textAllCaps="true"/>
+
+    <ImageButton
+        android:id="@+id/btn_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_margin="@dimen/distance_small"
+        android:background="@drawable/background_grey_round_rect"
+        android:src="@drawable/ic_close_icon"
+        android:padding="@dimen/padding_small">
+
+    </ImageButton>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
