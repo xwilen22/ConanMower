@@ -1,7 +1,12 @@
 #include <MeAuriga.h>
 #include <Wire.h>
 
+#define LEDNUM 12
+
 #include "motor.h"
+#include "ledRing.h"
+
+
 
 MeEncoderOnBoard motorL(SLOT1);
 MeEncoderOnBoard motorR(SLOT2);
@@ -9,6 +14,9 @@ MeEncoderOnBoard motorR(SLOT2);
 MeLineFollower lineFinder(PORT_10);
 MeUltrasonicSensor ultraSensor(PORT_9);
 MeGyro gyro(1,0x69);
+
+MeRGBLed led( 0, LEDNUM );
+
 
 enum autonomousSM_t {
   FORWARD,
@@ -40,7 +48,9 @@ void setup() {
   attachInterrupt(motorL.getIntNum(), isr_process_encoder1, RISING);
   attachInterrupt(motorR.getIntNum(), isr_process_encoder2, RISING);
   randomSeed(analogRead(0));
-
+  
+  led.setpin( 44 );
+  
 }
 
 
@@ -70,8 +80,12 @@ void autonomousStateMachine() {
         } 
         else if  (lineFinder.readSensors() == S1_IN_S2_IN) {
 
+          fullCirlce(&led, 150,0,0);
+
           motor.brake();
           delay(100);
+          
+          
             
           autonomousSM = REVERSE;
           motor.moveLength(-reverseLength,motorSpeed);
@@ -80,6 +94,7 @@ void autonomousStateMachine() {
       
     case REVERSE:
       if (motorL.isTarPosReached() && motorR.isTarPosReached()) {
+        fullCirlce(&led, 0,0,0);
         
         motor.brake();
         delay(100);
@@ -101,7 +116,6 @@ void autonomousStateMachine() {
       }
     break;
   }
-
 }
 
 void isr_process_encoder1(void) {
