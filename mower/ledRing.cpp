@@ -8,14 +8,15 @@ LedRing::LedRing(MeRGBLed* led):_pled(led){
 };
   
 void LedRing::colorLoop(int r, int g, int b) {
+
+      _pled->setColorAt((ledNbr-1+maxLeds)%maxLeds,0,0,0);
     
-    _pled->setColorAt((ledNbr-1+maxLeds)%maxLeds,0,0,0);
-  
-    _pled->setColorAt((ledNbr)  %maxLeds , r*0.05, g*0.05, b*0.05);
-    _pled->setColorAt((ledNbr+1)%maxLeds , r*0.25, g*0.25, b*0.25);
-    _pled->setColorAt((ledNbr+2)%maxLeds , r     , g     , b);
-    _pled->show();
-    ledNbr = (ledNbr + 1) % maxLeds;
+      _pled->setColorAt((ledNbr)  %maxLeds , r*0.05, g*0.05, b*0.05);
+      _pled->setColorAt((ledNbr+1)%maxLeds , r*0.25, g*0.25, b*0.25);
+      _pled->setColorAt((ledNbr+2)%maxLeds , r     , g     , b);
+      _pled->show();
+      ledNbr = (ledNbr + 1) % maxLeds;
+
 }
 
 void LedRing::fullCirlce(int r, int g, int b) {

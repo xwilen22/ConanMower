@@ -1,9 +1,12 @@
-/*
- * readBT(unsigned char *, MeBluetooth *)
- * Input, char array, MeBluetooth address 
- * reads the bluetooth and writes the data to the 
- * unsigned char array
- */
+
+ /**
+ *   \Function
+ *     readBT
+ *   \Description
+ *   reads the bluetooth and writes the data to the btBuffer
+ *   \Param[in]
+ *   btBuffer *, MeBluetooth *
+ **/
 
 void readBT(unsigned char *btBuffer, MeBluetooth *bluetooth)
 { 

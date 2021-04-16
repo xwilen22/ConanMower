@@ -9,20 +9,29 @@ class LedRing
 {
   public:
     LedRing(MeRGBLed* led);
-   /*
- * colorLoop(int,int,int);
- * Input, MeRGBLed address, int for r,g,b light strength
- * runs a single color, 3 range loop on the machine
- * Must be called in a loop
- */
+
+ /**
+ *   \Function
+ *   colorLoop
+ *   \Description
+ *   runs a single color in a circle, 3 long
+ *   \Param[in]
+ *   r,g,b, color values
+ *   \Others
+ *   Must be called in loop
+ **/
     void colorLoop(int r, int g, int b);
-    /*
- * fullCircle(int,int,int);
- * Input, MeRGBLed address, int for red,green,blue light strength
- * Colors the machine in rgb input light
- * Can be called once
- */
+
+  /**
+ *   \Function
+ *   fullCircle
+ *   \Description
+ *   colors the machine
+ *   \Param[in]
+ *   r,g,b, color values to use
+ **/
     void fullCirlce(int r, int g, int b);
+    
   private:
     int ledNbr = 0;
     int maxLeds;
