@@ -49,6 +49,7 @@ const int turnLength = 300;
 const int minObstacleDistance = 5;
 int turnAngle = 30;
 
+LedRing ledRing(&led);
 Motor motor(&motorL, &motorR);
 char oldCommand[2] = {MSTOP};
 
@@ -62,11 +63,11 @@ void setup() {
   randomSeed(analogRead(0));
   bluetooth.begin(115200);    //The factory default baud rate is 115200
 
-  led.setpin( 44 );
+  //led.setpin( 44 );
 
-  fullCirlce(&led, 0,0,50);
+  //fullCirlce(&led, 0,0,50);
   delay(1000);
-  fullCirlce(&led, 0,0,0);
+  ledRing.fullCirlce(0,50,0);
   
 }
 
@@ -75,7 +76,7 @@ void loop() {
   readBT(btBuffer,&bluetooth);
 
  
-  
+  ledRing.colorLoop(100,25,0);
   if(btBuffer[0] == MANUAL){
 
     if (oldCommand[1] != btBuffer[1]) {
@@ -115,17 +116,17 @@ void manualController(char command){
   switch(command){
     case MFORWARD:
       motor.moveSpeed(motorSpeed);
-      fullCirlce(&led, 0,0,50);
+    //  fullCirlce(&led, 0,0,50);
     break;
 
     case MREVERSE:
       motor.moveSpeed(-motorSpeed);
-      fullCirlce(&led, 0,50,0);
+      //fullCirlce(&led, 0,50,0);
     break;
     
     case MLEFT:
       motor.turnLeft(motorSpeed);
-      fullCirlce(&led, 0,50,50);
+     // fullCirlce(&led, 0,50,50);
     break;
     
     case MRIGHT:
@@ -142,7 +143,7 @@ void manualController(char command){
 }
 
 void autonomousStateMachine() {
-    fullCirlce(&led, 50,50,50);
+   // fullCirlce(&led, 50,50,50);
     switch (autonomousSM) {
     case FORWARD:
         motor.moveSpeed(motorSpeed);
@@ -157,7 +158,7 @@ void autonomousStateMachine() {
         } 
         else if  (lineFinder.readSensors() == S1_IN_S2_IN) {
           
-          fullCirlce(&led, 150,0,0);
+          //fullCirlce(&led, 150,0,0);
 
           motor.brake();
           delay(100);
@@ -169,7 +170,7 @@ void autonomousStateMachine() {
       
     case REVERSE:
       if (motorL.isTarPosReached() && motorR.isTarPosReached()) {
-        fullCirlce(&led, 0,0,0);
+      //  fullCirlce(&led, 0,0,0);
         
         motor.brake();
         delay(100);
