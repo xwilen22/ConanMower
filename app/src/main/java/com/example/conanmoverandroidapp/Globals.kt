@@ -12,8 +12,11 @@ class Globals: Application() {
     companion object {
         var btAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
         var btReceiver: BluetoothReceiver = BluetoothReceiver()
+
         val arduinoMAC = "00:1B:10:66:46:72"
-        val arduinoUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+        val arduinoServiceUUID = UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb")
+        val arduinoWriteCharacteristicsUUID = UUID.fromString("0000ffe3-0000-1000-8000-00805f9b34fb");
+        //val arduinoReadCharacteristicsUUID = UUID.fromString("0000ffe2-0000-1000-8000-00805f9b34fb")
 
         lateinit var appContext: Context
         lateinit var currentActivity: Activity
@@ -23,5 +26,4 @@ class Globals: Application() {
         super.onCreate()
         appContext = this
     }
-
 }

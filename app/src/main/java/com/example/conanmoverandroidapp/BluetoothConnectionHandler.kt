@@ -1,24 +1,17 @@
 package com.example.conanmoverandroidapp
 
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
-import android.bluetooth.BluetoothSocket
-import android.content.IntentFilter
+import android.bluetooth.*
 import android.os.Handler
 import android.os.Looper
-import android.widget.Toast
-import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
-import java.lang.Exception
+import android.util.Log
+import kotlinx.coroutines.runBlocking
 import kotlin.properties.Delegates
+
 
 class BluetoothConnectionHandler() {
     companion object {
-        lateinit var socket: BluetoothSocket
-        var outputStream: OutputStream? = null
-        var inputStream: InputStream? = null
-        var shouldListen = false
+        lateinit var bluetoothGatt: BluetoothGatt
+
         var onConnect = ArrayList<() -> Unit>()
         var onDisconnect = ArrayList<() -> Unit>()
         var connected: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
@@ -39,24 +32,25 @@ class BluetoothConnectionHandler() {
                 }
             }
         }
-        var onMessage = mutableMapOf<Int, (UByteArray) -> Unit>()
 
         fun connectToDevice(device: BluetoothDevice, wasSuccessful: (success: Boolean) -> Unit){
             Thread {
                 try {
                     Globals.btAdapter?.cancelDiscovery()
 
-                    socket = device.createRfcommSocketToServiceRecord(Globals.arduinoUUID)
-                    socket.connect()
-                    outputStream = socket.outputStream
-                    inputStream = socket.inputStream
+                    bluetoothGatt = device.connectGatt(Globals.currentActivity, false, gattCallback)
+
+                    runBlocking {
+                        bluetoothGatt.discoverServices()
+                    }
+
                     executeOnMainThread {
                         connected = true
                         wasSuccessful(true)
                     }
+
                     sendHeartbeatToArduino(true)
-                    listener.run()
-                } catch(e: Exception){
+                } catch (e: Exception){
                     executeOnMainThread {
                         connected = false
                         wasSuccessful(false)
@@ -65,83 +59,69 @@ class BluetoothConnectionHandler() {
             }.start()
         }
 
-        fun listen() {
-            val BUFFER_SIZE = 1024
-            val buffer = ByteArray(BUFFER_SIZE)
+        private val gattCallback = object : BluetoothGattCallback() {
+            override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
+                val deviceAddress = gatt.device.address
 
-            try {
-                var bytesReceived = inputStream!!.read(buffer)
-                var i = 0
-                while(i < bytesReceived){
-                    val type = buffer[i].toInt()
-                    if(type == 0){
-                        break
+                if (status == BluetoothGatt.GATT_SUCCESS) {
+                    if (newState == BluetoothProfile.STATE_CONNECTED) {
+                        Log.w("BluetoothGattCallback", "Successfully connected to $deviceAddress")
+                        // TODO: Store a reference to BluetoothGatt
+                    } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                        Log.w(
+                            "BluetoothGattCallback",
+                            "Successfully disconnected from $deviceAddress"
+                        )
+                        gatt.close()
                     }
-                    else{
-                        i++
-                        var dataLength = buffer[i].toInt()
-                        if(dataLength == 0){
-                            val newBuffer = ByteArray(BUFFER_SIZE)
-                            val newBytesReceived = inputStream!!.read(newBuffer)
-
-                            dataLength = newBuffer[0].toInt()
-
-                            for(x in 0..(newBytesReceived - 1)){
-                                buffer[i + x] = newBuffer[x]
-                            }
-                        }
-                        val data = ByteArray(dataLength)
-                        i++
-                        var o = 0
-                        while(o < dataLength){
-                            data[o] = buffer[i]
-                            i++
-                            o++
-                        }
-                        onMessageReceived(type, data.toUByteArray())
-                    }
-                }
-            } catch (e: IOException) {
-                executeOnMainThread {
-                    connected = false
-                }
-                e.printStackTrace()
-                shouldListen = false
-            }
-        }
-
-        fun send(bytes: UByteArray) {
-            if(::socket.isInitialized && outputStream != null && connected){
-                outputStream!!.write(bytes.toByteArray())
-            }
-        }
-
-        fun sendBlaBlaMessageToArduino(){
-            val buffer = UByteArray(3)
-            buffer[0] = 1.toUByte()
-            buffer[1] = 1.toUByte()
-            buffer[2] = 1.toUByte()
-            send(buffer)
-        }
-
-
-        private fun onMessageReceived(type: Int, buffer: UByteArray){
-            onMessage.forEach { entry ->
-                if(entry.key == type){
-                    executeOnMainThread {
-                        entry.value(buffer)
-                    }
+                } else {
+                    Log.w(
+                        "BluetoothGattCallback",
+                        "Error $status encountered for $deviceAddress! Disconnecting..."
+                    )
+                    gatt.close()
                 }
             }
         }
 
-        var listener = Runnable {
-            run {
-                shouldListen = true
-                while(shouldListen){
-                    listen()
+        fun writeCharacteristic(value: ByteArray?) {
+            val service: BluetoothGattService = bluetoothGatt.getService(Globals.arduinoServiceUUID)
+            if (service == null) {
+                println("service null")
+                return
+            }
+            val characteristic = service.getCharacteristic(Globals.arduinoWriteCharacteristicsUUID)
+            if (characteristic == null) {
+                println("characteristic null")
+                return
+            }
+            characteristic.value = value
+            val status: Boolean = bluetoothGatt.writeCharacteristic(characteristic)
+            println("Write Status: $status")
+        }
+
+        fun directionButtonPressed(direction: String){
+            val buffer = ByteArray(3)
+            buffer[0] = 77.toByte()
+
+            when (direction) {
+                "Left" -> {
+                    buffer[1] = 76.toByte()
+                }
+                "Forward" -> {
+                    buffer[1] = 70.toByte()
+                }
+                "Right" -> {
+                    buffer[1] = 82.toByte()
+                }
+                "Reverse" -> {
+                    buffer[1] = 66.toByte()
+                }
+                else -> {
+                    buffer[1] = 83.toByte()
                 }
             }
+            writeCharacteristic(buffer)
         }
 
         fun connectToArduino(onTimeout: () -> Unit){
@@ -174,15 +154,12 @@ class BluetoothConnectionHandler() {
 
         fun startDiscovery(onArduinoNotFound: () -> Unit){
             Globals.btAdapter?.startDiscovery()
-            Handler().postDelayed(
-                {
-                    if (!connected) {
-                        Globals.btAdapter?.cancelDiscovery()
-                        onArduinoNotFound()
-                    }
-                },
-                20000
-            )
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (!connected) {
+                    Globals.btAdapter?.cancelDiscovery()
+                    onArduinoNotFound()
+                }
+            }, 2000)
         }
 
         fun executeOnMainThread(function: () -> Unit){
@@ -192,27 +169,23 @@ class BluetoothConnectionHandler() {
             }
         }
 
-        fun onMessage(messageType: Int, listener: (UByteArray) -> Unit){
-            onMessage.put(messageType, listener)
-        }
-
         // Every 5 seconds, send a message to arduino
         fun sendHeartbeatToArduino(first: Boolean){
             if(first){
-                val buffer = UByteArray(3)
-                buffer[0] = 7.toUByte()
-                buffer[1] = 1.toUByte()
-                buffer[2] = 1.toUByte()
-                send(buffer)
+                val buffer = ByteArray(3)
+                buffer[0] = 79.toByte()
+                buffer[1] = 1.toByte()
+                buffer[2] = 1.toByte()
+                writeCharacteristic(buffer)
             }
             val handler = Handler(Looper.getMainLooper())
             handler.postDelayed({
-                if(connected){
-                    val buffer = UByteArray(3)
-                    buffer[0] = 7.toUByte()
-                    buffer[1] = 1.toUByte()
-                    buffer[2] = 1.toUByte()
-                    send(buffer)
+                if (connected) {
+                    val buffer = ByteArray(3)
+                    buffer[0] = 79.toByte()
+                    buffer[1] = 1.toByte()
+                    buffer[2] = 1.toByte()
+                    writeCharacteristic(buffer)
                     sendHeartbeatToArduino(false)
                 }
             }, 5000)
