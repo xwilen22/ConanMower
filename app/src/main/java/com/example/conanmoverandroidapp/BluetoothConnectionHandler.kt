@@ -44,6 +44,8 @@ class BluetoothConnectionHandler() {
         fun connectToDevice(device: BluetoothDevice, wasSuccessful: (success: Boolean) -> Unit){
             Thread {
                 try {
+                    Globals.btAdapter?.cancelDiscovery()
+
                     socket = device.createRfcommSocketToServiceRecord(Globals.arduinoUUID)
                     socket.connect()
                     outputStream = socket.outputStream
@@ -181,30 +183,6 @@ class BluetoothConnectionHandler() {
                 },
                 20000
             )
-        }
-
-        fun tryToConnect(changeLayout: Boolean) {
-            if (changeLayout) {
-                // TODO
-            }
-
-            val deviceFilter = IntentFilter(BluetoothDevice.ACTION_FOUND)
-            Globals.currentActivity.registerReceiver(Globals.btReceiver, deviceFilter)
-            val btstateFilter = IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
-            Globals.currentActivity.registerReceiver(Globals.btReceiver, btstateFilter)
-
-            connectToArduino {
-                executeOnMainThread {
-                    Toast.makeText(
-                            Globals.currentActivity,
-                            "Unable to connect to mover.",
-                            Toast.LENGTH_SHORT
-                    ).show()
-                    if (changeLayout) {
-                        // TODO
-                    }
-                }
-            }
         }
 
         fun executeOnMainThread(function: () -> Unit){

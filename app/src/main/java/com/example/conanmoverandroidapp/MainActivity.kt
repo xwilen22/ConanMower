@@ -1,24 +1,22 @@
 package com.example.conanmoverandroidapp
 
+import androidx.appcompat.app.AppCompatActivity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
-import androidx.appcompat.app.AppCompatActivity
+import android.view.View
+
 
 class MainActivity : AppCompatActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+        // Remember that you should never show the action bar if the
+        // status bar is hidden, so hide that too if necessary.
+        actionBar?.hide()
         setContentView(R.layout.activity_main)
 
         Globals.currentActivity = this
-
-        // Connect to bluetooth
-        findViewById<Button>(R.id.connectBluetoothBtn).setOnClickListener {
-            it.isClickable = !BluetoothConnectionHandler.connected
-
-            initiateBluetoothConnection()
-        }
 
         BluetoothConnectionHandler.onMessage(3) {
             it[0].toInt()
@@ -44,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         PermissionHandler.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
-    fun initiateBluetoothConnection() {
+    /*fun initiateBluetoothConnection() {
         if (BluetoothConnectionHandler.connected) {
             // Already connected
         } else {
@@ -53,5 +51,5 @@ class MainActivity : AppCompatActivity() {
                 BluetoothConnectionHandler.tryToConnect(false)
             }
         }
-    }
+    }*/
 }

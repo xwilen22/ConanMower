@@ -71,7 +71,7 @@ class PermissionHandler {
             }
         }
 
-        fun HandleBluetoothPermissionStatus(callback: () -> Unit){
+        fun handleBluetoothPermissionStatus(callback: () -> Unit){
             afterPermissionsAllowed = callback
             if (Globals.btAdapter == null) {
                 showNoBtAdapterAlert()

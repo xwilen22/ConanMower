@@ -12,8 +12,9 @@ class Globals: Application() {
     companion object {
         var btAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
         var btReceiver: BluetoothReceiver = BluetoothReceiver()
-        val arduinoMAC = "98:D3:11:F8:6A:DA"
-        val arduinoUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
+        val arduinoMAC = "00:1B:10:66:46:72"
+        val arduinoUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+
         lateinit var appContext: Context
         lateinit var currentActivity: Activity
     }

@@ -43,6 +43,7 @@ class BluetoothReceiver : BroadcastReceiver() {
         }
         if(device.address == Globals.arduinoMAC){
             Globals.btAdapter?.cancelDiscovery()
+            Log.d("Connect", "Trying to connect to bluetooth....")
             BluetoothConnectionHandler.connectToDevice(device){}
         }
 
