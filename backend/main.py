@@ -4,7 +4,6 @@ import mowerSerialiser as ms
 ### A connection to the database is established and used to insert an item in the database.
 ### This is currently test code that will be built upon. --- This comment can most likely be removed later. ---
 
-print("Doing the save")
 traveledPathClient = fc.FirebaseClient(fc.TraveledPathSettings())
 
 path = fc.TraveledPathData(20, 30, False)
