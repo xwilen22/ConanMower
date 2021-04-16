@@ -5,6 +5,7 @@
 #define LEDNUM 12
 
 #define AUTONOMOUS 'O'
+#define LINEFOLLOW '_'
 #define MANUAL 'M'
 #define MSTOP 'S'
 #define MLEFT 'L'
@@ -37,10 +38,19 @@ enum autonomousSM_t {
   TURN
 };
 
+struct Commands {
+  char type;
+  char command;
+};
+
+struct Commands btCommand = {AUTONOMOUS, MSTOP};
+struct Commands prevCommand = btCommand;
+
 
 autonomousSM_t autonomousSM = FORWARD;
 
-unsigned char btBuffer[128] = {AUTONOMOUS};
+//unsigned char btBuffer[128] = {AUTONOMOUS};
+
 int motorSpeed = 50;
 
 const int reverseLength = 200;
@@ -51,7 +61,8 @@ int turnAngle = 30;
 
 LedRing ledRing(&led);
 Motor motor(&motorL, &motorR);
-char oldCommand[2] = {MSTOP};
+
+//char oldCommand[2] = {MSTOP};
 
 
 void setup() {
@@ -73,43 +84,55 @@ void setup() {
 
 
 void loop() { 
-  readBT(btBuffer,&bluetooth);
+  //readBT(&btCommand ,&bluetooth);
 
  
   ledRing.colorLoop(100,25,0);
-  if(btBuffer[0] == MANUAL){
+  if(btCommand.type == MANUAL){
 
-    if (oldCommand[1] != btBuffer[1]) {
+    if (prevCommand.command != btCommand.command) {
 
-      Serial.println(char(btBuffer[1]));
+      Serial.println(char(btCommand.command));
       
-      if (oldCommand[0] == AUTONOMOUS) {
+      if (prevCommand.type == AUTONOMOUS) {
         motor.brake();
       }
       
-      manualController(btBuffer[1]);
-      oldCommand[0] = btBuffer[0];
-      oldCommand[1] = btBuffer[1];
+      manualController(btCommand.command);
+      saveBtCommand(true);
     }
   }
-  else if(btBuffer[0] == AUTONOMOUS){
+  else if(btCommand.type == AUTONOMOUS){
     autonomousStateMachine();
-    oldCommand[0] = btBuffer[0];
-    oldCommand[1] = 0;
+    saveBtCommand(false);
+  }
+  else if(btCommand.type == LINEFOLLOW){
+    saveBtCommand(false);
   }
   else{
-    btBuffer[0] = oldCommand[0];
-    btBuffer[1] = oldCommand[1];
+    btCommand.type = prevCommand.type;
+    btCommand.command = prevCommand.command;
   }
    
   //Serial.print(char(oldCommand[0]));
   //Serial.println(char(oldCommand[1]));
   
-  
   motorL.loop();
   motorR.loop();
    
 }
+
+void saveBtCommand(bool command) {
+  prevCommand.type = btCommand.type;
+  
+  if (command) {
+      prevCommand.command = btCommand.command;
+  }
+  else {
+    prevCommand.command = 0;
+  }
+}
+
 
 void manualController(char command){
   
@@ -191,6 +214,30 @@ void autonomousStateMachine() {
         autonomousSM = FORWARD;
       }
     break;
+  }
+}
+
+void lineFollow(){
+    int lineState = lineFinder.readSensors();
+    switch(lineState)
+  {
+    case S1_IN_S2_IN: 
+      //Serial.println("Sensor 1 and 2 are inside of black line"); 
+      motor.turnLeft(motorSpeed);
+      break;
+    case S1_IN_S2_OUT: 
+      //Serial.println("Sensor 2 is outside of black line"); 
+      motor.turnLeft(motorSpeed);
+      break;
+    case S1_OUT_S2_IN: 
+      //Serial.println("Sensor 1 is outside of black line"); 
+      motor.moveSpeed(motorSpeed);
+      break;
+    case S1_OUT_S2_OUT:
+      //Serial.println("Sensor 1 and 2 are outside of black line"); 
+      motor.moveSpeed(motorSpeed);
+      break;
+    default: break;
   }
 }
 
