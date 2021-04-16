@@ -13,10 +13,14 @@
 #define MFORWARD 'F'
 #define MREVERSE 'B'
 
-
-
 #include "motor.h"
 #include "ledRing.h"
+
+struct Commands {
+  unsigned char type;
+  unsigned char command;
+};
+
 #include "manualControl.h"
 
 MeBluetooth bluetooth(PORT_16);
@@ -38,12 +42,8 @@ enum autonomousSM_t {
   TURN
 };
 
-struct Commands {
-  char type;
-  char command;
-};
 
-struct Commands btCommand = {AUTONOMOUS, MSTOP};
+struct Commands btCommand = {LINEFOLLOW, MSTOP};
 struct Commands prevCommand = btCommand;
 
 
@@ -84,7 +84,7 @@ void setup() {
 
 
 void loop() { 
-  //readBT(&btCommand ,&bluetooth);
+  readBT(&btCommand ,&bluetooth);
 
  
   ledRing.colorLoop(100,25,0);
