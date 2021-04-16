@@ -4,6 +4,16 @@
 
 #define LEDNUM 12
 
+#define AUTONOMOUS 'O'
+#define MANUAL 'M'
+#define MSTOP 'S'
+#define MLEFT 'L'
+#define MRIGHT 'R'
+#define MFORWARD 'F'
+#define MREVERSE 'B'
+
+
+
 #include "motor.h"
 #include "ledRing.h"
 #include "manualControl.h"
@@ -30,7 +40,7 @@ enum autonomousSM_t {
 
 autonomousSM_t autonomousSM = FORWARD;
 
-unsigned char btBuffer[128] = {'A'};
+unsigned char btBuffer[128] = {AUTONOMOUS};
 int motorSpeed = 50;
 
 const int reverseLength = 200;
@@ -40,7 +50,7 @@ const int minObstacleDistance = 5;
 int turnAngle = 30;
 
 Motor motor(&motorL, &motorR);
-char oldCommand[2] = {'B'};
+char oldCommand[2] = {MSTOP};
 
 
 void setup() {
@@ -53,64 +63,80 @@ void setup() {
   bluetooth.begin(115200);    //The factory default baud rate is 115200
 
   led.setpin( 44 );
+
+  fullCirlce(&led, 0,0,50);
+  delay(1000);
+  fullCirlce(&led, 0,0,0);
   
 }
 
 
-void loop()
-{ 
+void loop() { 
   readBT(btBuffer,&bluetooth);
 
+ 
+  
+  if(btBuffer[0] == MANUAL){
 
-  if(btBuffer[0] == 'M'){
-    oldCommand[0] = btBuffer[0];
-    oldCommand[1] = btBuffer[1];
-    manualController(btBuffer[1]);
+    if (oldCommand[1] != btBuffer[1]) {
+
+      Serial.println(char(btBuffer[1]));
+      
+      if (oldCommand[0] == AUTONOMOUS) {
+        motor.brake();
+      }
+      
+      manualController(btBuffer[1]);
+      oldCommand[0] = btBuffer[0];
+      oldCommand[1] = btBuffer[1];
+    }
   }
-  else if(btBuffer[0] == 'A'){
-    oldCommand[0] = btBuffer[0];
-    oldCommand[1] = btBuffer[1];
+  else if(btBuffer[0] == AUTONOMOUS){
     autonomousStateMachine();
+    oldCommand[0] = btBuffer[0];
+    oldCommand[1] = 0;
   }
   else{
     btBuffer[0] = oldCommand[0];
     btBuffer[1] = oldCommand[1];
   }
    
-  Serial.print(char(oldCommand[0]));
-  Serial.println(char(oldCommand[1]));
+  //Serial.print(char(oldCommand[0]));
+  //Serial.println(char(oldCommand[1]));
   
   
   motorL.loop();
   motorR.loop();
-
+   
 }
 
 void manualController(char command){
-  motor.brake();
   
   switch(command){
-    case 'F':
+    case MFORWARD:
       motor.moveSpeed(motorSpeed);
       fullCirlce(&led, 0,0,50);
     break;
 
-    case 'B':
+    case MREVERSE:
       motor.moveSpeed(-motorSpeed);
       fullCirlce(&led, 0,50,0);
     break;
     
-    case 'L':
+    case MLEFT:
       motor.turnLeft(motorSpeed);
       fullCirlce(&led, 0,50,50);
     break;
     
-    case 'R':
+    case MRIGHT:
       motor.turnRight(motorSpeed);
     break;
     
-    case 'S':
+    case MSTOP:
       motor.brake();
+    break;
+
+    default:
     break;
   }
 }
@@ -130,14 +156,12 @@ void autonomousStateMachine() {
           motor.moveLength(-reverseLength,motorSpeed);
         } 
         else if  (lineFinder.readSensors() == S1_IN_S2_IN) {
-
+          
           fullCirlce(&led, 150,0,0);
 
           motor.brake();
           delay(100);
-          
-          
-            
+                  
           autonomousSM = REVERSE;
           motor.moveLength(-reverseLength,motorSpeed);
         }

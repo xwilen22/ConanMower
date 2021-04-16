@@ -7,6 +7,7 @@ void readBT(unsigned char *btBuffer, MeBluetooth *bluetooth)
     { 
       btBuffer[count] = readdata;
       count++;
+      //bluetooth->write(readdata);
       
       delay(1);
     } 
