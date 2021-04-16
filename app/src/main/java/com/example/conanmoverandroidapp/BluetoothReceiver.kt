@@ -8,6 +8,7 @@ import android.content.Intent
 import android.util.Log
 import androidx.core.app.ActivityCompat
 
+
 class BluetoothReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent) {
@@ -46,8 +47,6 @@ class BluetoothReceiver : BroadcastReceiver() {
             Log.d("Connect", "Trying to connect to bluetooth....")
             BluetoothConnectionHandler.connectToDevice(device){}
         }
-
-
     }
 
 }
