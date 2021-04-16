@@ -1,0 +1,2 @@
+com/example/conanmoverandroidapp/BuildConfig.java
+ com.example.conanmoverandroidapp.BuildConfig
