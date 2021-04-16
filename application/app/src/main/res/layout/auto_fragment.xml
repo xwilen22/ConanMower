@@ -35,12 +35,13 @@
     
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/anim_mower"
-        app:lottie_rawRes="@raw/anim_mower"
+        app:lottie_rawRes="@raw/anim_mower_drive"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
         android:scaleType="center"
+        app:lottie_scale="0.5"
         app:layout_constraintTop_toBottomOf="@id/header_text"
         app:layout_constraintBottom_toTopOf="@id/auto_button"
         app:layout_constraintStart_toStartOf="parent"
