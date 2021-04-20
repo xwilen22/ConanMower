@@ -70,7 +70,7 @@ void setup() {
   bluetooth.begin(115200);    //The factory default baud rate is 115200
 
 
-  fullCirlce(&led, 0,0,50);
+  ledRing.fullCirlce(0,0,50);
   delay(1000);
   ledRing.fullCirlce(0,0,0);
   
@@ -85,8 +85,6 @@ void loop() {
   if(btCommand.type == MANUAL){
 
     if (prevCommand.command != btCommand.command) {
-
-      Serial.println(char(btCommand.command));
       
       if (prevCommand.type == AUTONOMOUS) {
         motor.brake();
@@ -103,20 +101,14 @@ void loop() {
   else if(btCommand.type == LINEFOLLOW){
     lineFollow();
     saveBtCommand(false);
-    Serial.println("Line");
   }
   else{
     btCommand.type = prevCommand.type;
     btCommand.command = prevCommand.command;
   }
-
-  //Serial.println(char(btCommand.type));
-  //Serial.print(char(btCommand.command));
-  
   
   motorL.loop();
   motorR.loop();
-   
 }
 
 void saveBtCommand(bool command) {
@@ -208,6 +200,7 @@ void autonomousStateMachine() {
 
 void lineFollow(){
     int lineState = lineFinder.readSensors();
+
     switch(lineState)
   {
     case S1_IN_S2_IN: 
@@ -220,6 +213,7 @@ void lineFollow(){
       motor.moveSpeed(motorSpeed);
       break;
     case S1_OUT_S2_OUT:
+      //motor.turnRight(motorSpeed);
       motor.moveSpeed(motorSpeed);
       break;
     default: break;
