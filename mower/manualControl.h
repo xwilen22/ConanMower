@@ -15,14 +15,23 @@ void readBT(struct Commands *command, MeBluetooth *bluetooth)
   int readdata = 0,count = 0;
   int nrOfBytes = bluetooth->available();
   
+  unsigned char data = ' ';
+  
   if (nrOfBytes == 1) { // kolla så att det är en giltig type också?
     
-    command->type = bluetooth->read();  
+    data = bluetooth->read();  
+    command->type = data;
   }
   else if (nrOfBytes == 2) {
-    command->type = bluetooth->read(); // kolla så att det är en giltig type också?
+    
+    data = bluetooth->read(); // kolla så att det är en giltig type också?
+    command->type = data;
     delay(1);
-    command->command = 'H'; // kolla så att det är en giltigt command också?
+    data = bluetooth->read(); // kolla så att det är en giltigt command också?
+    command->command = data;
   }
-  bluetooth->flush(); // funkar flush?
+
+  while (bluetooth->available()) {
+    bluetooth->read();  
+  }
 }

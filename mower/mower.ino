@@ -43,13 +43,11 @@ enum autonomousSM_t {
 };
 
 
-struct Commands btCommand = {LINEFOLLOW, MSTOP};
+struct Commands btCommand = {AUTONOMOUS, MSTOP};
 struct Commands prevCommand = btCommand;
 
 
 autonomousSM_t autonomousSM = FORWARD;
-
-//unsigned char btBuffer[128] = {AUTONOMOUS};
 
 int motorSpeed = 50;
 
@@ -62,9 +60,6 @@ int turnAngle = 30;
 LedRing ledRing(&led);
 Motor motor(&motorL, &motorR);
 
-//char oldCommand[2] = {MSTOP};
-
-
 void setup() {
 
   Serial.begin(115200);
@@ -74,11 +69,10 @@ void setup() {
   randomSeed(analogRead(0));
   bluetooth.begin(115200);    //The factory default baud rate is 115200
 
-  //led.setpin( 44 );
 
-  //fullCirlce(&led, 0,0,50);
+  fullCirlce(&led, 0,0,50);
   delay(1000);
-  ledRing.fullCirlce(0,50,0);
+  ledRing.fullCirlce(0,0,0);
   
 }
 
@@ -107,15 +101,18 @@ void loop() {
     saveBtCommand(false);
   }
   else if(btCommand.type == LINEFOLLOW){
+    lineFollow();
     saveBtCommand(false);
+    Serial.println("Line");
   }
   else{
     btCommand.type = prevCommand.type;
     btCommand.command = prevCommand.command;
   }
-   
-  //Serial.print(char(oldCommand[0]));
-  //Serial.println(char(oldCommand[1]));
+
+  //Serial.println(char(btCommand.type));
+  //Serial.print(char(btCommand.command));
+  
   
   motorL.loop();
   motorR.loop();
@@ -139,17 +136,14 @@ void manualController(char command){
   switch(command){
     case MFORWARD:
       motor.moveSpeed(motorSpeed);
-    //  fullCirlce(&led, 0,0,50);
     break;
 
     case MREVERSE:
       motor.moveSpeed(-motorSpeed);
-      //fullCirlce(&led, 0,50,0);
     break;
     
     case MLEFT:
       motor.turnLeft(motorSpeed);
-     // fullCirlce(&led, 0,50,50);
     break;
     
     case MRIGHT:
@@ -166,7 +160,6 @@ void manualController(char command){
 }
 
 void autonomousStateMachine() {
-   // fullCirlce(&led, 50,50,50);
     switch (autonomousSM) {
     case FORWARD:
         motor.moveSpeed(motorSpeed);
@@ -180,9 +173,6 @@ void autonomousStateMachine() {
           motor.moveLength(-reverseLength,motorSpeed);
         } 
         else if  (lineFinder.readSensors() == S1_IN_S2_IN) {
-          
-          //fullCirlce(&led, 150,0,0);
-
           motor.brake();
           delay(100);
                   
@@ -193,7 +183,6 @@ void autonomousStateMachine() {
       
     case REVERSE:
       if (motorL.isTarPosReached() && motorR.isTarPosReached()) {
-      //  fullCirlce(&led, 0,0,0);
         
         motor.brake();
         delay(100);
@@ -222,19 +211,15 @@ void lineFollow(){
     switch(lineState)
   {
     case S1_IN_S2_IN: 
-      //Serial.println("Sensor 1 and 2 are inside of black line"); 
       motor.turnLeft(motorSpeed);
       break;
     case S1_IN_S2_OUT: 
-      //Serial.println("Sensor 2 is outside of black line"); 
       motor.turnLeft(motorSpeed);
       break;
     case S1_OUT_S2_IN: 
-      //Serial.println("Sensor 1 is outside of black line"); 
       motor.moveSpeed(motorSpeed);
       break;
     case S1_OUT_S2_OUT:
-      //Serial.println("Sensor 1 and 2 are outside of black line"); 
       motor.moveSpeed(motorSpeed);
       break;
     default: break;
