@@ -6,22 +6,23 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AlertDialog
 
+
 class PermissionHandler {
     companion object {
-        val REQUEST_ENABLE_BT = 1
-        val REQUEST_ENABLE_LOCATION = 2
-        var afterPermissionsAllowed: (() -> Unit)? = null
+        const val REQUEST_ENABLE_BT = 1
+        private const val REQUEST_ENABLE_LOCATION = 2
+        private var afterPermissionsAllowed: (() -> Unit)? = null
 
         fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
             if (requestCode == REQUEST_ENABLE_BT) {
                 if (resultCode == Activity.RESULT_CANCELED) {
                     AlertDialog.Builder(Globals.currentActivity)
                         .setCancelable(false)
-                        .setMessage("Bluetooth permission message")
-                        .setPositiveButton("Enable bluetooth") { _, _ ->
+                        .setMessage(Globals.currentActivity.getString(R.string.bluetooth_permission_message))
+                        .setPositiveButton(Globals.currentActivity.getString(R.string.enable_bluetooth)) { _, _ ->
                             requestBluetoothTurnOn()
                         }
-                        .setNegativeButton("Cancel") { _, _ -> }
+                        .setNegativeButton(Globals.currentActivity.getString(R.string.cancel)) { _, _ -> }
                         .show()
                 }
                 else {
@@ -43,27 +44,29 @@ class PermissionHandler {
             permissions: Array<String>,
             grantResults: IntArray
         ) {
-            when (requestCode) {
+            when(requestCode) {
                 REQUEST_ENABLE_LOCATION -> {
                     if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                         if (Globals.currentActivity.checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                             if (Globals.btAdapter?.isEnabled == false) {
                                 requestBluetoothTurnOn()
-                            } else {
+                            }
+                            else {
                                 if(afterPermissionsAllowed != null){
                                     afterPermissionsAllowed!!()
                                     afterPermissionsAllowed = null
                                 }
                             }
                         }
-                    } else {
+                    }
+                    else {
                         AlertDialog.Builder(Globals.currentActivity)
                             .setCancelable(false)
-                            .setMessage("Get location access permission")
-                            .setPositiveButton("Allow location access") { _, _ ->
+                            .setMessage(Globals.currentActivity.getString(R.string.get_location_access_permission))
+                            .setPositiveButton(Globals.currentActivity.getString(R.string.allow_location_access)) { _, _ ->
                                 requestLocationAccess()
                             }
-                            .setNegativeButton("Cancel") { _, _ -> }
+                            .setNegativeButton(Globals.currentActivity.getString(R.string.cancel)) { _, _ -> }
                             .show()
                     }
                     return
@@ -74,7 +77,7 @@ class PermissionHandler {
         fun handleBluetoothPermissionStatus(callback: () -> Unit){
             afterPermissionsAllowed = callback
             if (Globals.btAdapter == null) {
-                showNoBtAdapterAlert()
+                noBluetoothAdapterAlert()
             }
             else if (Globals.btAdapter?.isEnabled == false) {
                 requestBluetoothTurnOn()
@@ -91,11 +94,11 @@ class PermissionHandler {
         }
 
 
-        fun showNoBtAdapterAlert() {
+        fun noBluetoothAdapterAlert() {
             AlertDialog.Builder(Globals.currentActivity)
                 .setCancelable(false)
-                .setMessage("No adapter error")
-                .setPositiveButton("OK") { _, _ -> }.show()
+                .setMessage(Globals.currentActivity.getString(R.string.no_adapter_error))
+                .setPositiveButton(Globals.currentActivity.getString(R.string.ok)) { _, _ -> }.show()
         }
 
         fun requestBluetoothTurnOn() {

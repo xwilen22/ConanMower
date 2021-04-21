@@ -10,5 +10,8 @@
         <item name="colorSecondaryVariant">@color/orange</item>
         <item name="colorOnSecondary">@color/white</item>
 
+        <item name="fontFamily">@font/ubuntu_condensed</item>
+
     </style>
+
 </resources>

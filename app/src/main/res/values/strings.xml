@@ -3,4 +3,13 @@
     <string name="auto">Auto</string>
     <string name="manual">Manual</string>
     <string name="path">Path</string>
+    <string name="bluetooth_unable_to_connect">Unable to connect to mover</string>
+    <string name="get_location_access_permission">Get location access permission</string>
+    <string name="allow_location_access">Allow location access</string>
+    <string name="cancel">Cancel</string>
+    <string name="bluetooth_permission_message">Bluetooth permission message</string>
+    <string name="no_adapter_error">No adapter error</string>
+    <string name="ok">OK</string>
+    <string name="enable_bluetooth">Enable bluetooth</string>
+    <string name="no_bluetooth_connection">No bluetooth connection</string>
 </resources>
