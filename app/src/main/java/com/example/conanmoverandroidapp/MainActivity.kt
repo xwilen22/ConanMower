@@ -18,9 +18,9 @@ class MainActivity : AppCompatActivity() {
 
         Globals.currentActivity = this
 
-        BluetoothConnectionHandler.onMessage(3) {
-            it[0].toInt()
-        }
+//        BluetoothConnectionHandler.onMessage(3) {
+  //          it[0].toInt()
+    //    }
     }
 
     override fun onResume() {
