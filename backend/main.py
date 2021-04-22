@@ -1,5 +1,6 @@
 import firebaseClient as fc
 import mowerSerialiser as ms
+import data
 
 ### A connection to the database is established and used to insert an item in the database.
 ### This is currently test code that will be built upon. --- This comment can most likely be removed later. ---
@@ -17,9 +18,9 @@ while True:
 
     # TODO:
     # 1. If the code above works, we need to convert the data to the correct format
-    # 2. Add the converted data as parameters to fc.TraveledPathData(), e.g. path = fc.TraveledPathData(currentAngle, traveledDistance, endedByBorder)
+    # 2. Add the converted data as parameters to data.TraveledPathData(), e.g. path = fc.TraveledPathData(currentAngle, traveledDistance, endedByBorder)
 
-path = fc.TraveledPathData(20, 30, False)
+path = data.traveledPath.TraveledPathData(20, 30, False)
 traveledPathClient.InsertItem(path.getDictionary())
 
 print("Inserted item.")
