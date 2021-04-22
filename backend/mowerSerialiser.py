@@ -29,13 +29,3 @@ def getDataClass(retrievedBytesList):
     stoppedByObstacle = int.from_bytes(retrievedBytesList[3], byteorder=BYTE_ORDER)
 
     return traveledPathData.TraveledPathData(relativeAngle, traveledDistance, stoppedByObstacle)
-
-print(int.from_bytes(b'\x01\x01', byteorder=BYTE_ORDER))
-
-byteList = [
-    bytes([1]),
-    bytes([122]),
-    bytes([1, 1]),
-    bytes([0])
-]
-print(getDataClass(byteList).getDictionary())
