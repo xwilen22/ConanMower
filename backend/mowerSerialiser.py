@@ -3,6 +3,10 @@
 import serial
 
 def getSerialConnection(serialPortString):
-    pass
+    return serial.Serial(serialPortString, baudrate=9600, timeout=3.0)    
+
 def getObjectOnRecieve(serialConnection):
+    return serialConnection.read(5)
+
+def formatRecievedObject(bytearray):
     pass
