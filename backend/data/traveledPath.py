@@ -9,11 +9,11 @@ class TraveledPathData:
 
     ## The constructor assigns each attribute with the input parameters sent from the mower.
     ## The current date time is also generated here.
-    def __init__(self, currentAngle, traveledDistance, endedByBorder):
+    def __init__(self, currentAngle, traveledDistance, StoppedByObstacle):
         self.endTime = datetime.datetime.now()
         self.currentAngle = currentAngle
         self.traveledDistance = traveledDistance
-        self.endedByBorder = endedByBorder
+        self.StoppedByObstacle = StoppedByObstacle
     
     ## This function returns a dictionary consisting of each attribute used in the traveled path document in the database.
     def getDictionary(self):
@@ -21,5 +21,5 @@ class TraveledPathData:
             u'EndTime': self.endTime,
             u'CurrentAngle': self.currentAngle,
             u'TraveledDistance': self.traveledDistance,
-            u'EndedByBorder': self.endedByBorder
+            u'StoppedByObstacle': self.StoppedByObstacle
         }

@@ -27,8 +27,8 @@ class SerialConnection():
         angleChange = int.from_bytes(retrievedBytesList[1], byteorder=BYTE_ORDER)
 
         # Dunno if negative angle is for turning left or vise versa but ye
-        relativeAngle = angleChange * -1 if turnedLeft else angleChange
+        currentAngle = angleChange * -1 if turnedLeft else angleChange
         traveledDistance = int.from_bytes(retrievedBytesList[2], byteorder=BYTE_ORDER)
         stoppedByObstacle = int.from_bytes(retrievedBytesList[3], byteorder=BYTE_ORDER)
 
-        return traveledPathData.TraveledPathData(relativeAngle, traveledDistance, stoppedByObstacle)
+        return traveledPathData.TraveledPathData(currentAngle, traveledDistance, stoppedByObstacle)
