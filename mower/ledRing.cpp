@@ -25,3 +25,14 @@ void LedRing::fullCirlce(int r, int g, int b) {
   }
   _pled->show();
 }
+
+void LedRing::startUpBlink(int r, int g, int b) {
+
+  for (int i=0; i<5; i++) {
+    fullCirlce(r,g,b);
+    delay(100);
+    fullCirlce(0,0,0);
+    delay(100);  
+  }
+  
+}

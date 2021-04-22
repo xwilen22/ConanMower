@@ -69,10 +69,7 @@ void setup() {
   randomSeed(analogRead(0));
   bluetooth.begin(115200);    //The factory default baud rate is 115200
 
-
-  ledRing.fullCirlce(0,0,50);
-  delay(1000);
-  ledRing.fullCirlce(0,0,0);
+  ledRing.startUpBlink(50, 50 , 0);
   
 }
 
