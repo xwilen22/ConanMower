@@ -4,7 +4,6 @@ from firebase_admin import firestore
 
 import datetime
 
-
 ### This class is used as a setup-class to store attributes connecting to the TraveledPath document in the Cloud Firestore database. 
 class TraveledPathSettings:
 
@@ -49,7 +48,6 @@ class TraveledPathData:
 
 ### This class handles the connection and each call to and from the database.
 class FirebaseClient:
-
     ## The constructor establishes a connection to the database and assigns an attribute for each document used from the 
     ## database. Right now, it's just the TraveledPath document.
     def __init__(self, dataSettings):
