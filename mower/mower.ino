@@ -24,6 +24,7 @@ struct Commands {
 #include "manualControl.h"
 
 MeBluetooth bluetooth(PORT_16);
+//MeSerial piSerial(PORT_5);
 
 MeEncoderOnBoard motorL(SLOT1);
 MeEncoderOnBoard motorR(SLOT2);
@@ -37,7 +38,6 @@ MeRGBLed led( 0, LEDNUM );
 
 enum autonomousSM_t {
   FORWARD,
-  LINE,
   REVERSE,
   TURN
 };
@@ -51,6 +51,7 @@ autonomousSM_t autonomousSM = FORWARD;
 
 int motorSpeed = 50;
 
+MeBuzzer buzzer;
 const int reverseLength = 200;
 const int turnLength = 300;
 
@@ -68,17 +69,21 @@ void setup() {
   attachInterrupt(motorR.getIntNum(), isr_process_encoder2, RISING);
   randomSeed(analogRead(0));
   bluetooth.begin(115200);    //The factory default baud rate is 115200
+  //piSerial.begin(115200);
+
+  //buzzer.setpin(45);
 
   ledRing.startUpBlink(50, 50 , 0);
-  
+  //sendToRbp(&piSerial, true, 30, 300, true);
 }
 
 
 void loop() { 
   readBT(&btCommand ,&bluetooth);
-
  
-  ledRing.colorLoop(100,25,0);
+ // buzzer.tone(65,0.25);
+
+  //ledRing.colorLoop(100,25,0);
   if(btCommand.type == MANUAL){
 
     if (prevCommand.command != btCommand.command) {
@@ -88,21 +93,22 @@ void loop() {
       }
       
       manualController(btCommand.command);
-      saveBtCommand(true);
+    //  saveBtCommand(true);
     }
   }
   else if(btCommand.type == AUTONOMOUS){
+     if (prevCommand.type == MANUAL) {
+        autonomousSM = FORWARD;
+      }
+
     autonomousStateMachine();
-    saveBtCommand(false);
+  //  saveBtCommand(false);
   }
   else if(btCommand.type == LINEFOLLOW){
     lineFollow();
-    saveBtCommand(false);
+   // saveBtCommand(false);
   }
-  else{
-    btCommand.type = prevCommand.type;
-    btCommand.command = prevCommand.command;
-  }
+ 
   
   motorL.loop();
   motorR.loop();
