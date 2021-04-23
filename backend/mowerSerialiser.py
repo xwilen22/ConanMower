@@ -14,7 +14,7 @@ class SerialConnection():
     ## This method reads the data coming in from the arduino and returns it as a list.
     def getBytesOnRecieve(self):
         startByte = self.port.read(1)
-        while int.from_bytes(startByte) != 254:
+        while int.from_bytes(startByte, byteorder=BYTE_ORDER) != 254:
             startByte = self.port.read(1)
         
         returningList = [
