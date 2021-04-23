@@ -17,8 +17,15 @@ class SerialConnection():
         while int.from_bytes(startByte, byteorder=BYTE_ORDER) != 254:
             startByte = self.port.read(1)
         
-        print("start byte: ", startByte)        
-        leftOrRight = self.port.read(1)
+        print("start byte: ", startByte)  
+
+        returningList = []
+
+        while returningList.len < 6:
+            dataToBeStored = self.port.read(1)
+            if(dataToBeStored != b''):
+                returningList.append(dataToBeStored)
+        '''leftOrRight = self.port.read(1)
         angleChange = self.port.read(1)
         
         distanceOne = self.port.read(1)
@@ -32,7 +39,9 @@ class SerialConnection():
             distanceOne, #Distance
             distanceTwo,
             stoppedForObstacle  #Stopped because of border
-        ]
+        ]'''
+
+        print("Bytes stored in the list: ", returningList)
         return returningList
 
     ## Parses a list of bytes to a TraveledPath data class. The data class is returned.
