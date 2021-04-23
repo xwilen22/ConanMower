@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -40,10 +41,11 @@ class ManualFragment: Fragment() {
         // TODO: Use the ViewModel
         setUpNavigationButtons()
 
+        checkIfBluetoothLESupported()
         // If not connected to bluetooth, try to connect
-        if(!Globals.bluetoothConnectedStatus){
+        if(!Globals.bluetoothConnectedStatus && !Globals.bluetoothDiscoveringStatus){
             PermissionHandler.handleBluetoothPermissionStatus {
-                tryToConnect()
+                tryToConnectBluetoothToArduino()
             }
         }
 
@@ -68,6 +70,32 @@ class ManualFragment: Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        checkIfBluetoothLESupported()
+        // If not connected to bluetooth, try to connect
+        if(!Globals.bluetoothConnectedStatus && !Globals.bluetoothDiscoveringStatus){
+            PermissionHandler.handleBluetoothPermissionStatus {
+                tryToConnectBluetoothToArduino()
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if(Globals.bluetoothConnectedStatus){
+            BluetoothConnectionHandler.initiateAutoMowerControl()
+        }
+    }
+
+    private fun checkIfBluetoothLESupported() {
+        if(!Globals.currentActivity.packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+            Toast.makeText(Globals.currentActivity, getString(R.string.bluetooth_le_not_supported), Toast.LENGTH_SHORT).show()
+            parentFragmentManager.popBackStack()
+        }
+    }
+
     private fun setDirectionOnAction(action: Int, direction: String) {
         if(Globals.bluetoothConnectedStatus){
             if (action == MotionEvent.ACTION_DOWN) {
@@ -85,37 +113,36 @@ class ManualFragment: Fragment() {
         }
     }
 
-    private fun setUpNavigationButtons()
-    {
+    private fun setUpNavigationButtons() {
         auto_button.setOnClickListener {
             val direction = ManualFragmentDirections.actionManualFragmentToAutoFragment()
             it.findNavController().navigate(direction)
         }
     }
 
-
-    fun tryToConnect() {
-        changeBluetoothConnectionUi(null)
+    private fun tryToConnectBluetoothToArduino() {
         val deviceFilter = IntentFilter(BluetoothDevice.ACTION_FOUND)
         Globals.currentActivity.registerReceiver(Globals.btReceiver, deviceFilter)
-        val btstateFilter = IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
-        Globals.currentActivity.registerReceiver(Globals.btReceiver, btstateFilter)
+        val btStateFilter = IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
+        Globals.currentActivity.registerReceiver(Globals.btReceiver, btStateFilter)
 
-        BluetoothConnectionHandler.connectToArduino {
-            BluetoothConnectionHandler.executeOnMainThread {
-                /*TODO make sure this is right and this code snippet should be here*/
-                changeBluetoothConnectionUi(false)
-                Toast.makeText(
-                    Globals.currentActivity,
-                    R.string.bluetooth_unable_to_connect,
-                    Toast.LENGTH_SHORT
-                ).show()
+        changeBluetoothConnectionUi(null)
+        BluetoothConnectionHandler.initiateBluetoothConnectionToArduino { success ->
+            Globals.executeOnMainThread {
+                changeBluetoothConnectionUi(success)
+                if(!success){
+                    Toast.makeText(
+                        Globals.currentActivity,
+                        R.string.bluetooth_unable_to_connect,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
         }
     }
 
-    private fun changeBluetoothConnectionUi(couldConnect:Boolean?){
-        if(anim_bt.isAnimating){
+    private fun changeBluetoothConnectionUi(couldConnect: Boolean?){
+        if(anim_bt != null && anim_bt.isAnimating){
             anim_bt.visibility = View.GONE
             anim_bt.cancelAnimation()
             if(couldConnect!!){
@@ -125,7 +152,7 @@ class ManualFragment: Fragment() {
                 bt_indicator.visibility = View.VISIBLE
                 bt_indicator.setImageResource(R.drawable.ic_bluetooth_disconnected)
             }
-        } else {
+        } else if(anim_bt != null){
             bt_indicator.visibility = View.GONE
             anim_bt.visibility = View.VISIBLE
             anim_bt.playAnimation()

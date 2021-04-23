@@ -2,68 +2,95 @@ package com.example.conanmoverandroidapp
 
 import android.bluetooth.*
 import android.os.Handler
+import android.os.HandlerThread
 import android.os.Looper
-import android.util.Log
-import kotlinx.coroutines.runBlocking
+import java.util.*
 
 
 class BluetoothConnectionHandler {
     companion object {
+
+        const val arduinoMAC = "00:1B:10:66:46:72"
+        //const val arduinoMAC = "18:3E:EF:D8:46:01" // DATOR
+
+        val arduinoServiceUUID = UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb")
+        val arduinoWriteCharacteristicsUUID = UUID.fromString("0000ffe3-0000-1000-8000-00805f9b34fb")
+        val arduinoReadCharacteristicsUUID = UUID.fromString("0000ffe2-0000-1000-8000-00805f9b34fb")
+
         lateinit var bluetoothGatt: BluetoothGatt
 
-        fun connectToDevice(device: BluetoothDevice, wasSuccessful: (success: Boolean) -> Unit){
-            Thread {
-                try {
+        private fun startDiscovery(callback: (success: Boolean) -> Unit){
+            Globals.btAdapter?.startDiscovery()
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (!Globals.bluetoothConnectedStatus) {
                     Globals.btAdapter?.cancelDiscovery()
-
-                    bluetoothGatt = device.connectGatt(Globals.currentActivity, false, gattCallback)
-
-                    runBlocking {
-                        bluetoothGatt.discoverServices()
-                    }
-
-                    executeOnMainThread {
-                        Globals.bluetoothConnectedStatus = true
-                        wasSuccessful(true)
-                    }
-
-                    initiateHearbeatToArduino(true)
-                } catch (e: Exception){
-                    executeOnMainThread {
-                        Globals.bluetoothConnectedStatus = false
-                        wasSuccessful(false)
-                    }
+                    Globals.bluetoothDiscoveringStatus = false
+                    callback(false)
                 }
-            }.start()
+            }, 20000)
+
+            callback(true)
         }
 
-        private val gattCallback = object : BluetoothGattCallback() {
+        fun initiateBluetoothConnectionToArduino(callback: (success: Boolean) -> Unit){
+            // Get all previously paired devices
+            val pairedDevices: Set<BluetoothDevice>? = Globals.btAdapter?.bondedDevices
+            var deviceFound = false
+
+            // If arduino has been paired before, try to connect
+            pairedDevices?.forEach { device ->
+                if(device.address == arduinoMAC){
+                    deviceFound = true
+                    connectBluetoothToArduino(device, callback)
+                }
+            }
+
+            // If arduino has not been paired before, start discovery
+            if(!deviceFound) {
+                Globals.bluetoothDiscoveringStatus = true
+                startDiscovery(callback)
+            }
+        }
+
+        fun connectBluetoothToArduino(device: BluetoothDevice, callback: (success: Boolean) -> Unit)  {
+            try {
+                Globals.btAdapter?.cancelDiscovery()
+                bluetoothGatt = device.connectGatt(Globals.currentActivity, false, gattCallback(callback))
+            }
+            catch (e: Exception){
+                callback(false)
+            }
+        }
+
+        private fun gattCallback(callback: (success: Boolean) -> Unit) = object : BluetoothGattCallback() {
             override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
                 if (status == BluetoothGatt.GATT_SUCCESS) {
                     if (newState == BluetoothProfile.STATE_CONNECTED) {
                         Globals.bluetoothConnectedStatus = true
+                        bluetoothGatt.discoverServices()
+                        val a = bluetoothGatt.getService(arduinoServiceUUID) // TODO: Remove
+                        initiateHearbeatToArduino()
+
+                        callback(true)
                     } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                        // TODO: Handle disconnected from mower
                         Globals.bluetoothConnectedStatus = false
                         gatt.close()
+
+                        callback(false)
                     }
                 } else {
-                    // TODO: Handle bluetooth error
                     Globals.bluetoothConnectedStatus = false
                     gatt.close()
+
+                    callback(false)
                 }
             }
         }
 
-        fun writeCharacteristic(value: ByteArray?) {
-            val service: BluetoothGattService = bluetoothGatt.getService(Globals.arduinoServiceUUID)
-            if (service == null) {
-                return
-            }
-            val characteristic = service.getCharacteristic(Globals.arduinoWriteCharacteristicsUUID)
-            if (characteristic == null) {
-                return
-            }
+        private fun writeCharacteristic(value: ByteArray?) {
+            val service: BluetoothGattService = bluetoothGatt.getService(arduinoServiceUUID)
+            val characteristic =
+                service.getCharacteristic(arduinoWriteCharacteristicsUUID) ?: return
             characteristic.value = value
             val writeStatus: Boolean = bluetoothGatt.writeCharacteristic(characteristic)
             if(!writeStatus){
@@ -108,69 +135,28 @@ class BluetoothConnectionHandler {
             writeCharacteristic(buffer)
         }
 
-        fun connectToArduino(onTimeout: () -> Unit){
-            // Get all previously paired devices
-            val pairedDevices: Set<BluetoothDevice>? = Globals.btAdapter?.bondedDevices
-            var foundArduino = false
+        private fun initiateHearbeatToArduino(){
+            // Send first heartbeat
+            sendHeartbeatToArduino()
 
-            // If arduino has been paired before, try to connect
-            pairedDevices?.forEach { device ->
-                if(device.address == Globals.arduinoMAC){
-                    foundArduino = true
-                    connectToDevice(device) { wasSuccessful ->
-                        if(!wasSuccessful){
-                            startDiscovery {
-                                executeOnMainThread(onTimeout)
-                            }
-                        }
-                    }
-                }
-            }
+            // Create a background thread that has a Looper
+            val handlerThread = HandlerThread("HandlerThread")
+            handlerThread.start()
 
-            // If arduino has not been paired before, start discovery
-            if(!foundArduino) {
-                startDiscovery {
-                    executeOnMainThread(onTimeout)
-                }
-            }
-        }
-
-        fun startDiscovery(callback: () -> Unit){
-            Globals.btAdapter?.startDiscovery()
-            Handler(Looper.getMainLooper()).postDelayed({
-                if (!Globals.bluetoothConnectedStatus) {
-                    Globals.btAdapter?.cancelDiscovery()
-                    callback()
-                }
-            }, 2000)
-        }
-
-        fun executeOnMainThread(function: () -> Unit){
-            val handler = Handler(Looper.getMainLooper())
-            handler.post {
-                function()
-            }
-        }
-
-        // Every 5 seconds, send a message to arduino
-        fun initiateHearbeatToArduino(first: Boolean){
-            if(first){
-                sendHeartbeatToArduino()
-            }
-            val handler = Handler(Looper.getMainLooper())
-            handler.postDelayed({
+            // Every 5 seconds, send a new message to arduino (in a background thread)
+            Handler(handlerThread.looper).postDelayed({
                 if (Globals.bluetoothConnectedStatus) {
                     sendHeartbeatToArduino()
+                } else {
+                    handlerThread.quit()
                 }
             }, 5000)
         }
 
-        fun sendHeartbeatToArduino(){
-            if (Globals.bluetoothConnectedStatus) {
-                val buffer = ByteArray(1)
-                buffer[0] = 100.toByte()
-                writeCharacteristic(buffer)
-            }
+        private fun sendHeartbeatToArduino(){
+            val buffer = ByteArray(1)
+            buffer[0] = 100.toByte()
+            writeCharacteristic(buffer)
         }
     }
 

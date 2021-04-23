@@ -4,6 +4,8 @@ import android.app.Activity
 import android.app.Application
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import java.util.*
 
 
@@ -12,14 +14,17 @@ class Globals: Application() {
         var btAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
         var btReceiver: BluetoothReceiver = BluetoothReceiver()
         var bluetoothConnectedStatus: Boolean = false
-
-        val arduinoMAC = "00:1B:10:66:46:72"
-        val arduinoServiceUUID = UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb")
-        val arduinoWriteCharacteristicsUUID = UUID.fromString("0000ffe3-0000-1000-8000-00805f9b34fb");
-        //val arduinoReadCharacteristicsUUID = UUID.fromString("0000ffe2-0000-1000-8000-00805f9b34fb")
+        var bluetoothDiscoveringStatus: Boolean = false
 
         lateinit var appContext: Context
         lateinit var currentActivity: Activity
+
+        fun executeOnMainThread(function: () -> Unit){
+            val handler = Handler(Looper.getMainLooper())
+            handler.post {
+                function()
+            }
+        }
     }
 
     override fun onCreate() {

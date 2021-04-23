@@ -12,4 +12,5 @@
     <string name="ok">OK</string>
     <string name="enable_bluetooth">Enable bluetooth</string>
     <string name="no_bluetooth_connection">No bluetooth connection</string>
+    <string name="bluetooth_le_not_supported">BLE not supported!</string>
 </resources>
