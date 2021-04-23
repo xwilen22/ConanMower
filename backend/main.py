@@ -16,9 +16,9 @@ while True:
     if byteArray != None:
         mowerData = serialConnection.getDataClass(byteArray).getDictionary()
         print("Mowerdata is: ", mowerData)
-        traveledPathClient.InsertItem(mowerData)
+        #traveledPathClient.InsertItem(mowerData)
 
 path = data.traveledPath.TraveledPathData(20, 30, False)
-traveledPathClient.InsertItem(path.getDictionary())
+#traveledPathClient.InsertItem(path.getDictionary())
 
 print("Inserted item.")

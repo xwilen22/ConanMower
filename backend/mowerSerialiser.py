@@ -16,6 +16,7 @@ class SerialConnection():
         startByte = self.port.read(1)
         while int.from_bytes(startByte, byteorder=BYTE_ORDER) != 254:
             startByte = self.port.read(1)
+            print("start byte: " + startByte)
         
         leftOrRight = self.port.read(1)
         angleChange = self.port.read(1)
