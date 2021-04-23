@@ -21,7 +21,7 @@ class SerialConnection():
 
         returningList = []
 
-        while returningList.len < 6:
+        while len(returningList) < 6:
             dataToBeStored = self.port.read(1)
             if(dataToBeStored != b''):
                 returningList.append(dataToBeStored)
