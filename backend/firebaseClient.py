@@ -24,7 +24,3 @@ class FirebaseClient:
 
     def InsertItem(self, dataDict):        
         self._documentTraveledPath.push(dataDict)
-    
-    
-client = FirebaseClient()
-client.InsertItem(tp.TraveledPathData(11,11,True).getDictionary())
