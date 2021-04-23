@@ -10,6 +10,7 @@ import java.util.*
 class BluetoothConnectionHandler {
     companion object {
 
+        // "00:1B:10:66:46:72"
         const val arduinoMAC = "00:1B:10:66:46:72"
         //const val arduinoMAC = "18:3E:EF:D8:46:01" // DATOR
 

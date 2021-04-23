@@ -7,6 +7,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnTouchListener
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.auto_fragment.*
 import kotlinx.android.synthetic.main.auto_fragment.auto_button
 import kotlinx.android.synthetic.main.auto_fragment.manual_button
@@ -14,6 +15,9 @@ import kotlinx.android.synthetic.main.manual_fragment.*
 
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var viewModel: BluetoothViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -22,6 +26,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         Globals.currentActivity = this
+        Globals.bluetoothViewModel = ViewModelProviders.of(this).get(BluetoothViewModel::class.java)
 
     }
 
@@ -29,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         Globals.currentActivity = this
+        Globals.bluetoothViewModel = ViewModelProviders.of(this).get(BluetoothViewModel::class.java)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -18,6 +18,7 @@ class Globals: Application() {
 
         lateinit var appContext: Context
         lateinit var currentActivity: Activity
+        lateinit var bluetoothViewModel: BluetoothViewModel
 
         fun executeOnMainThread(function: () -> Unit){
             val handler = Handler(Looper.getMainLooper())
