@@ -1,15 +1,10 @@
-#import firebase_admin
-#from firebase_admin import credentials
-#from firebase_admin import firestore
-
 import pyrebase
 import datetime
+import data.traveledPath as tp
 
 class FirebaseClient:
-
     def __init__(self):
         # Use a service account
-
         firebaseConfig = {
             "apiKey": "AIzaSyDofuzKpCiUkkFk3Q3y-FxoLh2E1eCuH88",
             "authDomain": "conanmower.firebaseapp.com",
@@ -31,3 +26,5 @@ class FirebaseClient:
         self._documentTraveledPath.push(dataDict)
     
     
+client = FirebaseClient()
+client.InsertItem(tp.TraveledPathData(11,11,True).getDictionary())

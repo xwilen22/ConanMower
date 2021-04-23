@@ -18,7 +18,7 @@ class TraveledPathData:
     ## This function returns a dictionary consisting of each attribute used in the traveled path document in the database.
     def getDictionary(self):
         return {
-            u'EndTime': self.endTime,
+            u'EndTime': str(self.endTime),
             u'CurrentAngle': self.currentAngle,
             u'TraveledDistance': self.traveledDistance,
             u'StoppedByObstacle': self.StoppedByObstacle
