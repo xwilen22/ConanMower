@@ -17,11 +17,20 @@ class SerialConnection():
         while int.from_bytes(startByte, byteorder=BYTE_ORDER) != 254:
             startByte = self.port.read(1)
         
+        leftOrRight = self.port.read(1)
+        angleChange = self.port.read(1)
+        
+        distanceOne = self.port.read(1)
+        distanceTwo = self.port.read(1)
+        distance = distanceOne * 255 + distanceTwo
+
+        stoppedForObstacle = self.port.read(1)
+
         returningList = [
-            self.port.read(1), #Left or right
-            self.port.read(1), #Relative angle change
-            self.port.read(2), #Distance
-            self.port.read(1)  #Stopped because of border
+            leftOrRight, #Left or right
+            angleChange, #Relative angle change
+            distance, #Distance
+            stoppedForObstacle  #Stopped because of border
         ]
         return returningList
 
