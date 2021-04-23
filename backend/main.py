@@ -4,7 +4,7 @@ import data
 
 ### Initialize client firebase client and serial connection.
 
-traveledPathClient = fc.FirebaseClient(fc.TraveledPathSettings())
+traveledPathClient = fc.FirebaseClient("TraveledPath")
 
 serialPort = "/dev/ttyS0" # ttyS0 is used for Raspberry Pi Zero. Normally it would've been ACM0. --- NOTE: This is a temporary comment that can be removed on release ---
 

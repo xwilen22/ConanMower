@@ -3,7 +3,7 @@ import datetime
 import data.traveledPath as tp
 
 class FirebaseClient:
-    def __init__(self):
+    def __init__(self, forCollectionName):
         # Use a service account
         firebaseConfig = {
             "apiKey": "AIzaSyDofuzKpCiUkkFk3Q3y-FxoLh2E1eCuH88",
@@ -18,7 +18,7 @@ class FirebaseClient:
         db = firebase.database()
         
         print("DB is: ", db)
-        self._documentTraveledPath = db.child(u'TraveledPaths')
+        self._documentTraveledPath = db.child(str(forCollectionName))
 
         print("Connected to client.")
 
