@@ -1,36 +1,33 @@
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import firestore
+#import firebase_admin
+#from firebase_admin import credentials
+#from firebase_admin import firestore
 
-### This class is used as a setup-class to store attributes connecting to the TraveledPath document in the Cloud Firestore database. 
-class TraveledPathSettings:
-    ## The constructor provides the collection and document names to the attributes.
-    def __init__(self):
-        self.collectionName = "TraveledPaths"
-        self.documentName = "TraveledPath"
+import pyrebase
+import datetime
 
-    ## Fetch the name of the TraveledPaths collection used in the database. This collection contains the document "TraveledPath".
-    def getCollectionName(self):
-        return self.collectionName
-
-    ## Fetch the name of the TraveledPath document used in the database. This is where the rows of data is found.
-    def getDocumentName(self):
-        return self.documentName 
-
-### This class handles the connection and each call to and from the database.
 class FirebaseClient:
-    ## The constructor establishes a connection to the database and assigns an attribute for each document used from the 
-    ## database. Right now, it's just the TraveledPath document.
-    def __init__(self, dataSettings):
 
-        databaseCredentials = credentials.Certificate('./conan_mower_access_key.json')
-        firebase_admin.initialize_app(databaseCredentials)
+    def __init__(self):
+        # Use a service account
 
-        db = firestore.client()
-        self._documentTraveledPath = db.collection(dataSettings.getCollectionName()).document(dataSettings.getDocumentName())
+        firebaseConfig = {
+            "apiKey": "AIzaSyDofuzKpCiUkkFk3Q3y-FxoLh2E1eCuH88",
+            "authDomain": "conanmower.firebaseapp.com",
+            "databaseURL": "https://conanmower-default-rtdb.europe-west1.firebasedatabase.app/",
+            "storageBucket": "conanmower.appspot.com",
+            "serviceAccount": "./conan_mower_access_key.json"
+        }
+
+        firebase = pyrebase.initialize_app(firebaseConfig)
+
+        db = firebase.database()
+        
+        print("DB is: ", db)
+        self._documentTraveledPath = db.child(u'TraveledPaths')
 
         print("Connected to client.")
 
-    ## This function is used to insert an item into the database.
-    def InsertItem(self, documentDictionary):
-        self._documentTraveledPath.set(documentDictionary)
+    def InsertItem(self, dataDict):        
+        self._documentTraveledPath.push(dataDict)
+    
+    
