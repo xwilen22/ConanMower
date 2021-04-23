@@ -11,20 +11,12 @@ serialPort = "/dev/ttyS0" # ttyS0 is used for Raspberry Pi Zero. Normally it wou
 serialConnection = ms.SerialConnection(serialPort)
 
 while True:
-    
     byteArray = serialConnection.getBytesOnRecieve()
     print("ByteArray is", byteArray)
-    mowerData = serialConnection.getDataClass(byteArray).getDictionary()
-    print("Mowerdata is: ", mowerData)
-    traveledPathClient.InsertItem(mowerData)
-
-    #serialConnection.write("Say something: ") # Temporary for test environment
-    #rcv = serialConnection.getBytesOnRecieve() # Temporary for test environment
-    #serialConnection.write("You sent: " + repr(rcv)) # Temporary for test environment
-
-    # TODO:
-    # 1. If the code above works, we need to convert the data to the correct format (DONE)
-    # 2. Add the converted data as parameters to data.TraveledPathData(), e.g. path = fc.TraveledPathData(currentAngle, traveledDistance, endedByBorder) (SHOULD BE DONE)
+    if byteArray != None:
+        mowerData = serialConnection.getDataClass(byteArray).getDictionary()
+        print("Mowerdata is: ", mowerData)
+        traveledPathClient.InsertItem(mowerData)
 
 path = data.traveledPath.TraveledPathData(20, 30, False)
 traveledPathClient.InsertItem(path.getDictionary())

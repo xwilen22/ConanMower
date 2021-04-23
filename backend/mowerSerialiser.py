@@ -23,7 +23,7 @@ class SerialConnection():
 
     ## Parses a list of bytes to a TraveledPath data class. The data class is returned.
     def getDataClass(self, retrievedBytesList):
-        print(retrievedBytesList) # Kept for testing purposes.
+        print("From data class: ", retrievedBytesList) # Kept for testing purposes.
         turnedLeft = int.from_bytes(retrievedBytesList[0], byteorder=BYTE_ORDER) == 1
         angleChange = int.from_bytes(retrievedBytesList[1], byteorder=BYTE_ORDER)
 
