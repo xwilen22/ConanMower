@@ -8,7 +8,7 @@ traveledPathClient = fc.FirebaseClient("TraveledPath")
 
 serialPort = "/dev/ttyS0" # ttyS0 is used for Raspberry Pi Zero. Normally it would've been ACM0. --- NOTE: This is a temporary comment that can be removed on release ---
 
-serialConnection = ms.SerialConnection(serialPortString)
+serialConnection = ms.SerialConnection(serialPort)
 
 print(data)
 
