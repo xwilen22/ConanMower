@@ -10,13 +10,12 @@ serialPort = "/dev/ttyS0" # ttyS0 is used for Raspberry Pi Zero. Normally it wou
 
 serialConnection = ms.SerialConnection(serialPort)
 
-print(data)
-
 while True:
     
     byteArray = serialConnection.getBytesOnRecieve()
+    print("ByteArray is", byteArray)
     mowerData = serialConnection.getDataClass(byteArray).getDictionary()
-
+    print("Mowerdata is: ", mowerData)
     traveledPathClient.InsertItem(mowerData)
 
     #serialConnection.write("Say something: ") # Temporary for test environment
