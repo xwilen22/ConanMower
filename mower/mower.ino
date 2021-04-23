@@ -13,6 +13,8 @@
 #define MFORWARD 'F'
 #define MREVERSE 'B'
 
+#define degreeTime 14 // calculated on 150 speed. 12v. 
+
 #include "motor.h"
 #include "ledRing.h"
 
@@ -26,15 +28,11 @@ struct Commands {
 MeBluetooth bluetooth(PORT_16);
 MeSerial piSerial(PORT_5);
 
-MeEncoderOnBoard motorL(SLOT1);
-MeEncoderOnBoard motorR(SLOT2);
-
 MeLineFollower lineFinder(PORT_10);
 MeUltrasonicSensor ultraSensor(PORT_9);
 MeGyro gyro(1,0x69);
 
 MeRGBLed led( 0, LEDNUM );
-
 
 enum autonomousSM_t {
   FORWARD,
@@ -46,25 +44,24 @@ enum autonomousSM_t {
 struct Commands btCommand = {AUTONOMOUS, MSTOP};
 struct Commands prevCommand = btCommand;
 
-
 autonomousSM_t autonomousSM = FORWARD;
 
-int motorSpeed = 100;
+int motorSpeed = 75;
+
+long millisCounter = 0;
 
 MeBuzzer buzzer;
-const int reverseLength = 200;
-const int turnLength = 300;
+const int reverseLength = 500;
 
 const int minObstacleDistance = 5;
 int turnAngle = 30;
 
 LedRing ledRing(&led);
-Motor motor(&motorL, &motorR);
+
+Motor motor(11, 49, 48, 10, 47, 46);
 
 void setup() {
-  
-  attachInterrupt(motorL.getIntNum(), isr_process_encoder1, RISING);
-  attachInterrupt(motorR.getIntNum(), isr_process_encoder2, RISING);
+
   randomSeed(analogRead(0));
   bluetooth.begin(115200);    //The factory default baud rate is 115200
   piSerial.begin(115200);
@@ -78,10 +75,10 @@ void setup() {
 
 void loop() { 
 
+  
   if(bluetooth.available()){
     readBT(&btCommand ,&bluetooth);
   }
-  
   
  
  // buzzer.tone(65,0.25);
@@ -115,9 +112,16 @@ void loop() {
     saveBtCommand(false);
   }
   
-  motorL.loop();
-  motorR.loop();
+ 
   
+}
+
+bool isLine() {
+  return lineFinder.readSensors() == S1_IN_S2_IN;
+}
+
+bool isObstacle() {
+  return ultraSensor.distanceCm() < minObstacleDistance;
 }
 
 void saveBtCommand(bool command) {
@@ -166,46 +170,46 @@ void manualController(char command){
 }
 
 void autonomousStateMachine() {
+    
     switch (autonomousSM) {
     case FORWARD:
         motor.moveSpeed(motorSpeed);
         
-        if (ultraSensor.distanceCm() < minObstacleDistance) {
-          
+        if (isLine() || isObstacle()) {
           motor.brake();
-          delay(100);
-          
-          autonomousSM = REVERSE;
-          motor.moveLength(-reverseLength,motorSpeed);
-        } 
-        else if  (lineFinder.readSensors() == S1_IN_S2_IN) {
-          motor.brake();
-          delay(100);
                   
           autonomousSM = REVERSE;
-          motor.moveLength(-reverseLength,motorSpeed);
+          motor.moveSpeed(-motorSpeed);
+          millisCounter = millis();
         }
       break;
       
     case REVERSE:
-      if (motorL.isTarPosReached() && motorR.isTarPosReached()) {
+      if (isLine() || isObstacle()) {
+        motor.brake();
+        autonomousSM = FORWARD;
+      }
+      if (millis() > millisCounter + reverseLength) {
         
         motor.brake();
-        delay(100);
-        turnAngle = motor.turnAngle(45,100);
+        turnAngle = motor.turnAngle(30,70);
         autonomousSM = TURN;
+        //gyro.begin();
         motor.turnLeft(motorSpeed);
-        gyro.begin();
+        millisCounter = millis();
+        
       }
     break;
 
     case TURN:
-      gyro.update();
-      
-      if (abs(gyro.getAngleZ()) >= turnAngle) {
+      if (isLine() || isObstacle()) {
         motor.brake();
-        delay(100);
-        
+        autonomousSM = REVERSE;
+      }
+      //gyro.update();
+      if (millis() > millisCounter + turnAngle*degreeTime) {
+      //if (abs(gyro.getAngleZ()) >= 90) {
+        motor.brake(); 
         autonomousSM = FORWARD;
       }
     break;
@@ -231,23 +235,5 @@ void lineFollow(){
       motor.moveSpeed(motorSpeed);
       break;
     default: break;
-  }
-}
-
-void isr_process_encoder1(void) {
-  if(digitalRead(motorL.getPortB()) == 0) {
-    motorL.pulsePosMinus();
-  }
-  else {
-    motorL.pulsePosPlus();;
-  }
-}
-
-void isr_process_encoder2(void) {
-  if(digitalRead(motorR.getPortB()) == 0) {
-    motorR.pulsePosMinus();
-  }
-  else {
-    motorR.pulsePosPlus();
   }
 }

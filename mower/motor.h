@@ -3,12 +3,10 @@
 
 #include "Arduino.h"
 
-#include <MeEncoderOnBoard.h>
-
 class Motor
 {
   public:
-    Motor(MeEncoderOnBoard* leftMotor, MeEncoderOnBoard* rightMotor);
+    Motor(int pwmMotor1, int dir_M1_1, int dir_M1_2, int pwmMotor2, int dir_M2_1, int dir_M2_2);
  /**
  *   \Function
  *   break
@@ -88,8 +86,13 @@ class Motor
     int turnAngle(int minAngle,int maxAngle);
 
   private:
-    MeEncoderOnBoard* _pLeftMotor;
-    MeEncoderOnBoard* _pRightMotor;
+    int _pwmMotor1;
+    int _dir_M1_1;
+    int _dir_M1_2;
+    
+    int _pwmMotor2;
+    int _dir_M2_1;
+    int _dir_M2_2;
 };
 
 
