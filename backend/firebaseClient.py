@@ -2,7 +2,11 @@ import pyrebase
 import datetime
 import data.traveledPath as tp
 
+### This class handles the connection and each call to and from the database.
 class FirebaseClient:
+
+    ## The constructor establishes a connection to the database and assigns an attribute for each 
+    ## document used from the database. Right now, it's just the TraveledPath document.
     def __init__(self, forCollectionName):
         # Use a service account
         firebaseConfig = {
@@ -22,6 +26,7 @@ class FirebaseClient:
 
         print("Connected to client.")
 
+    ## This function is used to insert an item into the database.
     def InsertItem(self, dataDict):        
         self._documentTraveledPath.push(dataDict)
     
