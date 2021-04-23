@@ -13,12 +13,12 @@ class SerialConnection():
 
     ## This method reads the data coming in from the arduino and returns it as a list.
     def getBytesOnRecieve(self):
-        return list(
+        return [
             self.port.read(1), #Left or right
             self.port.read(1), #Relative angle change
             self.port.read(2), #Distance
             self.port.read(1)  #Stopped because of border
-        )
+        ]
 
     ## Parses a list of bytes to a TraveledPath data class. The data class is returned.
     def getDataClass(self, retrievedBytesList):
