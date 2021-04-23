@@ -24,7 +24,7 @@ struct Commands {
 #include "manualControl.h"
 
 MeBluetooth bluetooth(PORT_16);
-//MeSerial piSerial(PORT_5);
+MeSerial piSerial(PORT_5);
 
 MeEncoderOnBoard motorL(SLOT1);
 MeEncoderOnBoard motorR(SLOT2);
@@ -49,7 +49,7 @@ struct Commands prevCommand = btCommand;
 
 autonomousSM_t autonomousSM = FORWARD;
 
-int motorSpeed = 50;
+int motorSpeed = 100;
 
 MeBuzzer buzzer;
 const int reverseLength = 200;
@@ -62,14 +62,12 @@ LedRing ledRing(&led);
 Motor motor(&motorL, &motorR);
 
 void setup() {
-
-  Serial.begin(115200);
   
   attachInterrupt(motorL.getIntNum(), isr_process_encoder1, RISING);
   attachInterrupt(motorR.getIntNum(), isr_process_encoder2, RISING);
   randomSeed(analogRead(0));
   bluetooth.begin(115200);    //The factory default baud rate is 115200
-  //piSerial.begin(115200);
+  piSerial.begin(115200);
 
   //buzzer.setpin(45);
 
@@ -79,12 +77,18 @@ void setup() {
 
 
 void loop() { 
-  readBT(&btCommand ,&bluetooth);
+
+  if(bluetooth.available()){
+    readBT(&btCommand ,&bluetooth);
+  }
+  
+  
  
  // buzzer.tone(65,0.25);
 
   //ledRing.colorLoop(100,25,0);
   if(btCommand.type == MANUAL){
+    
 
     if (prevCommand.command != btCommand.command) {
       
@@ -93,25 +97,27 @@ void loop() {
       }
       
       manualController(btCommand.command);
-    //  saveBtCommand(true);
+      saveBtCommand(true);
     }
   }
   else if(btCommand.type == AUTONOMOUS){
-     if (prevCommand.type == MANUAL) {
-        autonomousSM = FORWARD;
-      }
+    //ledRing.fullCirlce(0,100,0); // Green
+    
+    if (prevCommand.type == MANUAL) {
+      autonomousSM = FORWARD;
+    }
 
     autonomousStateMachine();
-  //  saveBtCommand(false);
+    saveBtCommand(false);
   }
   else if(btCommand.type == LINEFOLLOW){
     lineFollow();
-   // saveBtCommand(false);
+    saveBtCommand(false);
   }
- 
   
   motorL.loop();
   motorR.loop();
+  
 }
 
 void saveBtCommand(bool command) {
@@ -130,22 +136,27 @@ void manualController(char command){
   
   switch(command){
     case MFORWARD:
+      //ledRing.fullCirlce(100,100,100); // White
       motor.moveSpeed(motorSpeed);
     break;
 
     case MREVERSE:
+      //ledRing.fullCirlce(0,0,0); // Off
       motor.moveSpeed(-motorSpeed);
     break;
     
     case MLEFT:
+      //ledRing.fullCirlce(0,0,100); // Blue
       motor.turnLeft(motorSpeed);
     break;
     
     case MRIGHT:
+      //ledRing.fullCirlce(100,100,0); // Yellow
       motor.turnRight(motorSpeed);
     break;
     
     case MSTOP:
+      //ledRing.fullCirlce(100,0,0); // Red
       motor.brake();
     break;
 

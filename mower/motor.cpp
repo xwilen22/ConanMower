@@ -12,6 +12,7 @@ Motor::Motor(MeEncoderOnBoard* leftMotor, MeEncoderOnBoard* rightMotor) :
   TCCR2A = _BV(WGM21) | _BV(WGM20);
   TCCR2B = _BV(CS21);
 
+  
   _pLeftMotor->setPulse(9);
   _pRightMotor->setPulse(9);
   _pLeftMotor->setRatio(39.267);
