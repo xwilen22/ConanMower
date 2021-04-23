@@ -22,14 +22,14 @@ class SerialConnection():
         
         distanceOne = self.port.read(1)
         distanceTwo = self.port.read(1)
-        distance = distanceOne * 255 + distanceTwo
 
         stoppedForObstacle = self.port.read(1)
 
         returningList = [
             leftOrRight, #Left or right
             angleChange, #Relative angle change
-            distance, #Distance
+            distanceOne, #Distance
+            distanceTwo,
             stoppedForObstacle  #Stopped because of border
         ]
         return returningList
@@ -42,7 +42,12 @@ class SerialConnection():
 
         # Dunno if negative angle is for turning left or vise versa but ye
         currentAngle = angleChange * -1 if turnedLeft else angleChange
-        traveledDistance = int.from_bytes(retrievedBytesList[2], byteorder=BYTE_ORDER)
-        stoppedByObstacle = int.from_bytes(retrievedBytesList[3], byteorder=BYTE_ORDER)
+
+        traveledDistanceOne = int.from_bytes(retrievedBytesList[2], byteorder=BYTE_ORDER)
+        traveledDistanceTwo = int.from_bytes(retrievedBytesList[3], byteorder=BYTE_ORDER)
+
+        traveledDistance = traveledDistanceOne * 255 + traveledDistanceTwo
+
+        stoppedByObstacle = int.from_bytes(retrievedBytesList[4], byteorder=BYTE_ORDER)
 
         return traveledPathData.TraveledPathData(currentAngle, traveledDistance, stoppedByObstacle)
