@@ -26,6 +26,7 @@ class BluetoothConnectionHandler {
                 if (!Globals.bluetoothConnectedStatus) {
                     Globals.btAdapter?.cancelDiscovery()
                     Globals.bluetoothDiscoveringStatus = false
+
                     callback(false)
                 }
             }, 20000)
@@ -69,7 +70,8 @@ class BluetoothConnectionHandler {
                     if (newState == BluetoothProfile.STATE_CONNECTED) {
                         Globals.bluetoothConnectedStatus = true
                         bluetoothGatt.discoverServices()
-                        val a = bluetoothGatt.getService(arduinoServiceUUID) // TODO: Remove
+                        bluetoothGatt.getService(arduinoServiceUUID)
+
                         initiateHearbeatToArduino()
 
                         callback(true)

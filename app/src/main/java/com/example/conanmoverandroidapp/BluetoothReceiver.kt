@@ -6,7 +6,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 
 
@@ -20,33 +19,21 @@ class BluetoothReceiver : BroadcastReceiver() {
                 BluetoothAdapter.ERROR
             )
             when (state) {
-                BluetoothAdapter.STATE_OFF -> bluetoothTurnedOff()
+                BluetoothAdapter.STATE_OFF -> promptUserToEnableBluetooth()
             }
         }
         else if (action == BluetoothDevice.ACTION_FOUND) {
             val device: BluetoothDevice? = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
             if(device != null){
-                bluetoothDeviceFound(device)
+                if(device.address == BluetoothConnectionHandler.arduinoMAC){
+                    BluetoothConnectionHandler.connectBluetoothToArduino(device) {}
+                }
             }
         }
     }
 
-    private fun bluetoothTurnedOff(){
+    private fun promptUserToEnableBluetooth(){
         val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
         ActivityCompat.startActivityForResult(Globals.currentActivity, enableBtIntent, PermissionHandler.REQUEST_ENABLE_BT, null)
     }
-
-    private fun bluetoothDeviceFound(device: BluetoothDevice){
-        if(!device.address.isNullOrEmpty()){
-            Log.d("Device address", device.address)
-        }
-        if(!device.name.isNullOrEmpty()){
-            Log.d("Device name", device.name)
-        }
-        if(device.address == BluetoothConnectionHandler.arduinoMAC){
-            Log.d("Connect", "Trying to connect to bluetooth....")
-            BluetoothConnectionHandler.connectBluetoothToArduino(device) {}
-        }
-    }
-
 }

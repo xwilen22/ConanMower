@@ -20,12 +20,6 @@ class Globals: Application() {
         lateinit var currentActivity: Activity
         lateinit var bluetoothViewModel: BluetoothViewModel
 
-        fun executeOnMainThread(function: () -> Unit){
-            val handler = Handler(Looper.getMainLooper())
-            handler.post {
-                function()
-            }
-        }
     }
 
     override fun onCreate() {
