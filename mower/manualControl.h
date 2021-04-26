@@ -8,6 +8,9 @@
  *   btBuffer *, MeBluetooth *
  **/
 
+void debugOnRpi(String msg) {
+  Serial2.println(msg);
+}
 
 void readBT(struct Commands *command, MeBluetooth *bluetooth)
 { 
@@ -20,7 +23,14 @@ void readBT(struct Commands *command, MeBluetooth *bluetooth)
   if (nrOfBytes == 1) { // kolla så att det är en giltig type också?
     
     data = bluetooth->read();  
-    command->type = data;
+
+    if (data == HEARTBEAT) {
+      command->heartBeat = true;
+    }
+    else {
+      command->type = data;
+    }
+    
   }
   else if (nrOfBytes == 2) {
     
@@ -34,10 +44,15 @@ void readBT(struct Commands *command, MeBluetooth *bluetooth)
   while (bluetooth->available()) {
     bluetooth->read();  
   }
+
+ 
+  debugOnRpi(String(command->type) + "  " + String(command->command));
+  
 }
 
 void sendToRbp(MeSerial *piSerial, boolean turnLeft, int degree, uint16_t distance, boolean obstacle){
     
+    piSerial->write(254); // startbyte
     piSerial->write(turnLeft);
     piSerial->write(degree);
     uint8_t msb = (distance >> 8) & 0xff;
@@ -45,14 +60,9 @@ void sendToRbp(MeSerial *piSerial, boolean turnLeft, int degree, uint16_t distan
     piSerial->write(msb);
     piSerial->write(lsb);
     piSerial->write(obstacle);
-    
-    /*
-    piSerial->println(turnLeft);
-    piSerial->println(degree);
-    uint8_t msb = (distance >> 8) & 0xff;
-    uint8_t lsb = distance & 0xff;
-    piSerial->println(msb);
-    piSerial->println(lsb);
-    piSerial->println(obstacle);
-    */
+
+}
+
+void debugOnRpi(MeSerial *piSerial, String msg) {
+  piSerial->println(msg);
 }
