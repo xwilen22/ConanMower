@@ -47,9 +47,9 @@ class AutoFragment : Fragment() {
     private fun setUpNavigationButtons()
     {
         btn_path.setOnClickListener {
-            //val direction = AutoFragmentDirections.actionAutoFragmentToPathFragment()
-            //it.findNavController().navigate(direction)
-            playMowerAnimation(Random.nextInt(0, 5))
+            val direction = AutoFragmentDirections.actionAutoFragmentToPathFragment()
+            it.findNavController().navigate(direction)
+            //playMowerAnimation(Random.nextInt(0, 5))
         }
 
         manual_button.setOnClickListener {
