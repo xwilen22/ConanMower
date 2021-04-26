@@ -78,55 +78,55 @@ void setup() {
   Serial2.begin(9600);
 
   ledRing.startUpBlink(50, 50 , 0);
-  
+
 }
 
 
-void loop() { 
+void loop() {
 
-  
-  if(bluetooth.available()){
-    readBT(&btCommand ,&bluetooth);
+
+  if (bluetooth.available()) {
+    readBT(&btCommand , &bluetooth);
   }
 
-  //debugOnRpi(&piSerial, String(btCommand.type) + "  " + String(btCommand.command));
-  
 
- // buzzer.tone(65,0.25);
+  // buzzer.tone(65,0.25);
 
   //ledRing.colorLoop(100,25,0);
-  if(btCommand.type == MANUAL){
-    
+  if (btCommand.type == MANUAL) {
+
+
+
 
     if (prevCommand.command != btCommand.command) {
-      
+
       if (prevCommand.type == AUTONOMOUS) {
         motor.brake();
       }
-      
+
       manualController(btCommand.command);
       saveBtCommand(true);
     }
   }
-  else if(btCommand.type == AUTONOMOUS){
-    
-    
+  else if (btCommand.type == AUTONOMOUS) {
+
+
     if (prevCommand.type == MANUAL) {
       autonomousSM = FORWARD;
-      ledRing.fullCirlce(0,100,0); // Green
+      ledRing.fullCirlce(0, 100, 0); // Green
     }
 
     autonomousStateMachine();
     saveBtCommand(false);
   }
-  else if(btCommand.type == LINEFOLLOW){
+  else if (btCommand.type == LINEFOLLOW) {
     lineFollow();
     saveBtCommand(false);
   }
 
 
   // HeartBeat stuff
-  if (btCommand.heartBeat) { 
+  if (btCommand.heartBeat) {
     heartBeatCounter = millis();
     bluetoothConnected = true;
     btCommand.heartBeat = false;
@@ -134,11 +134,12 @@ void loop() {
   if (millis() > heartBeatCounter + HEARTBEATTIMEOUT) {
     bluetoothConnected = false;
   }
-  
-  
- delay(20); //Without delay bt commands are not handled right
-  
+
+
+  delay(20); //Without delay bt commands are not handled right
+
 }
+
 
 bool isLine() {
   return lineFinder.readSensors() == S1_IN_S2_IN;
@@ -150,9 +151,9 @@ bool isObstacle() {
 
 void saveBtCommand(bool command) {
   prevCommand.type = btCommand.type;
-  
+
   if (command) {
-      prevCommand.command = btCommand.command;
+    prevCommand.command = btCommand.command;
   }
   else {
     prevCommand.command = 0;
@@ -160,103 +161,103 @@ void saveBtCommand(bool command) {
 }
 
 
-void manualController(char command){
-  
-  switch(command){
+void manualController(char command) {
+
+  switch (command) {
     case MFORWARD:
-      ledRing.fullCirlce(100,100,100); // White
+      ledRing.fullCirlce(100, 100, 100); // White
       motor.moveSpeed(motorSpeed);
-    break;
+      break;
 
     case MREVERSE:
-      ledRing.fullCirlce(0,0,0); // Off
+      ledRing.fullCirlce(0, 0, 0); // Off
       motor.moveSpeed(-motorSpeed);
-    break;
-    
+      break;
+
     case MLEFT:
-      ledRing.fullCirlce(0,0,100); // Blue
+      ledRing.fullCirlce(0, 0, 100); // Blue
       motor.turnLeft(motorSpeed);
-    break;
-    
+      break;
+
     case MRIGHT:
-      ledRing.fullCirlce(100,100,0); // Yellow
+      ledRing.fullCirlce(100, 100, 0); // Yellow
       motor.turnRight(motorSpeed);
-    break;
-    
+      break;
+
     case MSTOP:
-      ledRing.fullCirlce(100,0,0); // Red
+      ledRing.fullCirlce(100, 0, 0); // Red
       motor.brake();
-    break;
+      break;
 
     default:
-    break;
+      break;
   }
 }
 
 
 void autonomousStateMachine() {
-    
-    switch (autonomousSM) {
+
+  switch (autonomousSM) {
     case FORWARD:
-        motor.moveSpeed(motorSpeed);
-        //bluetooth.println("forward");
-        
-        if (isLine() || isObstacle()) {
-          
-          motor.brake();
-          //bluetooth.println("forward + line/obs");
-          autonomousSM = REVERSE;
-          motor.moveSpeed(-motorSpeed);
-          millisCounter = millis();
-        }
+      motor.moveSpeed(motorSpeed);
+      //bluetooth.println("forward");
+
+      if (isLine() || isObstacle()) {
+
+        motor.brake();
+        //bluetooth.println("forward + line/obs");
+        autonomousSM = REVERSE;
+        motor.moveSpeed(-motorSpeed);
+        millisCounter = millis();
+      }
       break;
-      
+
     case REVERSE:
-//      if (isLine() || isObstacle()) {
-//        motor.brake();
-//        autonomousSM = FORWARD;
-//      }
+      //      if (isLine() || isObstacle()) {
+      //        motor.brake();
+      //        autonomousSM = FORWARD;
+      //      }
 
       if (millis() > millisCounter + reverseLength) {
         //bluetooth.println("Reverse");
         motor.brake();
-        turnAngle = motor.turnAngle(30,70);
+        turnAngle = motor.turnAngle(30, 70);
         autonomousSM = TURN;
         //gyro.begin();
         motor.turnLeft(motorSpeed);
         millisCounter = millis();
-        
+
       }
-    break;
+      break;
 
     case TURN:
-//      if (isLine() || isObstacle()) {
-//        motor.brake();
-//        autonomousSM = REVERSE;
-//      }
+      //      if (isLine() || isObstacle()) {
+      //        motor.brake();
+      //        autonomousSM = REVERSE;
+      //      }
       //gyro.update();
       //bluetooth.println("Turn");
-      if (millis() > millisCounter + turnAngle*degreeTime) {
-      //if (abs(gyro.getAngleZ()) >= 90) {
-        motor.brake(); 
+      if (millis() > millisCounter + turnAngle * degreeTime) {
+        //if (abs(gyro.getAngleZ()) >= 90) {
+        motor.brake();
         autonomousSM = FORWARD;
       }
-    break;
+      break;
   }
 }
 
-void lineFollow(){
-    int lineState = lineFinder.readSensors();
+void lineFollow() {
+  int lineState = lineFinder.readSensors();
 
-    switch(lineState)
+  switch (lineState)
   {
-    case S1_IN_S2_IN: 
+    case S1_IN_S2_IN:
       motor.turnLeft(motorSpeed);
       break;
-    case S1_IN_S2_OUT: 
+    case S1_IN_S2_OUT:
       motor.turnLeft(motorSpeed);
       break;
-    case S1_OUT_S2_IN: 
+    case S1_OUT_S2_IN:
       motor.moveSpeed(motorSpeed);
       break;
     case S1_OUT_S2_OUT:
