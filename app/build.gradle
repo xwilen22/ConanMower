@@ -53,11 +53,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
     implementation platform('com.google.firebase:firebase-bom:27.1.0')
-
     implementation 'com.google.firebase:firebase-database:19.7.0'
-    //implementation 'com.google.firebase:firebase-database-ktx:19.7.0'
-    //implementation "android.arch.navigation:navigation-fragment-ktx:1.0.0" //test
-
     implementation 'com.google.firebase:firebase-firestore-ktx:22.1.2'
     implementation 'com.google.firebase:firebase-core:18.0.3'
 
