@@ -10,16 +10,15 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.findNavController
 import com.example.conanmoverandroidapp.R
+import com.example.conanmoverandroidapp.TraveledPath
 import com.google.firebase.database.*
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import kotlinx.android.synthetic.main.auto_fragment.*
 import kotlinx.android.synthetic.main.path_fragment.*
 
 
 class PathFragment : Fragment() {
 
     private val TAG = "ReadData"
+    val traveledPathList = mutableListOf<TraveledPath>()
     private lateinit var database: DatabaseReference
 
     companion object {
@@ -41,14 +40,19 @@ class PathFragment : Fragment() {
         // TODO: Use the ViewModel
 
         database = FirebaseDatabase.getInstance().reference;
-
         database.addValueEventListener(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
-                    val path = snapshot.children
-                    path.forEach {
-                        Log.d(TAG, it.toString())
-                    }
+                    val traveledPath = snapshot.child("-MYyscW4GgFUwsj0RmJz").getValue(TraveledPath::class.java)
+                    //val id = traveledPath?.id.toString()
+                    val currentAngle = traveledPath?.CurrentAngle
+                    val endTime = traveledPath?.EndTime
+                    val stoppedByObstacle = traveledPath?.StoppedByObstacle
+                    val traveledDistance = traveledPath?.TraveledDistance
+
+                    traveledPathList.add(TraveledPath(currentAngle!!.toInt(), endTime!!, stoppedByObstacle!!.toInt(),traveledDistance!!.toInt()))
+                    Log.d(TAG, traveledPathList.toString())
+
                 }
                 else{
                     Log.d(TAG, "snapshot does not exist")
@@ -65,5 +69,6 @@ class PathFragment : Fragment() {
             it.findNavController().navigate(direction)
         }
     }
+
 }
 
