@@ -2,6 +2,8 @@
 #include <Wire.h>
 #include <SoftwareSerial.h>
 
+#include "heartbeat.h"
+
 #define LEDNUM 12
 
 #define AUTONOMOUS 'O'
@@ -56,9 +58,6 @@ int motorSpeed = 75;
 
 long millisCounter = 0;
 
-long heartBeatCounter = millis();
-bool bluetoothConnected;
-
 const int reverseLength = 500;
 
 const int minObstacleDistance = 5;
@@ -66,6 +65,8 @@ int turnAngle = 30;
 
 
 Motor motor(11, 49, 48, 10, 47, 46);
+
+Heartbeat bluetoothHeartbeat(HEARTBEATTIMEOUT);
 
 void setup() {
 
@@ -79,6 +80,7 @@ void setup() {
 
   ledRing.startUpBlink(50, 50 , 0);
 
+  bluetoothHeartbeat.activate();
 }
 
 
@@ -94,10 +96,6 @@ void loop() {
 
   //ledRing.colorLoop(100,25,0);
   if (btCommand.type == MANUAL) {
-
-
-
-
     if (prevCommand.command != btCommand.command) {
 
       if (prevCommand.type == AUTONOMOUS) {
@@ -109,8 +107,7 @@ void loop() {
     }
   }
   else if (btCommand.type == AUTONOMOUS) {
-
-
+    
     if (prevCommand.type == MANUAL) {
       autonomousSM = FORWARD;
       ledRing.fullCirlce(0, 100, 0); // Green
@@ -125,20 +122,21 @@ void loop() {
   }
 
 
-  // HeartBeat stuff
+  
+  if (bluetoothHeartbeat.isTimeout()) {
+    // Bluetooth is not connected
+  }
+  else {
+    //Bluetooth is connected
+  }
   if (btCommand.heartBeat) {
-    heartBeatCounter = millis();
-    bluetoothConnected = true;
-    btCommand.heartBeat = false;
+    bluetoothHeartbeat.beat(); 
   }
-  if (millis() > heartBeatCounter + HEARTBEATTIMEOUT) {
-    bluetoothConnected = false;
-  }
-
 
   delay(20); //Without delay bt commands are not handled right
 
 }
+
 
 
 bool isLine() {
@@ -226,7 +224,6 @@ void autonomousStateMachine() {
         //gyro.begin();
         motor.turnLeft(motorSpeed);
         millisCounter = millis();
-
       }
       break;
 
