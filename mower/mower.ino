@@ -3,6 +3,9 @@
 #include <SoftwareSerial.h>
 
 #include "heartbeat.h"
+#include "motor.h"
+#include "ledRing.h"
+#include "manualControl.h"
 
 #define LEDNUM 12
 
@@ -20,22 +23,10 @@
 
 #define HEARTBEATTIMEOUT 3000
 
-#include "motor.h"
-#include "ledRing.h"
-
-
-struct Commands {
-  unsigned char type;
-  unsigned char command;
-  bool heartBeat;
-};
-
-#include "manualControl.h"
 
 
 Motor motor(11, 49, 48, 10, 47, 46);
 int motorSpeed = 75;
-
 
 MeBluetooth bluetooth(PORT_16);
 MeSerial piSerial(PORT_5);
@@ -48,22 +39,22 @@ MeUltrasonicSensor ultraSensor(PORT_9);
 MeRGBLed led( 0, LEDNUM );
 LedRing ledRing(&led);
 
+Heartbeat bluetoothHeartbeat(HEARTBEATTIMEOUT);
+
 enum autonomousSM_t {
   FORWARD,
   REVERSE,
   TURN
 };
+autonomousSM_t autonomousSM = FORWARD;
 
 struct Commands btCommand = {AUTONOMOUS, MSTOP};
-
-autonomousSM_t autonomousSM = FORWARD;
 
 long millisCounter = 0;
 
 const int reverseLength = 500;
 const int minObstacleDistance = 5;
 
-Heartbeat bluetoothHeartbeat(HEARTBEATTIMEOUT);
 
 
 void setup() {

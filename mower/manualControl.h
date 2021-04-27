@@ -1,4 +1,10 @@
 
+struct Commands {
+  unsigned char type;
+  unsigned char command;
+  bool heartBeat;
+};
+
 /**
     \Function
       readBT
