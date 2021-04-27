@@ -39,7 +39,6 @@ MeUltrasonicSensor ultraSensor(PORT_9);
 //MeGyro gyro(1,0x69);
 //MeBuzzer buzzer;
 
-
 MeRGBLed led( 0, LEDNUM );
 LedRing ledRing(&led);
 enum autonomousSM_t {
@@ -50,7 +49,6 @@ enum autonomousSM_t {
 
 
 struct Commands btCommand = {AUTONOMOUS, MSTOP};
-struct Commands prevCommand = btCommand;
 
 autonomousSM_t autonomousSM = FORWARD;
 
@@ -91,38 +89,9 @@ void loop() {
     readBT(&btCommand , &bluetooth);
   }
 
-
-  // buzzer.tone(65,0.25);
-
-  //ledRing.colorLoop(100,25,0);
-  if (btCommand.type == MANUAL) {
-    if (prevCommand.command != btCommand.command) {
-
-      if (prevCommand.type == AUTONOMOUS) {
-        motor.brake();
-      }
-
-      manualController(btCommand.command);
-      saveBtCommand(true);
-    }
-  }
-  else if (btCommand.type == AUTONOMOUS) {
-    
-    if (prevCommand.type == MANUAL) {
-      autonomousSM = FORWARD;
-      ledRing.fullCirlce(0, 100, 0); // Green
-    }
-
-    autonomousStateMachine();
-    saveBtCommand(false);
-  }
-  else if (btCommand.type == LINEFOLLOW) {
-    lineFollow();
-    saveBtCommand(false);
-  }
+  pathTaker(btCommand);
 
 
-  
   if (bluetoothHeartbeat.isTimeout()) {
     // Bluetooth is not connected
   }
@@ -130,13 +99,41 @@ void loop() {
     //Bluetooth is connected
   }
   if (btCommand.heartBeat) {
-    bluetoothHeartbeat.beat(); 
+    bluetoothHeartbeat.beat();
   }
 
   delay(20); //Without delay bt commands are not handled right
 
 }
 
+
+void pathTaker(Commands command) {
+
+  static Commands prevCommand = {' ', ' '};
+
+  switch (command.type) {
+
+    case MANUAL:
+      
+      if (command.command != prevCommand.command) {
+        manualController(command.command);
+        autonomousSM = FORWARD; // To be sure to start at FORWARD when going back to autonomous
+      }
+      
+      break;
+
+    case AUTONOMOUS:
+      autonomousStateMachine();
+      break;
+
+    case LINEFOLLOW:
+      lineFollow();
+      break;
+
+    default:
+      break;
+  }
+}
 
 
 bool isLine() {
@@ -147,16 +144,6 @@ bool isObstacle() {
   return ultraSensor.distanceCm() < minObstacleDistance;
 }
 
-void saveBtCommand(bool command) {
-  prevCommand.type = btCommand.type;
-
-  if (command) {
-    prevCommand.command = btCommand.command;
-  }
-  else {
-    prevCommand.command = 0;
-  }
-}
 
 
 void manualController(char command) {
