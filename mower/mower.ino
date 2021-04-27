@@ -23,6 +23,7 @@
 #include "motor.h"
 #include "ledRing.h"
 
+
 struct Commands {
   unsigned char type;
   unsigned char command;
@@ -30,6 +31,11 @@ struct Commands {
 };
 
 #include "manualControl.h"
+
+
+Motor motor(11, 49, 48, 10, 47, 46);
+int motorSpeed = 75;
+
 
 MeBluetooth bluetooth(PORT_16);
 MeSerial piSerial(PORT_5);
@@ -41,40 +47,34 @@ MeUltrasonicSensor ultraSensor(PORT_9);
 
 MeRGBLed led( 0, LEDNUM );
 LedRing ledRing(&led);
+
 enum autonomousSM_t {
   FORWARD,
   REVERSE,
   TURN
 };
 
-
 struct Commands btCommand = {AUTONOMOUS, MSTOP};
 
 autonomousSM_t autonomousSM = FORWARD;
 
-int motorSpeed = 75;
-
 long millisCounter = 0;
 
 const int reverseLength = 500;
-
 const int minObstacleDistance = 5;
-int turnAngle = 30;
-
-
-Motor motor(11, 49, 48, 10, 47, 46);
 
 Heartbeat bluetoothHeartbeat(HEARTBEATTIMEOUT);
+
 
 void setup() {
 
   randomSeed(analogRead(0));
   bluetooth.begin(115200);    //The factory default baud rate is 115200
-  //piSerial.begin(115200);
+  piSerial.begin(9600);
 
   //buzzer.setpin(45);
 
-  Serial2.begin(9600);
+  //Serial2.begin(9600);
 
   ledRing.startUpBlink(50, 50 , 0);
 
@@ -109,17 +109,11 @@ void loop() {
 
 void pathTaker(Commands command) {
 
-  static Commands prevCommand = {' ', ' '};
-
   switch (command.type) {
-
+    
     case MANUAL:
-      
-      if (command.command != prevCommand.command) {
-        manualController(command.command);
-        autonomousSM = FORWARD; // To be sure to start at FORWARD when going back to autonomous
-      }
-      
+      manualController(command.command);
+      autonomousSM = FORWARD; // To be sure to start at FORWARD when going back to autonomous
       break;
 
     case AUTONOMOUS:
@@ -136,51 +130,50 @@ void pathTaker(Commands command) {
 }
 
 
-bool isLine() {
-  return lineFinder.readSensors() == S1_IN_S2_IN;
-}
-
-bool isObstacle() {
-  return ultraSensor.distanceCm() < minObstacleDistance;
-}
-
-
 
 void manualController(char command) {
 
-  switch (command) {
-    case MFORWARD:
-      ledRing.fullCirlce(100, 100, 100); // White
-      motor.moveSpeed(motorSpeed);
-      break;
+  static unsigned char prevCommand = ' ';
 
-    case MREVERSE:
-      ledRing.fullCirlce(0, 0, 0); // Off
-      motor.moveSpeed(-motorSpeed);
-      break;
+  if (command != prevCommand) {
+    switch (command) {
+      case MFORWARD:
+        ledRing.fullCirlce(100, 100, 100); // White
+        motor.moveSpeed(motorSpeed);
+        break;
 
-    case MLEFT:
-      ledRing.fullCirlce(0, 0, 100); // Blue
-      motor.turnLeft(motorSpeed);
-      break;
+      case MREVERSE:
+        ledRing.fullCirlce(0, 0, 0); // Off
+        motor.moveSpeed(-motorSpeed);
+        break;
 
-    case MRIGHT:
-      ledRing.fullCirlce(100, 100, 0); // Yellow
-      motor.turnRight(motorSpeed);
-      break;
+      case MLEFT:
+        ledRing.fullCirlce(0, 0, 100); // Blue
+        motor.turnLeft(motorSpeed);
+        break;
 
-    case MSTOP:
-      ledRing.fullCirlce(100, 0, 0); // Red
-      motor.brake();
-      break;
+      case MRIGHT:
+        ledRing.fullCirlce(100, 100, 0); // Yellow
+        motor.turnRight(motorSpeed);
+        break;
 
-    default:
-      break;
+      case MSTOP:
+        ledRing.fullCirlce(100, 0, 0); // Red
+        motor.brake();
+        break;
+
+      default:
+        break;
+    }
   }
+
+  prevCommand = command;
 }
 
 
 void autonomousStateMachine() {
+
+  static int turnAngle = 30;
 
   switch (autonomousSM) {
     case FORWARD:
@@ -229,6 +222,16 @@ void autonomousStateMachine() {
       break;
   }
 }
+
+
+bool isLine() {
+  return lineFinder.readSensors() == S1_IN_S2_IN;
+}
+
+bool isObstacle() {
+  return ultraSensor.distanceCm() < minObstacleDistance;
+}
+
 
 void lineFollow() {
   int lineState = lineFinder.readSensors();
