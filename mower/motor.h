@@ -2,6 +2,7 @@
 #define Motor_h
 
 #include "Arduino.h"
+#include "Encoder.h"
 
 class Motor
 {
@@ -14,20 +15,7 @@ class Motor
         stops the wheels
     **/
     void brake();
-    /**
-        \Function
 
-        \Description
-
-        \Param[in]
-
-        \Ouput
-
-        \Return
-
-        \Others
-    **/
-    void moveLength(int moveLength, int motorSpeed);
     /**
         \Function
 
@@ -42,6 +30,7 @@ class Motor
         \Others
     **/
     void moveSpeed(int moveSpeed);
+    
     /**
         \Function
 
@@ -56,6 +45,7 @@ class Motor
         \Others
     **/
     void turnLeft(int moveSpeed);
+    
     /**
         \Function
 
@@ -70,6 +60,7 @@ class Motor
         \Others
     **/
     void turnRight(int moveSpeed);
+    
     /**
         \Function
 
@@ -93,6 +84,7 @@ class Motor
     int _pwmMotor2;
     int _dir_M2_1;
     int _dir_M2_2;
+
 };
 
 

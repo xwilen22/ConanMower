@@ -51,19 +51,6 @@ void Motor::moveSpeed(int moveSpeed) {
   analogWrite(_pwmMotor2, moveSpeed);
 }
 
-void Motor::moveLength(int moveLength, int motorSpeed) {
-
-  if (moveLength < 0) {
-    moveSpeed(-motorSpeed);
-    moveLength = -moveLength;
-  }
-  else {
-    moveSpeed(motorSpeed);
-  }
-
-  delay(moveLength);
-  brake();
-}
 
 void Motor::turnLeft(int moveSpeed) {
   digitalWrite(_dir_M1_1, LOW);

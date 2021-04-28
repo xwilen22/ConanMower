@@ -28,30 +28,31 @@ void readBT(struct Commands *command, MeBluetooth *bluetooth) {
   if (nrOfBytes == 1) { // kolla så att det är en giltig type också?
 
     data = bluetooth->read();
-
+    debugOnRpi(String(data));
     if (data == HEARTBEAT) {
       command->heartBeat = true;
     }
     else {
       command->type = data;
     }
-
   }
   else if (nrOfBytes == 2) {
 
     data = bluetooth->read(); // kolla så att det är en giltig type också?
     command->type = data;
+    debugOnRpi(String(data));
     delay(1);
     data = bluetooth->read(); // kolla så att det är en giltigt command också?
     command->command = data;
+    debugOnRpi(String(data));
   }
 
   while (bluetooth->available()) {
     bluetooth->read();
   }
 
-
-  debugOnRpi(String(command->type) + "  " + String(command->command));
+ 
+  //debugOnRpi(String(command->type) + "  " + String(command->command));
 
 }
 

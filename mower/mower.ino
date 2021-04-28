@@ -2,11 +2,6 @@
 #include <Wire.h>
 #include <SoftwareSerial.h>
 
-#include "heartbeat.h"
-#include "motor.h"
-#include "ledRing.h"
-#include "manualControl.h"
-
 #define LEDNUM 12
 
 #define AUTONOMOUS 'O'
@@ -19,14 +14,26 @@
 #define MREVERSE 'B'
 #define HEARTBEAT 'H'
 
+#include "heartbeat.h"
+#include "motor.h"
+#include "ledRing.h"
+#include "manualControl.h"
+#include "Encoder.h"
+
+
 #define degreeTime 14 // calculated on 150 speed. 12v.  OLD
+
+const int reverseLength = -10;
+const int minObstacleDistance = 5;
 
 #define HEARTBEATTIMEOUT 3000
 
-
+MeEncoderOnBoard Encoder_1(SLOT1);
+MeEncoderOnBoard Encoder_2(SLOT2);
+Encoder encoder = Encoder();
 
 Motor motor(11, 49, 48, 10, 47, 46);
-int motorSpeed = 75;
+int motorSpeed = 40;
 
 MeBluetooth bluetooth(PORT_16);
 MeSerial piSerial(PORT_5);
@@ -50,14 +57,36 @@ autonomousSM_t autonomousSM = FORWARD;
 
 struct Commands btCommand = {AUTONOMOUS, MSTOP};
 
-long millisCounter = 0;
 
-const int reverseLength = 500;
-const int minObstacleDistance = 5;
+void isr_process_encoder1(void)
+{
+  if(digitalRead(Encoder_1.getPortB()) == 0)
+  {
+    encoder.addPulseRight();
+  }
+  else
+  {
+    encoder.subtractPulseRight();
+  }
+}
+
+void isr_process_encoder2(void)
+{
+  if(digitalRead(Encoder_2.getPortB()) == 0)
+  {
+    encoder.subtractPulseLeft();
+  }
+  else
+  {
+    encoder.addPulseLeft();
+  }
+}
 
 
 
 void setup() {
+  attachInterrupt(Encoder_1.getIntNum(), isr_process_encoder1, RISING);
+  attachInterrupt(Encoder_2.getIntNum(), isr_process_encoder2, RISING);
 
   randomSeed(analogRead(0));
   bluetooth.begin(115200);    //The factory default baud rate is 115200
@@ -70,10 +99,15 @@ void setup() {
   ledRing.startUpBlink(50, 50 , 0);
 
   bluetoothHeartbeat.activate();
+
 }
 
 
 void loop() {
+
+
+
+  
 
 
   if (bluetooth.available()) {
@@ -94,7 +128,7 @@ void loop() {
   }
 
   delay(20); //Without delay bt commands are not handled right
-
+ 
 }
 
 
@@ -176,8 +210,13 @@ void autonomousStateMachine() {
         motor.brake();
         //bluetooth.println("forward + line/obs");
         autonomousSM = REVERSE;
+
+        motor.brake();
+        delay(100);
+        encoder.startMeasureLeft();
+        
         motor.moveSpeed(-motorSpeed);
-        millisCounter = millis();
+        
       }
       break;
 
@@ -186,15 +225,16 @@ void autonomousStateMachine() {
       //        motor.brake();
       //        autonomousSM = FORWARD;
       //      }
-
-      if (millis() > millisCounter + reverseLength) {
+      
+      if (encoder.getDistanceLeft() <= reverseLength) {
         //bluetooth.println("Reverse");
         motor.brake();
         turnAngle = motor.turnAngle(30, 70);
         autonomousSM = TURN;
-        //gyro.begin();
+        motor.brake();
+        delay(100);
+        encoder.startMeasureLeft();
         motor.turnLeft(motorSpeed);
-        millisCounter = millis();
       }
       break;
 
@@ -203,11 +243,11 @@ void autonomousStateMachine() {
       //        motor.brake();
       //        autonomousSM = REVERSE;
       //      }
-      //gyro.update();
-      //bluetooth.println("Turn");
-      if (millis() > millisCounter + turnAngle * degreeTime) {
-        //if (abs(gyro.getAngleZ()) >= 90) {
+          
+      debugOnRpi(String(encoder.getAngleLeft()));
+      if (encoder.getAngleLeft() >= turnAngle) {
         motor.brake();
+        delay(100);
         autonomousSM = FORWARD;
       }
       break;
