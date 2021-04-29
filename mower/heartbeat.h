@@ -21,36 +21,6 @@ class Heartbeat
 
         \Others
     **/
-    void activate();
-
-    /**
-        \Function
-
-        \Description
-
-        \Param[in]
-
-        \Ouput
-
-        \Return
-
-        \Others
-    **/
-    void deactivate();
-
-    /**
-        \Function
-
-        \Description
-
-        \Param[in]
-
-        \Ouput
-
-        \Return
-
-        \Others
-    **/
     void beat();
 
     /**
@@ -69,7 +39,6 @@ class Heartbeat
     bool isTimeout();
 
   private:
-    bool _active;
     int _timeout;
     long _timestamp;
 };

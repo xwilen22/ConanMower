@@ -92,13 +92,11 @@ void setup() {
 
   ledRing.startUpBlink(50, 50 , 0);
 
-  bluetoothHeartbeat.activate();
-
 }
 
 
 void loop() {
-
+  
   if (bluetooth.available()) {
     readBT(&btCommand , &bluetooth);
   }
@@ -122,7 +120,7 @@ void loop() {
   }
 
   delay(20); //Without delay bt commands are not handled right
-
+  
 }
 
 

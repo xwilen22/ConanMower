@@ -28,7 +28,7 @@ void readBT(struct Commands *command, MeBluetooth *bluetooth) {
   if (nrOfBytes == 1) { // kolla så att det är en giltig type också?
 
     data = bluetooth->read();
-    debugOnRpi(String(data) + "\n");
+    //debugOnRpi(String(data) + "\n");
     if (data == HEARTBEAT) {
       command->heartBeat = true;
     }
@@ -40,26 +40,17 @@ void readBT(struct Commands *command, MeBluetooth *bluetooth) {
 
     data = bluetooth->read(); // kolla så att det är en giltig type också?
     command->type = data;
-    debugOnRpi(String(data) + ' ');
+    //debugOnRpi(String(data) + ' ');
     delay(1);
     data = bluetooth->read(); // kolla så att det är en giltigt command också?
     command->command = data;
-    debugOnRpi(String(data) + "\n");
+    //debugOnRpi(String(data) + "\n");
   }
 
-  else {
-    debugOnRpi(String("hej\n"));
-    while (bluetooth->available()) {
-      debugOnRpi(String(bluetooth->read()));
-    }
-    debugOnRpi(String("\n"));
-  }
-
-  /*while (bluetooth->available()) {
+  while (bluetooth->available()) {
     bluetooth->read();
-  }*/
+  }
   
-  //debugOnRpi(String(command->type) + "  " + String(command->command));
 
 }
 
@@ -73,6 +64,7 @@ void sendToRbp(MeSerial *piSerial, boolean turnLeft, int degree, uint16_t distan
   piSerial->write(msb);
   piSerial->write(lsb);
   piSerial->write(obstacle);
+
 
 }
 
