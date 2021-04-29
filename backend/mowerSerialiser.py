@@ -16,7 +16,6 @@ class SerialConnection():
 
     ## This method reads the data coming in from the arduino and returns it as a list.
     def getBytesOnRecieve(self):
-        self.port.flush()
 
         startByte = 254
         expectedNrOfBytes = 6
@@ -27,10 +26,11 @@ class SerialConnection():
             buffer.append( self.readInt(1) ) # relative turn (degrees)
             buffer.append( self.readInt(2) ) # distance (centimeters)
             buffer.append( self.readInt(1) ) # stopped because of obstacle
-
+            self.port.flush()
             return buffer
 
         else:
+            self.port.flush()
             return None
         '''while len(returningList) < 6:
             dataToBeStored = self.port.read(1)
