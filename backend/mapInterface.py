@@ -10,9 +10,15 @@ HOST_PROPERTIES = {
 def index():
     templateKeyValue = dict(
         points = [
-            (10, 1),
-            (2, 3),
-            (1, 1)
+            (100, 54),
+            (31, 100),
+            (55, 9)
+        ],
+        # How the edges would be connected
+        # points[0] ➡ points[2] ➡ points[1]
+        edges = [
+            (0, 2),
+            (2, 1)
         ]
     )
 

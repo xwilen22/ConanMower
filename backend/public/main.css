@@ -1,14 +1,32 @@
-html {
-    padding: 0;
+:root {
+    --map-size: 500px;
+    --map-edge-thickness: 2px;
+    /*Colours*/
+    --map-edge-colour: rebeccapurple;
+    --map-node-colour: red;
 }
-body {
+html, body {
     padding: 0;
     margin: 0;
     height: 100vh;
-    width: 100vh;
+    width: 100vw;
 }
 #map {
     background-color: green;
-    height: 50vh;
-    width: 50vh;
+    height: var(--map-size);
+    width: var(--map-size);
+}
+.map-node {
+    position: relative;
+    display: block;
+    background-color: var(--map-node-colour);
+    border-radius: 100px;
+    height: 1em;
+    width: 1em;
+}
+.map-edge {
+    position: relative;
+    border-width: 2px;
+    background-color: var(--map-edge-colour);
+    height: var(--map-edge-thickness);
 }
