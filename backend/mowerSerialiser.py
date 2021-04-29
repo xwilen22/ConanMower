@@ -10,13 +10,13 @@ class SerialConnection():
     ## Creates the connection through a specified serial port.
     def __init__(self, serialPortString):
         self.port = serial.Serial(serialPortString, baudrate=9600) 
-        self.port.flush()
 
     def readInt(self, nrOfBytes, endian='big'):
         return int.from_bytes(self.port.read(nrOfBytes), byteorder=endian)
 
     ## This method reads the data coming in from the arduino and returns it as a list.
     def getBytesOnRecieve(self):
+        self.port.flush()
 
         startByte = 254
         expectedNrOfBytes = 6
