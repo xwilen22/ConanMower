@@ -8,7 +8,7 @@
     <title>🗺</title>
 </head>
 <body>
-    <h1>{{name}}</h1>
+    <h1>The map</h1>
     <main>
         <div id="map">
 
