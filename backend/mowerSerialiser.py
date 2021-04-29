@@ -63,7 +63,7 @@ class SerialConnection():
 
         currentAngle = angleChange * -1 if turnedLeft else angleChange
 
-        traveledDistance = retrievedBytesList[3]
-        stoppedByObstacle = retrievedBytesList[4]
+        traveledDistance = retrievedBytesList[2]
+        stoppedByObstacle = retrievedBytesList[3]
 
         return traveledPathData.TraveledPathData(currentAngle, traveledDistance, stoppedByObstacle)
