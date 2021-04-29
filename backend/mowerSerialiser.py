@@ -57,18 +57,13 @@ class SerialConnection():
 
     ## Parses a list of bytes to a TraveledPath data class. The data class is returned.
     def getDataClass(self, retrievedBytesList):
-        print("From data class: ", retrievedBytesList) # Kept for testing purposes.
-        turnedLeft = int.from_bytes(retrievedBytesList[0], byteorder=BYTE_ORDER) == 1
-        angleChange = int.from_bytes(retrievedBytesList[1], byteorder=BYTE_ORDER)
+        #print("From data class: ", retrievedBytesList) # Kept for testing purposes.
+        turnedLeft = retrievedBytesList[0]
+        angleChange = retrievedBytesList[1]
 
-        # Dunno if negative angle is for turning left or vise versa but ye
         currentAngle = angleChange * -1 if turnedLeft else angleChange
 
-        traveledDistanceOne = int.from_bytes(retrievedBytesList[2], byteorder=BYTE_ORDER)
-        traveledDistanceTwo = int.from_bytes(retrievedBytesList[3], byteorder=BYTE_ORDER)
-
-        traveledDistance = traveledDistanceOne * 255 + traveledDistanceTwo
-
-        stoppedByObstacle = int.from_bytes(retrievedBytesList[4], byteorder=BYTE_ORDER)
+        traveledDistance = retrievedBytesList[3]
+        stoppedByObstacle = retrievedBytesList[4]
 
         return traveledPathData.TraveledPathData(currentAngle, traveledDistance, stoppedByObstacle)

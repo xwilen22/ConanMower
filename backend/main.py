@@ -6,13 +6,11 @@ import data
 
 traveledPathClient = fc.FirebaseClient("TraveledPath")
 
-serialPort = "/dev/ttyS0" # ttyS0 is used for Raspberry Pi Zero. Normally it would've been ACM0. --- NOTE: This is a temporary comment that can be removed on release ---
+serialPort = "/dev/serial0" # serial0 is used for Raspberry Pi Zero. Normally it would've been ACM0. --- NOTE: This is a temporary comment that can be removed on release ---
 
 serialConnection = ms.SerialConnection(serialPort)
-
 while True:
     byteArray = serialConnection.getBytesOnRecieve()
-    print("ByteArray is", byteArray)
     if byteArray != None:
         mowerData = serialConnection.getDataClass(byteArray).getDictionary()
         print("Mowerdata is: ", mowerData)
