@@ -38,21 +38,21 @@ class PathFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(PathViewModel::class.java)
         // TODO: Use the ViewModel
-
         database = FirebaseDatabase.getInstance().reference;
         database.addValueEventListener(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
-                    val traveledPath = snapshot.child("-MYyscW4GgFUwsj0RmJz").getValue(TraveledPath::class.java)
-                    //val id = traveledPath?.id.toString()
-                    val currentAngle = traveledPath?.CurrentAngle
-                    val endTime = traveledPath?.EndTime
-                    val stoppedByObstacle = traveledPath?.StoppedByObstacle
-                    val traveledDistance = traveledPath?.TraveledDistance
 
-                    traveledPathList.add(TraveledPath(currentAngle!!.toInt(), endTime!!, stoppedByObstacle!!.toInt(),traveledDistance!!.toInt()))
-                    Log.d(TAG, traveledPathList.toString())
+                    val data = snapshot.children
 
+                    data.forEach {
+                        val traveledPath = it.getValue(TraveledPath::class.java)
+                        traveledPathList.add(traveledPath!!)
+                    }
+
+                    traveledPathList.forEach {
+                        Log.d(TAG, it.toString())
+                    }
                 }
                 else{
                     Log.d(TAG, "snapshot does not exist")
@@ -63,12 +63,12 @@ class PathFragment : Fragment() {
             }
 
         })
-
         btn_close.setOnClickListener {
             val direction = PathFragmentDirections.actionPathFragmentToAutoFragment()
             it.findNavController().navigate(direction)
         }
     }
-
 }
+
+
 
