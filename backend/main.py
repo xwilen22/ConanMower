@@ -1,23 +1,17 @@
 import firebaseClient as fc
 import mowerSerialiser as ms
-import data
+import data.traveledPath as traveledPathData
 
 ### Initialize client firebase client and serial connection.
 
 traveledPathClient = fc.FirebaseClient("TraveledPath")
 
-serialPort = "/dev/serial0" # serial0 is used for Raspberry Pi Zero. Normally it would've been ACM0. --- NOTE: This is a temporary comment that can be removed on release ---
+serialPort = "/dev/serial0" # serial0 or ttys0 (being the same port) is used for Raspberry Pi Zero W.
 
 serialConnection = ms.SerialConnection(serialPort)
 while True:
-    byteArray = serialConnection.getBytesOnRecieve()
-    if byteArray != None:
-        print('bytearray: ' + str(byteArray))
-        mowerData = serialConnection.getDataClass(byteArray).getDictionary()
+    buffer = serialConnection.getBytesOnRecieve()
+    if buffer != None:
+        mowerData = traveledPathData.TraveledPathData(buffer).getDictionary()
         print("Mowerdata is: ", mowerData)
-        #traveledPathClient.InsertItem(mowerData)
-
-path = data.traveledPath.TraveledPathData(20, 30, False)
-#traveledPathClient.InsertItem(path.getDictionary())
-
-print("Inserted item.")
+        traveledPathClient.InsertItem(mowerData)

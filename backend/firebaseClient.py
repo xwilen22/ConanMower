@@ -29,3 +29,4 @@ class FirebaseClient:
     ## This function is used to insert an item into the database.
     def InsertItem(self, dataDict):        
         self._documentTraveledPath.push(dataDict)
+        print("Inserted item.")
