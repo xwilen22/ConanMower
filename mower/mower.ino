@@ -33,7 +33,7 @@ MeEncoderOnBoard Encoder_2(SLOT2);
 Encoder encoder = Encoder();
 
 Motor motor(11, 49, 48, 10, 47, 46);
-int motorSpeed = 40;
+int motorSpeed = 75;
 
 MeBluetooth bluetooth(PORT_16);
 MeSerial piSerial(PORT_5);
@@ -105,11 +105,6 @@ void setup() {
 
 void loop() {
 
-
-
-  
-
-
   if (bluetooth.available()) {
     readBT(&btCommand , &bluetooth);
   }
@@ -134,14 +129,20 @@ void loop() {
 
 void pathTaker(Commands command) {
 
+  static unsigned char prevType = ' ';
+
   switch (command.type) {
     
     case MANUAL:
       manualController(command.command);
-      autonomousSM = FORWARD; // To be sure to start at FORWARD when going back to autonomous
+      
       break;
 
     case AUTONOMOUS:
+      if (command.type != prevType) {
+        autonomousSM = FORWARD; 
+        startMeasuring();
+      }
       autonomousStateMachine();
       break;
 
@@ -152,6 +153,8 @@ void pathTaker(Commands command) {
     default:
       break;
   }
+
+  prevType = command.type;
 }
 
 
@@ -203,16 +206,19 @@ void autonomousStateMachine() {
   switch (autonomousSM) {
     case FORWARD:
       motor.moveSpeed(motorSpeed);
-      //bluetooth.println("forward");
 
       if (isLine() || isObstacle()) {
-
+        
+        
         motor.brake();
-        //bluetooth.println("forward + line/obs");
+        delay(50);
+        int distance = getDistance();
+        bluetooth.println(String(distance) + "\tcm");
+        startMeasuring();
+        
         autonomousSM = REVERSE;
+        delay(50);
 
-        motor.brake();
-        delay(100);
         encoder.startMeasureLeft();
         
         motor.moveSpeed(-motorSpeed);
@@ -227,13 +233,16 @@ void autonomousStateMachine() {
       //      }
       
       if (encoder.getDistanceLeft() <= reverseLength) {
-        //bluetooth.println("Reverse");
+
         motor.brake();
-        turnAngle = motor.turnAngle(30, 70);
+        delay(50);
+        int distance = getDistance();
+        bluetooth.println(String(distance) + "\tcm");
+        startMeasuring();
         autonomousSM = TURN;
-        motor.brake();
         delay(100);
-        encoder.startMeasureLeft();
+        
+        turnAngle = motor.turnAngle(30, 70);
         motor.turnLeft(motorSpeed);
       }
       break;
@@ -244,16 +253,33 @@ void autonomousStateMachine() {
       //        autonomousSM = REVERSE;
       //      }
           
-      debugOnRpi(String(encoder.getAngleLeft()));
-      if (encoder.getAngleLeft() >= turnAngle) {
+      
+      if (getAngle() >= turnAngle) {
+        
         motor.brake();
-        delay(100);
+        delay(50);
+        bluetooth.println(String(turnAngle) + "\tdegrees");
+        startMeasuring();
         autonomousSM = FORWARD;
+        
       }
       break;
   }
 }
 
+
+void startMeasuring() {
+  encoder.startMeasureLeft();
+  encoder.startMeasureRight();
+}
+
+int getDistance() {
+  return encoder.getDistanceLeft();
+}
+
+int getAngle() {
+  return encoder.getAngleLeft();
+}
 
 bool isLine() {
   return lineFinder.readSensors() == S1_IN_S2_IN;
