@@ -15,7 +15,7 @@ struct Commands {
 **/
 
 void debugOnRpi(String msg) {
-  Serial2.println(msg);
+  Serial2.print(msg);
 }
 
 void readBT(struct Commands *command, MeBluetooth *bluetooth) {
@@ -28,7 +28,7 @@ void readBT(struct Commands *command, MeBluetooth *bluetooth) {
   if (nrOfBytes == 1) { // kolla så att det är en giltig type också?
 
     data = bluetooth->read();
-    debugOnRpi(String(data));
+    debugOnRpi(String(data) + "\n");
     if (data == HEARTBEAT) {
       command->heartBeat = true;
     }
@@ -40,18 +40,25 @@ void readBT(struct Commands *command, MeBluetooth *bluetooth) {
 
     data = bluetooth->read(); // kolla så att det är en giltig type också?
     command->type = data;
-    debugOnRpi(String(data));
+    debugOnRpi(String(data) + ' ');
     delay(1);
     data = bluetooth->read(); // kolla så att det är en giltigt command också?
     command->command = data;
-    debugOnRpi(String(data));
+    debugOnRpi(String(data) + "\n");
   }
 
-  while (bluetooth->available()) {
+  else {
+    debugOnRpi(String("hej\n"));
+    while (bluetooth->available()) {
+      debugOnRpi(String(bluetooth->read()));
+    }
+    debugOnRpi(String("\n"));
+  }
+
+  /*while (bluetooth->available()) {
     bluetooth->read();
-  }
-
- 
+  }*/
+  
   //debugOnRpi(String(command->type) + "  " + String(command->command));
 
 }

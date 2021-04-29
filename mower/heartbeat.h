@@ -7,7 +7,7 @@ class Heartbeat
 {
   public:
     Heartbeat(int timeout);
-   
+
     /**
         \Function
 
@@ -52,7 +52,7 @@ class Heartbeat
         \Others
     **/
     void beat();
-    
+
     /**
         \Function
 

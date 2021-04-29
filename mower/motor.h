@@ -30,7 +30,7 @@ class Motor
         \Others
     **/
     void moveSpeed(int moveSpeed);
-    
+
     /**
         \Function
 
@@ -45,7 +45,7 @@ class Motor
         \Others
     **/
     void turnLeft(int moveSpeed);
-    
+
     /**
         \Function
 
@@ -60,7 +60,7 @@ class Motor
         \Others
     **/
     void turnRight(int moveSpeed);
-    
+
     /**
         \Function
 

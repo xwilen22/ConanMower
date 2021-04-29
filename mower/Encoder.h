@@ -133,7 +133,7 @@ class Encoder
     **/
     long getDistanceRight();
 
-    
+
     /**
         \Function
 
