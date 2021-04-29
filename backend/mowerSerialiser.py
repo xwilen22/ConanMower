@@ -57,7 +57,7 @@ class SerialConnection():
 
     ## Parses a list of bytes to a TraveledPath data class. The data class is returned.
     def getDataClass(self, retrievedBytesList):
-        #print("From data class: ", retrievedBytesList) # Kept for testing purposes.
+        print("From data class: ", retrievedBytesList) # Kept for testing purposes.
         turnedLeft = retrievedBytesList[0]
         angleChange = retrievedBytesList[1]
 
