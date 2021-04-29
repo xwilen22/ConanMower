@@ -14,7 +14,7 @@ class FirebaseClient:
             "authDomain": "conanmower.firebaseapp.com",
             "databaseURL": "https://conanmower-default-rtdb.europe-west1.firebasedatabase.app/",
             "storageBucket": "conanmower.appspot.com",
-            "serviceAccount": "./conan_mower_access_key.json"
+            "serviceAccount": "./key/conan_mower_access_key.json"
         }
 
         firebase = pyrebase.initialize_app(firebaseConfig)
