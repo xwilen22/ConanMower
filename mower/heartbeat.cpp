@@ -3,7 +3,7 @@
 Heartbeat::Heartbeat(int timeout) {
   _timeout = timeout;
   _active = false;
-  _timestamp = 0;
+  _timestamp = -timeout;
 }
 
 void Heartbeat::activate() {
@@ -19,5 +19,5 @@ void Heartbeat::beat() {
 }
 
 bool Heartbeat::isTimeout() {
-  return millis() > _timestamp + _timeout && _active;
+  return (millis() > _timestamp + _timeout) && _active;
 }

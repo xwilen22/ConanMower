@@ -12,7 +12,7 @@
 #define MRIGHT 'R'
 #define MFORWARD 'F'
 #define MREVERSE 'B'
-#define HEARTBEAT 'H'
+#define HEARTBEAT 'd'
 
 #include "heartbeat.h"
 #include "motor.h"
@@ -26,14 +26,14 @@
 const int reverseLength = -10;
 const int minObstacleDistance = 5;
 
-#define HEARTBEATTIMEOUT 3000
+#define HEARTBEATTIMEOUT 4000
 
 MeEncoderOnBoard Encoder_1(SLOT1);
 MeEncoderOnBoard Encoder_2(SLOT2);
 Encoder encoder = Encoder();
 
 Motor motor(11, 49, 48, 10, 47, 46);
-int motorSpeed = 100;
+int motorSpeed = 75;
 
 MeBluetooth bluetooth(PORT_16);
 MeSerial piSerial(PORT_5);
@@ -108,12 +108,16 @@ void loop() {
 
   if (bluetoothHeartbeat.isTimeout()) {
     // Bluetooth is not connected
+    ledRing.fullCirlce(100, 0, 100);
   }
   else {
     //Bluetooth is connected
+    ledRing.fullCirlce(0, 0, 100);
   }
   if (btCommand.heartBeat) {
     bluetoothHeartbeat.beat();
+    btCommand.heartBeat = false;
+    
   }
 
   delay(20); //Without delay bt commands are not handled right
@@ -200,21 +204,21 @@ void autonomousStateMachine() {
   switch (autonomousSM) {
     case FORWARD:
       motor.moveSpeed(motorSpeed);
-      
-      bool line = isLine();
-      if (line || isObstacle()) {
+
+      bool line;
+  
+      if (line = isLine() || isObstacle()) {
 
 
         motor.brake();
         delay(50);
         int distance = getDistance();
         bluetooth.println(String(distance) + "\tcm");
+        
         startMeasuring();
 
         autonomousSM = REVERSE;
         delay(50);
-
-        encoder.startMeasureLeft();
 
         motor.moveSpeed(-motorSpeed);
 
@@ -226,8 +230,7 @@ void autonomousStateMachine() {
       //        motor.brake();
       //        autonomousSM = FORWARD;
       //      }
-
-      if (encoder.getDistanceLeft() <= reverseLength) {
+      if (getDistance() <= reverseLength) {
 
         motor.brake();
         delay(50);
@@ -235,7 +238,7 @@ void autonomousStateMachine() {
         bluetooth.println(String(distance) + "\tcm");
         startMeasuring();
         autonomousSM = TURN;
-        delay(100);
+        delay(50);
 
         turnAngle = motor.turnAngle(30, 70);
         motor.turnLeft(motorSpeed);
@@ -277,11 +280,13 @@ int getAngle() {
 }
 
 bool isLine() {
-  return lineFinder.readSensors() == S1_IN_S2_IN;
+  bool line = (lineFinder.readSensors() == S1_IN_S2_IN);
+  return line;
 }
 
 bool isObstacle() {
-  return ultraSensor.distanceCm() < minObstacleDistance;
+  bool obs = (ultraSensor.distanceCm() < minObstacleDistance);
+  return obs;
 }
 
 
