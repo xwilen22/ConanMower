@@ -11,7 +11,9 @@ serialPort = "/dev/serial0" # serial0 is used for Raspberry Pi Zero. Normally it
 serialConnection = ms.SerialConnection(serialPort)
 while True:
     byteArray = serialConnection.getBytesOnRecieve()
+    print('bytearray: ' + str(byteArray))
     if byteArray != None:
+        
         mowerData = serialConnection.getDataClass(byteArray).getDictionary()
         print("Mowerdata is: ", mowerData)
         #traveledPathClient.InsertItem(mowerData)
