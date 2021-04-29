@@ -109,6 +109,7 @@ void loop() {
   if (bluetoothHeartbeat.isTimeout()) {
     // Bluetooth is not connected
     ledRing.fullCirlce(100, 0, 100);
+    btCommand.command = MSTOP;
   }
   else {
     //Bluetooth is connected
@@ -200,22 +201,23 @@ void manualController(char command) {
 void autonomousStateMachine() {
 
   static int turnAngle = 30;
+  
+  static int distance = 0;
+  static int angleTurned = 0;
 
   switch (autonomousSM) {
     case FORWARD:
       motor.moveSpeed(motorSpeed);
 
-      bool line;
+      bool obstacle;
   
-      if (line = isLine() || isObstacle()) {
-
-
+      if ((obstacle = isObstacle()) || isLine()) {
         motor.brake();
         delay(50);
-        int distance = getDistance();
-        bluetooth.println(String(distance) + "\tcm");
+        distance = getDistance();
+        //bluetooth.println(String(distance) + "\tcm");
         
-        startMeasuring();
+        //startMeasuring();
 
         autonomousSM = REVERSE;
         delay(50);
@@ -234,8 +236,8 @@ void autonomousStateMachine() {
 
         motor.brake();
         delay(50);
-        int distance = getDistance();
-        bluetooth.println(String(distance) + "\tcm");
+        //int reverseDistance = getDistance();
+        //bluetooth.println(String(distance) + "\tcm");
         startMeasuring();
         autonomousSM = TURN;
         delay(50);
@@ -252,13 +254,15 @@ void autonomousStateMachine() {
       //      }
 
 
-      if (getAngle() >= turnAngle) {
+      if ((angleTurned = getAngle()) >= turnAngle) {
 
         motor.brake();
         delay(50);
         bluetooth.println(String(turnAngle) + "\tdegrees");
         startMeasuring();
         autonomousSM = FORWARD;
+
+        sendToRbp(&piSerial, true, angleTurned, distance, obstacle);
 
       }
       break;
