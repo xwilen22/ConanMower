@@ -9,55 +9,28 @@ class SerialConnection():
 
     ## Creates the connection through a specified serial port.
     def __init__(self, serialPortString):
-        self.port = serial.Serial(serialPortString, baudrate=9600, timeout=1.0)    
+        self.port = serial.Serial(serialPortString, baudrate=9600) 
+        self.port.flush()
+
+    ## reads the first value in the buffer and parse it to an int. It returns an integer.
+    def readByteToInt(self, nrOfBytes, endian='big'):
+        return int.from_bytes(self.port.read(nrOfBytes), byteorder=endian)
 
     ## This method reads the data coming in from the arduino and returns it as a list.
     def getBytesOnRecieve(self):
-        startByte = self.port.read(1)
-        while int.from_bytes(startByte, byteorder=BYTE_ORDER) != 254:
-            startByte = self.port.read(1)
-        
-        print("start byte: ", startByte)  
 
-        returningList = []
+        startByte = 254
+        expectedNrOfBytes = 6
+        buffer = []
 
-        while len(returningList) < 6:
-            dataToBeStored = self.port.read(1)
-            if(dataToBeStored != b''):
-                returningList.append(dataToBeStored)
-        '''leftOrRight = self.port.read(1)
-        angleChange = self.port.read(1)
-        
-        distanceOne = self.port.read(1)
-        distanceTwo = self.port.read(1)
+        currentByte = self.readByteToInt(1)
 
-        stoppedForObstacle = self.port.read(1)
+        if self.port.inWaiting() >= expectedNrOfBytes and currentByte == startByte:
+            buffer.append( self.readByteToInt(1) ) # turned left
+            buffer.append( self.readByteToInt(1) ) # relative turn (degrees)
+            buffer.append( self.readByteToInt(2) ) # distance (centimeters)
+            buffer.append( self.readByteToInt(1) ) # stopped because of obstacle
+            return buffer
 
-        returningList = [
-            leftOrRight, #Left or right
-            angleChange, #Relative angle change
-            distanceOne, #Distance
-            distanceTwo,
-            stoppedForObstacle  #Stopped because of border
-        ]'''
-
-        print("Bytes stored in the list: ", returningList)
-        return returningList
-
-    ## Parses a list of bytes to a TraveledPath data class. The data class is returned.
-    def getDataClass(self, retrievedBytesList):
-        print("From data class: ", retrievedBytesList) # Kept for testing purposes.
-        turnedLeft = int.from_bytes(retrievedBytesList[0], byteorder=BYTE_ORDER) == 1
-        angleChange = int.from_bytes(retrievedBytesList[1], byteorder=BYTE_ORDER)
-
-        # Dunno if negative angle is for turning left or vise versa but ye
-        currentAngle = angleChange * -1 if turnedLeft else angleChange
-
-        traveledDistanceOne = int.from_bytes(retrievedBytesList[2], byteorder=BYTE_ORDER)
-        traveledDistanceTwo = int.from_bytes(retrievedBytesList[3], byteorder=BYTE_ORDER)
-
-        traveledDistance = traveledDistanceOne * 255 + traveledDistanceTwo
-
-        stoppedByObstacle = int.from_bytes(retrievedBytesList[4], byteorder=BYTE_ORDER)
-
-        return traveledPathData.TraveledPathData(currentAngle, traveledDistance, stoppedByObstacle)
+        else:
+            return None

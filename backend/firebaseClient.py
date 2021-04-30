@@ -7,7 +7,7 @@ class FirebaseClient:
 
     ## The constructor establishes a connection to the database and assigns an attribute for each 
     ## document used from the database. Right now, it's just the TraveledPath document.
-    def __init__(self, forCollectionName):
+    def __init__(self, collectionName):
         # Use a service account
         firebaseConfig = {
             "apiKey": "AIzaSyDofuzKpCiUkkFk3Q3y-FxoLh2E1eCuH88",
@@ -19,13 +19,14 @@ class FirebaseClient:
 
         firebase = pyrebase.initialize_app(firebaseConfig)
 
-        db = firebase.database()
+        self.db = firebase.database()
         
-        print("DB is: ", db)
-        self._documentTraveledPath = db.child(str(forCollectionName))
+        self.path = collectionName
+        #self._documentTraveledPath = self.db.child(str(collectionName))
 
         print("Connected to client.")
 
     ## This function is used to insert an item into the database.
     def InsertItem(self, dataDict):        
-        self._documentTraveledPath.push(dataDict)
+        self.db.child(self.path).push(dataDict)
+        print("Inserted item.")
