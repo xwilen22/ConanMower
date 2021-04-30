@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "993460625950",
+    "firebase_url": "https://conanmower-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "conanmower",
+    "storage_bucket": "conanmower.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:993460625950:android:1983be46a2a7a11b9a840f",
+        "android_client_info": {
+          "package_name": "com.example.conanmoverandroidapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "993460625950-o4bk3309928958732kr4djmhg9o4emtc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAoAfNuli1d4y2wodVo6W_pBCK54naOOAg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "993460625950-o4bk3309928958732kr4djmhg9o4emtc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

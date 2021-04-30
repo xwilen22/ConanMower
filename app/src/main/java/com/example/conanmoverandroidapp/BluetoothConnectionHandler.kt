@@ -4,15 +4,13 @@ import android.bluetooth.*
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
+import android.widget.Toast
 import java.util.*
 
 
 class BluetoothConnectionHandler {
     companion object {
-
-        // "00:1B:10:66:46:72"
         const val arduinoMAC = "00:1B:10:66:46:72"
-        //const val arduinoMAC = "18:3E:EF:D8:46:01" // DATOR
 
         val arduinoServiceUUID = UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb")
         val arduinoWriteCharacteristicsUUID = UUID.fromString("0000ffe3-0000-1000-8000-00805f9b34fb")
@@ -26,6 +24,7 @@ class BluetoothConnectionHandler {
                 if (!Globals.bluetoothConnectedStatus) {
                     Globals.btAdapter?.cancelDiscovery()
                     Globals.bluetoothDiscoveringStatus = false
+
                     callback(false)
                 }
             }, 20000)
@@ -56,6 +55,7 @@ class BluetoothConnectionHandler {
         fun connectBluetoothToArduino(device: BluetoothDevice, callback: (success: Boolean) -> Unit)  {
             try {
                 Globals.btAdapter?.cancelDiscovery()
+                Globals.bluetoothDiscoveringStatus = false
                 bluetoothGatt = device.connectGatt(Globals.currentActivity, false, gattCallback(callback))
             }
             catch (e: Exception){
@@ -68,11 +68,8 @@ class BluetoothConnectionHandler {
                 if (status == BluetoothGatt.GATT_SUCCESS) {
                     if (newState == BluetoothProfile.STATE_CONNECTED) {
                         Globals.bluetoothConnectedStatus = true
-                        bluetoothGatt.discoverServices()
-                        val a = bluetoothGatt.getService(arduinoServiceUUID) // TODO: Remove
-                        initiateHearbeatToArduino()
 
-                        callback(true)
+                        bluetoothGatt.discoverServices()
                     } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                         Globals.bluetoothConnectedStatus = false
                         gatt.close()
@@ -86,16 +83,59 @@ class BluetoothConnectionHandler {
                     callback(false)
                 }
             }
+
+            override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
+                super.onServicesDiscovered(gatt, status)
+                if(status == BluetoothGatt.GATT_SUCCESS){
+                    initiateHearbeatToArduino()
+                    callback(true)
+                }
+                else{
+                    Globals.bluetoothConnectedStatus = false
+                    gatt.close()
+                    callback(false)
+                }
+            }
+        }
+
+        private fun initiateHearbeatToArduino(){
+            // Send first heartbeat
+            sendHeartbeatToArduino()
+
+            // Create a background thread that has a Looper
+            val handlerThread = HandlerThread("HandlerThread")
+            handlerThread.start()
+
+            val handler = Handler(handlerThread.looper)
+            var runnable: Runnable? = null
+            val delay = 3000
+
+            // Every 5 seconds, send a new message to arduino (in a background thread)
+            handler .postDelayed(
+                Runnable {
+                    handler.postDelayed(runnable!!, delay.toLong())
+                    if (Globals.bluetoothConnectedStatus) {
+                        sendHeartbeatToArduino()
+                    } else {
+                        handlerThread.quit()
+                    }
+                }.also { runnable = it }, delay.toLong())
         }
 
         private fun writeCharacteristic(value: ByteArray?) {
-            val service: BluetoothGattService = bluetoothGatt.getService(arduinoServiceUUID)
-            val characteristic =
-                service.getCharacteristic(arduinoWriteCharacteristicsUUID) ?: return
-            characteristic.value = value
-            val writeStatus: Boolean = bluetoothGatt.writeCharacteristic(characteristic)
-            if(!writeStatus){
-                // TODO: Handle communication error
+            // Check if services have been registered
+            if(bluetoothGatt.services.size > 0){
+                val service: BluetoothGattService = bluetoothGatt.getService(arduinoServiceUUID)
+                val characteristic =
+                    service.getCharacteristic(arduinoWriteCharacteristicsUUID) ?: return
+                characteristic.value = value
+                val writeStatus: Boolean = bluetoothGatt.writeCharacteristic(characteristic)
+                if(!writeStatus){
+                    // TODO: Handle communication error
+                }
+            }
+            else{
+                // TODO: Handle no services
             }
         }
 
@@ -136,22 +176,10 @@ class BluetoothConnectionHandler {
             writeCharacteristic(buffer)
         }
 
-        private fun initiateHearbeatToArduino(){
-            // Send first heartbeat
-            sendHeartbeatToArduino()
-
-            // Create a background thread that has a Looper
-            val handlerThread = HandlerThread("HandlerThread")
-            handlerThread.start()
-
-            // Every 5 seconds, send a new message to arduino (in a background thread)
-            Handler(handlerThread.looper).postDelayed({
-                if (Globals.bluetoothConnectedStatus) {
-                    sendHeartbeatToArduino()
-                } else {
-                    handlerThread.quit()
-                }
-            }, 5000)
+        fun initiateMowerLineFollowControl(){
+            val buffer = ByteArray(1)
+            buffer[0] = 95.toByte()
+            writeCharacteristic(buffer)
         }
 
         private fun sendHeartbeatToArduino(){
@@ -160,5 +188,4 @@ class BluetoothConnectionHandler {
             writeCharacteristic(buffer)
         }
     }
-
 }

@@ -93,7 +93,6 @@ class PermissionHandler {
             }
         }
 
-
         fun noBluetoothAdapterAlert() {
             AlertDialog.Builder(Globals.currentActivity)
                 .setCancelable(false)

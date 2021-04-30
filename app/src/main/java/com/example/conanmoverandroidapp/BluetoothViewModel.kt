@@ -23,21 +23,8 @@ class BluetoothViewModel : ViewModel() {
         val btStateFilter = IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
         Globals.currentActivity.registerReceiver(Globals.btReceiver, btStateFilter)
 
-        //changeBluetoothConnectionUi()
         BluetoothConnectionHandler.initiateBluetoothConnectionToArduino { success ->
             connected.value = success
-           /* Globals.executeOnMainThread {
-                /*The value here is not important, but we need to make a change for the fragment to get aha*/
-
-                //changeBluetoothConnectionUi(success)
-                if(!success){
-                    Toast.makeText(
-                        Globals.currentActivity,
-                        R.string.bluetooth_unable_to_connect,
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }*/
         }
     }
 
@@ -49,13 +36,13 @@ class BluetoothViewModel : ViewModel() {
                 BluetoothConnectionHandler.directionButtonPressed("")
             }
         }
-       /* else{
+       else{
             Toast.makeText(
                 Globals.currentActivity,
-                getString(R.string.no_bluetooth_connection),
+                R.string.no_bluetooth_connection,
                 Toast.LENGTH_SHORT
             ).show()
-        }*/
+        }
     }
 
 

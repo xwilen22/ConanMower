@@ -9,28 +9,22 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import com.example.conanmoverandroidapp.*
 import kotlinx.android.synthetic.main.manual_fragment.*
 
 
 class ManualFragment: Fragment() {
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         return inflater.inflate(R.layout.manual_fragment, container, false)
     }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        // TODO: Use the ViewModel
-
 
         val connectObserver = Observer<Boolean> { success ->
             // Update the UI
@@ -46,8 +40,6 @@ class ManualFragment: Fragment() {
 
         // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
         Globals.bluetoothViewModel.connected.observe(viewLifecycleOwner, connectObserver)
-
-       //connectObserver.onChanged(Globals.bluetoothConnectedStatus)
 
         setUpNavigationButtons()
 
@@ -90,22 +82,19 @@ class ManualFragment: Fragment() {
         super.onResume()
 
         checkIfBluetoothLESupported()
+
         // If not connected to bluetooth, try to connect
         if(!Globals.bluetoothConnectedStatus && !Globals.bluetoothDiscoveringStatus){
             PermissionHandler.handleBluetoothPermissionStatus {
                 Globals.bluetoothViewModel.tryToConnectBluetoothToArduino()
             }
-        /*} else {
-            changeBluetoothConnectionUi()
-            if(!Globals.bluetoothDiscoveringStatus){
-            changeBluetoothConnectionUi(Globals.bluetoothConnectedStatus)
-            }*/
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        if(Globals.bluetoothConnectedStatus){
+
+        if(Globals.bluetoothConnectedStatus) {
             BluetoothConnectionHandler.initiateAutoMowerControl()
         }
     }
