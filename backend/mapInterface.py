@@ -1,4 +1,5 @@
-import data.traveledPath
+from data.traveledPath import TraveledPathData
+import pathSession
 from bottle import route, run, template, static_file
 
 HOST_PROPERTIES = {
@@ -8,14 +9,18 @@ HOST_PROPERTIES = {
 
 @route('/')
 def index():
+    testSession = pathSession.PathSession()
+
     templateKeyValue = dict(
         # Where has the mower gone in chronological order.
         # (X, Y, ByObstacle)
         points = [
-            (10, 10, False),
-            (10, 32, True),
-            (50, 50, False),
-            (20, 70, False)
+            testSession.getPointByTraveledData(TraveledPathData([True, 20, 10, False])),
+            testSession.getPointByTraveledData(TraveledPathData([True, 20, 10, True])),
+            testSession.getPointByTraveledData(TraveledPathData([True, 20, 10, True])),
+            testSession.getPointByTraveledData(TraveledPathData([True, 20, 10, True])),
+            testSession.getPointByTraveledData(TraveledPathData([False, 274, 13, False])),
+            testSession.getPointByTraveledData(TraveledPathData([False, 50, 30, False]))
         ]
     )
 

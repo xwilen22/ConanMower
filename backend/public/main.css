@@ -1,9 +1,5 @@
 :root {
     --map-size: 500px;
-    --map-edge-thickness: 2px;
-    /*Colours*/
-    --map-edge-colour: rebeccapurple;
-    --map-node-colour: red;
 }
 html, body {
     padding: 0;
@@ -12,22 +8,10 @@ html, body {
     width: 100vw;
 }
 #map {
+    background-image: url("bg.gif");
     background-color: green;
     height: var(--map-size);
     width: var(--map-size);
-}
-.map-node {
-    position: relative;
-    display: block;
-    background-color: var(--map-node-colour);
-    border-radius: 100px;
-    height: 1em;
-    width: 1em;
-}
-.map-edge {
-    position: absolute;
-    border-width: 2px;
-    width: 100%;
-    background-color: var(--map-edge-colour);
-    height: var(--map-edge-thickness);
+    margin-left: auto;
+    margin-right: auto;
 }
