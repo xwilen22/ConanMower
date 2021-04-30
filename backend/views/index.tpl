@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="public/main.css" type="text/css">
     <script src="public/mowerMap.js"></script>
-    <title>🗺</title>
+    <title>Mappy McMapFace 🗺</title>
 </head>
 <body>
     <header>
@@ -14,17 +14,19 @@
     </header>
     <main>
         <div id="map">
+            <svg viewBox="0 0 100 100" id="map-lines">
+                
+            </svg>
         </div>
     </main>
 </body>
 
 <script>
+    const allPoints = []
     % for index, point in enumerate(points):
-    placePoint("point{{index}}", {{point[0]}}, {{point[1]}})
+    allPoints.push([{{point[0]}}, {{point[1]}}])
     % end
-    % for edge in edges:
-    placeEdgeBetweenPoints("point{{edge[0]}}", "point{{edge[1]}}")
-    % end
+    placeAllPoints(allPoints)
 </script>
 
 </html>

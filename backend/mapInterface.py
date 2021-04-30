@@ -9,16 +9,12 @@ HOST_PROPERTIES = {
 @route('/')
 def index():
     templateKeyValue = dict(
+        # Where has the mower gone in chronological order.
+        # (X, Y)
         points = [
-            (100, 54),
-            (31, 100),
-            (55, 9)
-        ],
-        # How the edges would be connected
-        # points[0] ➡ points[2] ➡ points[1]
-        edges = [
-            (0, 2),
-            (2, 1)
+            (2, 5),
+            (10, 32),
+            (10, 50)
         ]
     )
 

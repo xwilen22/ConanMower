@@ -25,8 +25,9 @@ html, body {
     width: 1em;
 }
 .map-edge {
-    position: relative;
+    position: absolute;
     border-width: 2px;
+    width: 100%;
     background-color: var(--map-edge-colour);
     height: var(--map-edge-thickness);
 }
