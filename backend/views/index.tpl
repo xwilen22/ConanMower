@@ -24,7 +24,7 @@
 <script>
     const allPoints = []
     % for index, point in enumerate(points):
-    allPoints.push([{{point[0]}}, {{point[1]}}])
+    allPoints.push([{{point[0]}}, {{point[1]}}, "{{point[2]}}"])
     % end
     placeAllPoints(allPoints)
 </script>

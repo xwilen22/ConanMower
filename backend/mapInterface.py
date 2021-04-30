@@ -10,11 +10,12 @@ HOST_PROPERTIES = {
 def index():
     templateKeyValue = dict(
         # Where has the mower gone in chronological order.
-        # (X, Y)
+        # (X, Y, ByObstacle)
         points = [
-            (2, 5),
-            (10, 32),
-            (10, 50)
+            (10, 10, False),
+            (10, 32, True),
+            (50, 50, False),
+            (20, 70, False)
         ]
     )
 
