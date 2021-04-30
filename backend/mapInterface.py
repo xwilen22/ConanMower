@@ -7,6 +7,8 @@ HOST_PROPERTIES = {
     "name":"localhost"
 }
 
+# 10 CM bak
+
 @route('/')
 def index():
     testSession = pathSession.PathSession()
