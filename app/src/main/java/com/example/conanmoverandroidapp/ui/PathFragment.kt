@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.findNavController
+import com.example.conanmoverandroidapp.Globals
 import com.example.conanmoverandroidapp.R
 import com.example.conanmoverandroidapp.TraveledPath
 import com.google.firebase.database.*
@@ -18,7 +19,6 @@ import kotlinx.android.synthetic.main.path_fragment.*
 class PathFragment : Fragment() {
 
     private val TAG = "ReadData"
-    val traveledPathList = mutableListOf<TraveledPath>()
     private lateinit var database: DatabaseReference
 
     companion object {
@@ -39,18 +39,27 @@ class PathFragment : Fragment() {
         viewModel = ViewModelProviders.of(this).get(PathViewModel::class.java)
         // TODO: Use the ViewModel
         database = FirebaseDatabase.getInstance().reference;
+        readDataFromRealtimeDatabase()
+
+        btn_close.setOnClickListener {
+            val direction = PathFragmentDirections.actionPathFragmentToAutoFragment()
+            it.findNavController().navigate(direction)
+        }
+    }
+
+    private fun readDataFromRealtimeDatabase () {
         database.addValueEventListener(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
 
-                    val data = snapshot.children
+                    val data = snapshot.child("TraveledPath").children
 
                     data.forEach {
                         val traveledPath = it.getValue(TraveledPath::class.java)
-                        traveledPathList.add(traveledPath!!)
+                        Globals.traveledPathList.add(traveledPath!!)
                     }
 
-                    traveledPathList.forEach {
+                    Globals.traveledPathList.forEach {
                         Log.d(TAG, it.toString())
                     }
                 }
@@ -63,10 +72,6 @@ class PathFragment : Fragment() {
             }
 
         })
-        btn_close.setOnClickListener {
-            val direction = PathFragmentDirections.actionPathFragmentToAutoFragment()
-            it.findNavController().navigate(direction)
-        }
     }
 }
 

@@ -15,6 +15,7 @@ class Globals: Application() {
         var btReceiver: BluetoothReceiver = BluetoothReceiver()
         var bluetoothConnectedStatus: Boolean = false
         var bluetoothDiscoveringStatus: Boolean = false
+        var traveledPathList = mutableListOf<TraveledPath>()
 
         lateinit var appContext: Context
         lateinit var currentActivity: Activity
