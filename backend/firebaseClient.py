@@ -26,7 +26,6 @@ class FirebaseClient:
 
     ## This function is used to insert an item into the database.
     def insertItem(self, dataDict):
-        print("inserting into session id: ", self.sessionId)
         self.db.child(self.path).child(self.sessionId).push(dataDict)
         print("Inserted item.")
 
@@ -36,6 +35,5 @@ class FirebaseClient:
 
     ## This function checks if the mower just started a new session. If it did, a new session key is generated.
     def checkIfNewSession(self, session):
-        print("session flag: ", session)
         if(session == 1):
             self.sessionId = self.db.generate_key()

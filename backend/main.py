@@ -11,7 +11,6 @@ serialConnection = ms.SerialConnection(serialPort)
 
 while True:
     buffer = serialConnection.getBytesOnRecieve()
-    print("buffer: ", buffer)
     if buffer != None:
         mowerData = tpd.TraveledPathData(buffer).getDictionary()
         session = traveledPathClient.getSession(buffer)
