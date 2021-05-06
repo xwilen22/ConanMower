@@ -1,0 +1,5 @@
+<resources>
+    <declare-styleable name="pathcanvas">
+        <attr name="recenter" format="boolean" />
+    </declare-styleable>
+</resources>

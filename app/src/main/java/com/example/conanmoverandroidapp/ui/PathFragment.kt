@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.findNavController
 import com.example.conanmoverandroidapp.Globals
 import com.example.conanmoverandroidapp.PathCanvas
 import com.example.conanmoverandroidapp.R
@@ -23,7 +24,6 @@ class PathFragment :Fragment() {
     private val TAG = "ReadData"
     private lateinit var database: DatabaseReference
     private lateinit var viewModel: PathViewModel
-    private lateinit var canvas: PathCanvas
 
     companion object {
         fun newInstance() = PathFragment()
@@ -54,14 +54,11 @@ class PathFragment :Fragment() {
         viewModel = ViewModelProviders.of(this).get(PathViewModel::class.java)
         //canvas = PathCanvas(this.requireContext(),null)
         btn_close.setOnClickListener {
-            //val direction = PathFragmentDirections.actionPathFragmentToAutoFragment()
-            //it.findNavController().navigate(direction)
-            val x = Random.nextInt(0, 5) * Random.nextFloat()
-            val y = Random.nextInt(0, 5) * Random.nextFloat()
-            val x2 = Random.nextInt(0, 5) * Random.nextFloat()
-            val y2 = Random.nextInt(0, 5) * Random.nextFloat()
-            //canvas.drawFromAttributes(x, y, x2, y2)
+            val direction = PathFragmentDirections.actionPathFragmentToAutoFragment()
+            it.findNavController().navigate(direction)
+
         }
+
     }
 
     private fun readDataFromRealtimeDatabase () {
