@@ -8,5 +8,14 @@ data class TraveledPath(
     var CurrentAngle: Int = 0,
     var StoppedByObstacle: Int = 0,
     var TraveledDistance: Int = 0
+)
 
+data class TraveledPathSession(
+    // TODO: Add more info about session
+    var traveledPaths: MutableList<TraveledPath>
+)
+
+data class Coordinates(
+    var xCoordinate: Float,
+    var yCoordinate: Float
 )

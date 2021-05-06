@@ -4,9 +4,8 @@ import android.app.Activity
 import android.app.Application
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
-import java.util.*
+import androidx.lifecycle.LifecycleOwner
+import com.example.conanmoverandroidapp.ui.PathViewModel
 
 
 class Globals: Application() {
@@ -15,11 +14,13 @@ class Globals: Application() {
         var btReceiver: BluetoothReceiver = BluetoothReceiver()
         var bluetoothConnectedStatus: Boolean = false
         var bluetoothDiscoveringStatus: Boolean = false
-        var traveledPathList = mutableListOf<TraveledPath>()
+        var traveledPathSessionList = mutableListOf<TraveledPathSession>()
 
         lateinit var appContext: Context
         lateinit var currentActivity: Activity
         lateinit var bluetoothViewModel: BluetoothViewModel
+        lateinit var pathViewModel: PathViewModel
+        lateinit var pathLifeCycleOwner: LifecycleOwner
 
     }
 

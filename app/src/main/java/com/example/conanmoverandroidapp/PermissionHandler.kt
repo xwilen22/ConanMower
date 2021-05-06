@@ -76,10 +76,7 @@ class PermissionHandler {
 
         fun handleBluetoothPermissionStatus(callback: () -> Unit){
             afterPermissionsAllowed = callback
-            if (Globals.btAdapter == null) {
-                noBluetoothAdapterAlert()
-            }
-            else if (Globals.btAdapter?.isEnabled == false) {
+            if (Globals.btAdapter?.isEnabled == false) {
                 requestBluetoothTurnOn()
             }
             else {
@@ -91,13 +88,6 @@ class PermissionHandler {
                     afterPermissionsAllowed = null
                 }
             }
-        }
-
-        fun noBluetoothAdapterAlert() {
-            AlertDialog.Builder(Globals.currentActivity)
-                .setCancelable(false)
-                .setMessage(Globals.currentActivity.getString(R.string.no_adapter_error))
-                .setPositiveButton(Globals.currentActivity.getString(R.string.ok)) { _, _ -> }.show()
         }
 
         fun requestBluetoothTurnOn() {
