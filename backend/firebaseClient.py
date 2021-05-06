@@ -4,7 +4,6 @@ import data.traveledPath as tp
 
 ### This class handles the connection and each call to and from the database.
 class FirebaseClient:
-
     ## The constructor establishes a connection to the database and assigns an attribute for each 
     ## document used from the database. Right now, it's just the TraveledPath document.
     def __init__(self, collectionName):
@@ -38,5 +37,7 @@ class FirebaseClient:
         if(session == 1):
             self.sessionId = self.db.generate_key()
     
-    def getLatestSession():
-        pass
+    def getLatestSession(self):
+        return self.db.child(self.path).get().val()
+
+print(FirebaseClient("TraveledPath").getLatestSession())
