@@ -37,7 +37,7 @@ class FirebaseClient:
         if(session == 1):
             self.sessionId = self.db.generate_key()
     
-    def getLatestSession(self):
-        return self.db.child(self.path).get().val()
+    def getLatestSessionChildren(self):
+        return list(self.db.child(self.path).get().val().items())[0][1]
 
-print(FirebaseClient("TraveledPath").getLatestSession())
+print(FirebaseClient("TraveledPath").getLatestSessionList())
