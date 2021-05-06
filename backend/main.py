@@ -14,6 +14,6 @@ while True:
     if buffer != None:
         mowerData = tpd.TraveledPathData(buffer).getDictionary()
         session = traveledPathClient.getSession(buffer)
-        if(traveledPathClient.isNewSession(session)):
-            print("Mowerdata is: ", mowerData)
-            traveledPathClient.insertItem(mowerData)
+        traveledPathClient.checkIfNewSession(session)
+        print("Mowerdata is: ", mowerData)
+        traveledPathClient.insertItem(mowerData)
