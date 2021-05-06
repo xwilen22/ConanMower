@@ -31,9 +31,13 @@ class FirebaseClient:
         self.db.child(self.path).child(self.sessionId).push(dataDict)
         print("Inserted item.")
 
+    ## Returns 
+    def getSession(buffer):
+        return buffer[4]  
+
     ## This function checks if the mower just started a new session. If it did, a new session key is generated.
     def isNewSession(self, sessionFlag):
-
+        print("session flag: ", sessionFlag)
         if(sessionFlag == 1):
             self.sessionId = self.db.generate_key()
             return True

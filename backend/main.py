@@ -13,7 +13,7 @@ while True:
     buffer = serialConnection.getBytesOnRecieve()
     if buffer != None:
         mowerData = tpd.TraveledPathData(buffer).getDictionary()
-
-        if(traveledPathClient.newSession(buffer[4])): # buffer[4] is a flag from the mower to check if the mower just started a new session.
+        session = traveledPathClient.getSession(buffer)
+        if(traveledPathClient.newSession(session)):
             print("Mowerdata is: ", mowerData)
             traveledPathClient.insertItem(mowerData)
