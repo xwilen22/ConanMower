@@ -28,6 +28,7 @@ class SerialConnection():
             buffer.append( self.readByteToInt(2) ) # distance (centimeters)
             buffer.append( self.readByteToInt(1) ) # stopped because of obstacle
             buffer.append( self.readByteToInt(1) ) # flag for new session
+            print("buffer in serialiser: ", buffer)
             return buffer
 
         else:
