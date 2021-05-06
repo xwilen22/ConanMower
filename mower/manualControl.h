@@ -56,7 +56,7 @@ void readBT(struct Commands *command, MeBluetooth *bluetooth) {
 
 }
 
-void sendToRbp(MeSerial *piSerial, boolean turnLeft, int degree, uint16_t distance, boolean obstacle) {
+void sendToRbp(MeSerial *piSerial, boolean turnLeft, int degree, uint16_t distance, boolean obstacle, boolean newSession) {
 
   piSerial->write(254); // startbyte
   piSerial->write(turnLeft);
@@ -66,7 +66,7 @@ void sendToRbp(MeSerial *piSerial, boolean turnLeft, int degree, uint16_t distan
   piSerial->write(msb);
   piSerial->write(lsb);
   piSerial->write(obstacle);
-
+  piSerial->write(newSession);
 
 }
 

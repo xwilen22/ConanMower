@@ -26,6 +26,10 @@
 const int reverseLength = -10;
 const int minObstacleDistance = 5;
 
+bool newSession = false;
+bool turnLeft = true;
+bool obstacle = false;
+
 #define HEARTBEATTIMEOUT 4000
 
 MeEncoderOnBoard Encoder_1(SLOT1);
@@ -97,7 +101,6 @@ void setup() {
 
 void loop() {
 
-  
   if (bluetooth.available()) {
     readBT(&btCommand , &bluetooth);
   }
@@ -107,12 +110,12 @@ void loop() {
 
   if (bluetoothHeartbeat.isTimeout()) {
     // Bluetooth is not connected
-    //ledRing.fullCirlce(100, 0, 100);
-    //btCommand.command = MSTOP;
+    ledRing.fullCirlce(100, 0, 100);
+    btCommand.command = MSTOP;
   }
   else {
     //Bluetooth is connected
-    //ledRing.fullCirlce(0, 0, 100);
+    ledRing.fullCirlce(0, 0, 100);
   }
   if (btCommand.heartBeat) {
     bluetoothHeartbeat.beat();
@@ -121,7 +124,7 @@ void loop() {
   }
 
   delay(20); //Without delay bt commands are not handled right
-  
+
 }
 
 
@@ -138,6 +141,7 @@ void pathTaker(Commands command) {
 
     case AUTONOMOUS:
       if (command.type != prevType) {
+        newSession = true;
         autonomousSM = FORWARD;
         startMeasuring();
       }
@@ -164,27 +168,27 @@ void manualController(char command) {
   if (command != prevCommand) {
     switch (command) {
       case MFORWARD:
-        ledRing.fullCirlce(100, 100, 100); // White
+        //ledRing.fullCirlce(100, 100, 100); // White
         motor.moveSpeed(motorSpeed);
         break;
 
       case MREVERSE:
-        ledRing.fullCirlce(0, 0, 0); // Off
+        //ledRing.fullCirlce(0, 0, 0); // Off
         motor.moveSpeed(-motorSpeed);
         break;
 
       case MLEFT:
-        ledRing.fullCirlce(0, 0, 100); // Blue
+        //ledRing.fullCirlce(0, 0, 100); // Blue
         motor.turnLeft(motorSpeed);
         break;
 
       case MRIGHT:
-        ledRing.fullCirlce(100, 100, 0); // Yellow
+        //ledRing.fullCirlce(100, 100, 0); // Yellow
         motor.turnRight(motorSpeed);
         break;
 
       case MSTOP:
-        ledRing.fullCirlce(100, 0, 0); // Red
+        //ledRing.fullCirlce(100, 0, 0); // Red
         motor.brake();
         break;
 
@@ -207,10 +211,8 @@ void autonomousStateMachine() {
   switch (autonomousSM) {
     case FORWARD:
       motor.moveSpeed(motorSpeed);
-
-      bool obstacle;
   
-      if (isObstacle() || isLine()) {
+      if ( (obstacle = isObstacle()) || isLine()) {
         motor.brake();
         delay(50);
         distance = getDistance();
@@ -260,7 +262,8 @@ void autonomousStateMachine() {
         startMeasuring();
         autonomousSM = FORWARD;
 
-        sendToRbp(&piSerial, true, angleTurned, distance, false);
+        sendToRbp(&piSerial, turnLeft, angleTurned, distance, obstacle, newSession);
+        newSession = false;
 
       }
       break;

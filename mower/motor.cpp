@@ -12,11 +12,11 @@ Motor::Motor(int pwmMotor1, int dir_M1_1, int dir_M1_2, int pwmMotor2, int dir_M
   _dir_M2_1 = dir_M2_1;
   _dir_M2_2 = dir_M2_2;
 
-  pinMode(_pwmMotor1, OUTPUT);   //We have to set PWM pin as output
-  pinMode(_dir_M1_1, OUTPUT); //Logic pins are also set as output
+  pinMode(_pwmMotor1, OUTPUT);
+  pinMode(_dir_M1_1, OUTPUT);
   pinMode(_dir_M1_2, OUTPUT);
-  pinMode(_pwmMotor2, OUTPUT);   //We have to set PWM pin as output
-  pinMode(_dir_M2_1, OUTPUT); //Logic pins are also set as output
+  pinMode(_pwmMotor2, OUTPUT);
+  pinMode(_dir_M2_1, OUTPUT);
   pinMode(_dir_M2_2, OUTPUT);
 }
 
