@@ -37,7 +37,7 @@ class FirebaseClient:
         return buffer[4]
 
     ## This function checks if the mower just started a new session. If it did, a new session key is generated.
-    def checkIfNewSession(self, sessionFlag):
-        print("session flag: ", sessionFlag)
+    def checkIfNewSession(self, session):
+        print("session flag: ", session)
         if(sessionFlag == 1):
             self.sessionId = self.db.generate_key()
