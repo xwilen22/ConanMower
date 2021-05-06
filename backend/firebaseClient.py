@@ -2,6 +2,8 @@ import pyrebase
 import datetime
 import data.traveledPath as tp
 
+import datetime
+
 ### This class handles the connection and each call to and from the database.
 class FirebaseClient:
 
@@ -20,13 +22,20 @@ class FirebaseClient:
         firebase = pyrebase.initialize_app(firebaseConfig)
 
         self.db = firebase.database()
-        
         self.path = collectionName
-        #self._documentTraveledPath = self.db.child(str(collectionName))
 
         print("Connected to client.")
 
     ## This function is used to insert an item into the database.
-    def InsertItem(self, dataDict):        
-        self.db.child(self.path).push(dataDict)
+    def insertItem(self, dataDict):        
+        self.db.child(self.path).child(self.sessionId).push(dataDict)
         print("Inserted item.")
+
+    ## This function checks if the mower just started a new session. If it did, a new session key is generated.
+    def isNewSession(self, sessionFlag):
+
+        if(sessionFlag == 1):
+            self.sessionId = self.db.generate_key()
+            return True
+        else:
+            return False
