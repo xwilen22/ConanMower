@@ -37,3 +37,6 @@ class FirebaseClient:
     def checkIfNewSession(self, session):
         if(session == 1):
             self.sessionId = self.db.generate_key()
+    
+    def getLatestSession():
+        pass
