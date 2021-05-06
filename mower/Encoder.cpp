@@ -48,3 +48,7 @@ long Encoder::getDistanceRight() {
 int Encoder::getAngleLeft() {
   return abs(posLeft / DEGREEPULSES);
 }
+
+int Encoder::getAngleRight() {
+  return abs(posRight / DEGREEPULSES);
+}

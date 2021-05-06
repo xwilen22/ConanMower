@@ -149,6 +149,20 @@ class Encoder
     **/
     int getAngleLeft();
 
+    /**
+        \Function
+
+        \Description
+
+        \Param[in]
+
+        \Ouput
+
+        \Return
+
+        \Others
+    **/
+    int getAngleRight();
 
   private:
     long posLeft;

@@ -96,6 +96,7 @@ void setup() {
 
 
 void loop() {
+
   
   if (bluetooth.available()) {
     readBT(&btCommand , &bluetooth);
@@ -106,12 +107,12 @@ void loop() {
 
   if (bluetoothHeartbeat.isTimeout()) {
     // Bluetooth is not connected
-    ledRing.fullCirlce(100, 0, 100);
-    btCommand.command = MSTOP;
+    //ledRing.fullCirlce(100, 0, 100);
+    //btCommand.command = MSTOP;
   }
   else {
     //Bluetooth is connected
-    ledRing.fullCirlce(0, 0, 100);
+    //ledRing.fullCirlce(0, 0, 100);
   }
   if (btCommand.heartBeat) {
     bluetoothHeartbeat.beat();
@@ -209,13 +210,13 @@ void autonomousStateMachine() {
 
       bool obstacle;
   
-      if ((obstacle = isObstacle()) || isLine()) {
+      if (isObstacle() || isLine()) {
         motor.brake();
         delay(50);
         distance = getDistance();
         //bluetooth.println(String(distance) + "\tcm");
         
-        //startMeasuring();
+        startMeasuring();
 
         autonomousSM = REVERSE;
         delay(50);
@@ -230,8 +231,8 @@ void autonomousStateMachine() {
       //        motor.brake();
       //        autonomousSM = FORWARD;
       //      }
+      
       if (getDistance() <= reverseLength) {
-
         motor.brake();
         delay(50);
         //int reverseDistance = getDistance();
@@ -256,11 +257,10 @@ void autonomousStateMachine() {
 
         motor.brake();
         delay(50);
-        bluetooth.println(String(turnAngle) + "\tdegrees");
         startMeasuring();
         autonomousSM = FORWARD;
 
-        sendToRbp(&piSerial, true, angleTurned, distance, obstacle);
+        sendToRbp(&piSerial, true, angleTurned, distance, false);
 
       }
       break;
@@ -274,11 +274,11 @@ void startMeasuring() {
 }
 
 int getDistance() {
-  return encoder.getDistanceLeft();
+  return ( encoder.getDistanceLeft() + encoder.getDistanceRight() ) / 2;
 }
 
 int getAngle() {
-  return encoder.getAngleLeft();
+  return ( encoder.getAngleLeft() + encoder.getAngleRight() ) / 2;
 }
 
 bool isLine() {
