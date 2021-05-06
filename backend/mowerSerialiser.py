@@ -11,13 +11,13 @@ class SerialConnection():
         self.port.flush()
 
     ## reads the first value in the buffer and parse it to an int. It returns an integer.
-    def readByteToInt(self, nrOfBytes, endian=sys.byteorder):
+    def readByteToInt(self, nrOfBytes, endian='big'):
         return int.from_bytes(self.port.read(nrOfBytes), byteorder=endian)
 
     ## This method reads the data coming in from the arduino and returns it as a list.
     def getBytesOnRecieve(self):
         startByte = 254
-        expectedNrOfBytes = 6 # expecting 7, but one is read right away
+        expectedNrOfBytes = 6
         buffer = []
 
         if self.port.inWaiting() >= expectedNrOfBytes and self.readByteToInt(1) == startByte:
