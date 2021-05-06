@@ -71,13 +71,15 @@ class PathCanvas(context: Context, attributeSet: AttributeSet?) : View(context) 
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        /* Place the starting point at the bottom left instead of upper left corner */
+        canvas.scale(1f, -1f, width / 2f, height / 2f)
         canvas.drawPath(path, paint)
     }
 
     private fun drawPathOnCanvas(){
         var startCoordinates = Coordinates(0.toFloat(), 0.toFloat())
         Globals.traveledPathSessionList[0].traveledPaths.forEach {
-            // Parse each data point
+            /* Parse each data point */
             val stopCoordinates = parseToCoordinates(
                 startCoordinates.xCoordinate,
                 startCoordinates.yCoordinate,
@@ -85,7 +87,7 @@ class PathCanvas(context: Context, attributeSet: AttributeSet?) : View(context) 
                 it.TraveledDistance
             )
 
-            // Update UI
+            /* Update UI */
             onUpdatePath(
                 startCoordinates.xCoordinate,
                 startCoordinates.yCoordinate,
@@ -94,7 +96,7 @@ class PathCanvas(context: Context, attributeSet: AttributeSet?) : View(context) 
                 //it.StoppedByObstacle
             )
 
-            // Set new start coordinates from this data point, for the next data point
+            /* Set new start coordinates from this data point, for the next data point */
             startCoordinates = Coordinates(
                 stopCoordinates.xCoordinate,
                 stopCoordinates.yCoordinate
