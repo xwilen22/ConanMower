@@ -2,8 +2,6 @@ import pyrebase
 import datetime
 import data.traveledPath as tp
 
-import datetime
-
 ### This class handles the connection and each call to and from the database.
 class FirebaseClient:
 
