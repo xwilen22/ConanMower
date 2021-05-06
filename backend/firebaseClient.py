@@ -31,11 +31,11 @@ class FirebaseClient:
         print("Inserted item.")
 
     ## Returns a flag from the mower to check if the mower just started a new session.
-    def getSession(buffer):
+    def getSession(self, buffer):
         return buffer[4]
 
     ## This function checks if the mower just started a new session. If it did, a new session key is generated.
     def checkIfNewSession(self, session):
         print("session flag: ", session)
-        if(sessionFlag == 1):
+        if(session == 1):
             self.sessionId = self.db.generate_key()

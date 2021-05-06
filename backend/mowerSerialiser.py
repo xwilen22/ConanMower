@@ -24,6 +24,8 @@ class SerialConnection():
 
         print("current byte: ", currentByte)
 
+        print("currently in queue: ", self.port.inWaiting())
+
         if self.port.inWaiting() >= expectedNrOfBytes and currentByte == startByte:
             buffer.append( self.readByteToInt(1) ) # turned left
             buffer.append( self.readByteToInt(1) ) # relative turn (degrees)
