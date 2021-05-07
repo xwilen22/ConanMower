@@ -14,7 +14,8 @@ def getCurrentPoints():
     currentSessionNodes = firebaseClient.FirebaseClient("TraveledPath").getLatestSessionChildren()
 
     localSession = pathSession.PathSession()
-    allPoints = []
+    # (X, Y, ByObstacle)
+    allPoints = [localSession.getFirstPoint()]
 
     for traveledPathNode in currentSessionNodes:
         allPoints.append(localSession.getPointByTraveledData(traveledPathNode))
@@ -24,8 +25,7 @@ def getCurrentPoints():
 @route('/')
 def index():
     templateKeyValue = dict(
-        # Where has the mower gone in chronological order.
-        # (X, Y, ByObstacle)
+        # Where has the mower has gone in chronological order.
         points = getCurrentPoints()
     )
 
