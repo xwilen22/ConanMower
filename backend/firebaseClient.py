@@ -55,7 +55,7 @@ class FirebaseClient:
             self.sessionId = self.db.generate_key()
     
     def getLatestSessionChildren(self):
-        retrievedDictionary = list(self.db.child(self.path).get().val().items())[0][1]
+        retrievedDictionary = list(self.db.child(self.path).get().val().items())[2][1]
         returningList = [
             parseSessionToDataClass(item) for key, item in retrievedDictionary.items()
         ]
