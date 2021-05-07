@@ -79,7 +79,7 @@ class PathCanvas(context: Context, attributeSet: AttributeSet?) : View(context) 
 
     private fun drawPathOnCanvas(){
         var startCoordinates = Coordinates(width.toFloat()/2, height.toFloat()/2)
-        Globals.traveledPathSessionList[0].traveledPaths.forEach {
+        Globals.traveledPathSessionList[1].traveledPaths.forEach {
             // Parse each data point
             val stopCoordinates = parseToCoordinates(
                 startCoordinates.xCoordinate,
@@ -123,8 +123,7 @@ class PathCanvas(context: Context, attributeSet: AttributeSet?) : View(context) 
 
         // TODO: Adjust distance depending on screen-size
        /// var relativeDistance
-        updateRelativeFactor(oldX.toInt(),oldY.toInt())
-        /*TODO: Handle possible 0s in oldX and oldY as to not divide with 0*/
+       // updateRelativeFactor(oldX.toInt(),oldY.toInt())
         //updateRelativeFactor(oldX.toInt(), oldY.toInt())
         /*GETS THE NUMBER OF PATHS THAT CAN FIT ON THE X-AXIS, div it with a good number*/
         //var relativeWidth = Math.floorDiv(width,distance) / relativeFactor
@@ -146,7 +145,7 @@ class PathCanvas(context: Context, attributeSet: AttributeSet?) : View(context) 
         }
 
     }
-    
+
 
 
     }
