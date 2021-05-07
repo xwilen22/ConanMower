@@ -1,7 +1,3 @@
-window.addEventListener("load", (event) => {
-
-})
-
 const SVG_NAMESPACE = "http://www.w3.org/2000/svg"
 
 function placeAllPoints(pointList) {
@@ -20,10 +16,19 @@ function placeAllPoints(pointList) {
 
         polyLinePathString += `${xPosition},${yPosition} `
 
-        if(index != pointList.length - 1) {
-            allSvgPoints.push(getPointGraphic(xPosition, yPosition, isObstaclePoint))
-        } else {
-            allSvgPoints.push(getMowerGraphic(xPosition, yPosition))
+        switch(index) {
+            //Start graphic
+            case 0:
+                allSvgPoints.push(getStartGraphic(xPosition, yPosition))
+                break
+            //End graphic
+            case pointList.length - 1:
+                allSvgPoints.push(getMowerGraphic(xPosition, yPosition))
+                break
+            //Default graphic between end and start
+            default:
+                allSvgPoints.push(getPointGraphic(xPosition, yPosition, isObstaclePoint))
+                break
         }
     });
 
@@ -49,7 +54,7 @@ function getPointGraphic(xPosition, yPosition, isObstaclePoint) {
 
     return point
 }
-
+// Constructs a triangle to represents the mower
 function getMowerGraphic(xPosition, yPosition) {
     let mowerPoint = document.createElementNS(SVG_NAMESPACE, "polygon")
 
@@ -64,10 +69,23 @@ function getMowerGraphic(xPosition, yPosition) {
     for(let polyPoint of trianglePolygonPoints) {
         polygonPointString += `${polyPoint[0]},${polyPoint[1]} `
     }
+
     mowerPoint.setAttribute("points", polygonPointString)
     mowerPoint.setAttribute("r", 1)
     mowerPoint.setAttribute("stroke", "black")
     mowerPoint.setAttribute("fill", "white")
 
     return mowerPoint
+}
+
+function getStartGraphic(xPosition, yPosition) {
+    let point = document.createElementNS(SVG_NAMESPACE, "circle")
+    
+    point.setAttribute("cx", xPosition)
+    point.setAttribute("cy", yPosition)
+    point.setAttribute("r", 2)
+    point.setAttribute("stroke", "black")
+    point.setAttribute("fill", "green")
+
+    return point
 }
