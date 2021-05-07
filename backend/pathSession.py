@@ -1,8 +1,8 @@
 import data.traveledPath as traveledPath
 import math
 # X, Y
-INITIAL_X = 60
-INITIAL_Y = 30
+INITIAL_X = 0
+INITIAL_Y = 0
 INITIAL_POINT_TUPLE = (INITIAL_X, INITIAL_Y)
 INITIAL_START_ANGLE = 0
 

@@ -15,7 +15,7 @@
     </header>
     <main>
         <div id="map">
-            <svg viewBox="0 0 100 100" id="map-lines">
+            <svg viewBox="{{mapCenterPoint[0]}} {{mapCenterPoint[1]}} {{mapSize[0]}} {{mapSize[1]}}" id="map-lines">
                 
             </svg>
         </div>
@@ -30,7 +30,6 @@
     placeAllPoints(allPoints)
 
     refreshPage()
-
 </script>
 
 </html>
