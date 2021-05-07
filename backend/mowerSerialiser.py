@@ -1,6 +1,5 @@
 import serial
 import sys
-import data.traveledPath as traveledPathData
 
 ### This class sets up and handles a serial connection between the Raspberry and the mower. 
 class SerialConnection():
@@ -27,6 +26,5 @@ class SerialConnection():
             buffer.append( self.readByteToInt(1) ) # stopped because of obstacle
             buffer.append( self.readByteToInt(1) ) # flag for new session
             return buffer
-
         else:
             return None
