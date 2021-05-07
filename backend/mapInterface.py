@@ -33,4 +33,4 @@ def send_static(filename):
     return static_file(filename, root='./public')
 
 webbrowser.open('http://localhost:8080', new=1)
-run(host=HOST_PROPERTIES["name"], port=HOST_PROPERTIES["port"], debug=True)
+run(host=HOST_PROPERTIES["name"], port=HOST_PROPERTIES["port"], debug=True, reloader=True, interval=1)

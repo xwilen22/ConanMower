@@ -12,27 +12,25 @@ class PathSession:
     def getPointByTraveledData(self, traveledPathData):
         self.currentAngle = (self.currentAngle + traveledPathData.currentAngle) % 360
         
-        #y = self.lastPoint[1] + math.sin(math.radians(self.currentAngle)) * traveledPathData.traveledDistance
-        #x = self.lastPoint[0] + math.cos(math.radians(self.currentAngle)) * traveledPathData.traveledDistance
-        
-        #x = self.lastPoint[0] + math.cos(traveledPathData.currentAngle) * traveledPathData.traveledDistance
-        # +Y +X
-        
+        currentAngleSin = math.sin(math.radians(self.currentAngle))
+        currentAngleCos = math.cos(math.radians(self.currentAngle))
+
+        # +Y +X 
         if 0 <= self.currentAngle <= 90:
-            y = self.lastPoint[1] + math.sin(math.radians(self.currentAngle)) * traveledPathData.traveledDistance
-            x = self.lastPoint[0] + math.cos(math.radians(self.currentAngle)) * traveledPathData.traveledDistance
+            y = self.lastPoint[1] + currentAngleSin * traveledPathData.traveledDistance
+            x = self.lastPoint[0] + currentAngleCos * traveledPathData.traveledDistance
         # +Y -X
-        elif 90 <self.currentAngle <= 180:
-            y = self.lastPoint[1] - math.sin(math.radians(self.currentAngle)) * traveledPathData.traveledDistance
-            x = self.lastPoint[0] + math.cos(math.radians(self.currentAngle)) * traveledPathData.traveledDistance
+        elif 90 < self.currentAngle <= 180:
+            y = self.lastPoint[1] - currentAngleSin * traveledPathData.traveledDistance
+            x = self.lastPoint[0] + currentAngleCos * traveledPathData.traveledDistance
         # -Y -X
         elif 180 < self.currentAngle < 270:
-            y = self.lastPoint[1] - math.sin(math.radians(self.currentAngle)) * traveledPathData.traveledDistance
-            x = self.lastPoint[0] - math.cos(math.radians(self.currentAngle)) * traveledPathData.traveledDistance
+            y = self.lastPoint[1] - currentAngleSin * traveledPathData.traveledDistance
+            x = self.lastPoint[0] - currentAngleCos * traveledPathData.traveledDistance
         # -Y +X
         else:
-            y = self.lastPoint[1] + math.sin(math.radians(self.currentAngle)) * traveledPathData.traveledDistance
-            x = self.lastPoint[0] - math.cos(math.radians(self.currentAngle)) * traveledPathData.traveledDistance
+            y = self.lastPoint[1] + currentAngleSin * traveledPathData.traveledDistance
+            x = self.lastPoint[0] - currentAngleCos * traveledPathData.traveledDistance
         
         self.lastPoint = (x, y)
         print("New last point ", self.lastPoint)
