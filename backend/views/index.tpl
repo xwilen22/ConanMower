@@ -11,12 +11,13 @@
 </head>
 <body>
     <header>
-        <h1>ConanMower - Current traveled path</h1>
+        <h1>Conan Mower - Traveled path</h1>
     </header>
     <main>
         <div id="map">
             <svg viewBox="{{mapCenterPoint[0]}} {{mapCenterPoint[1]}} {{mapSize[0]}} {{mapSize[1]}}" id="map-lines"></svg>
         </div>
+        <p>Refreshing map in <span id="logic-time-left"></span> sec.</p>
     </main>
 </body>
 

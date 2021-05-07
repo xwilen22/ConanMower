@@ -1,17 +1,32 @@
+@font-face {
+    font-family: 'Roboto';
+    src: url('fonts/Roboto.ttf');
+}
 :root {
     --map-size: 500px;
+    --background-color: #2b2b2b;
+    --map-background-color: #3a3a3a;
 }
 html, body {
+    background-color: var(--background-color);
+
     padding: 0;
     margin: 0;
-    height: 100vh;
-    width: 100vw;
+
+    height: 100%;
+    width: 100%;
+}
+h1 {
+    color: white;
+    text-align: center;
+    font-family: 'Roboto';
 }
 #map {
-    background-image: url("bg.gif");
-    background-color: green;
+    /*background-image: url("bg.gif");*/
+    background-color: var(--map-background-color);
     height: var(--map-size);
     width: var(--map-size);
+
     margin-left: auto;
     margin-right: auto;
 }
