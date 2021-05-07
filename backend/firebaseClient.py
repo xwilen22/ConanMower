@@ -1,10 +1,26 @@
 import pyrebase
 import datetime
+
 import data.traveledPath as tp
+
+def parseSessionToDataClass(sessionItem):
+    angleChange = sessionItem['CurrentAngle']
+
+    stringFormat = "%Y-%m-%d %H:%M:%S"
+    endTimeDateTime = datetime.datetime.strptime(sessionItem['EndTime'][0:19], stringFormat)
+    
+    stoppedByObstacle = sessionItem['StoppedByObstacle'] == 1
+    traveledDistance = sessionItem['TraveledDistance']
+
+    turnedLeft = angleChange < 0
+
+    returningTraveledPathData = tp.TraveledPathData(None, turnedLeft=turnedLeft, angleChange=angleChange, traveledDistance=traveledDistance, stoppedByObstacle=stoppedByObstacle)
+    returningTraveledPathData.overrideTimeStamp(endTimeDateTime)
+
+    return returningTraveledPathData
 
 ### This class handles the connection and each call to and from the database.
 class FirebaseClient:
-
     ## The constructor establishes a connection to the database and assigns an attribute for each 
     ## document used from the database. Right now, it's just the TraveledPath document.
     def __init__(self, collectionName):
@@ -37,3 +53,12 @@ class FirebaseClient:
     def checkIfNewSession(self, session):
         if(session == 1):
             self.sessionId = self.db.generate_key()
+    
+    def getLatestSessionChildren(self):
+        retrievedDictionary = list(self.db.child(self.path).get().val().items())[0][1]
+        returningList = [
+            parseSessionToDataClass(item) for key, item in retrievedDictionary.items()
+        ]
+        return returningList
+
+print(FirebaseClient("TraveledPath").getLatestSessionChildren())
