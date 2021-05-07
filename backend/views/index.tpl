@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="public/main.css" type="text/css">
     <script src="public/mowerMap.js"></script>
+    <script src="public/refreshUserPage.js"></script>
     <title>Mappy McMapFace 🗺</title>
 </head>
 <body>
@@ -27,6 +28,9 @@
     allPoints.push([{{point[0]}}, {{point[1]}}, "{{point[2]}}"])
     % end
     placeAllPoints(allPoints)
+
+    refreshPage()
+
 </script>
 
 </html>
