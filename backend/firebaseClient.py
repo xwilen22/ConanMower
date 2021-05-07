@@ -3,17 +3,21 @@ import datetime
 
 import data.traveledPath as tp
 
-def parseSessionToDataClass(sessionItem, lastAngle = 0):
+def parseSessionToDataClass(sessionItem):
     angleChange = sessionItem['CurrentAngle']
 
     stringFormat = "%Y-%m-%d %H:%M:%S"
     endTimeDateTime = datetime.datetime.strptime(sessionItem['EndTime'][0:19], stringFormat)
     
-    stoppedByObstacle = sessionItem['StoppedByObstacle']
+    stoppedByObstacle = sessionItem['StoppedByObstacle'] == 1
     traveledDistance = sessionItem['TraveledDistance']
 
+    turnedLeft = angleChange < 0
 
-    returningTraveledPathData = tp.TraveledPathData(None)
+    returningTraveledPathData = tp.TraveledPathData(None, turnedLeft=turnedLeft, angleChange=angleChange, traveledDistance=traveledDistance, stoppedByObstacle=stoppedByObstacle)
+    returningTraveledPathData.overrideTimeStamp(endTimeDateTime)
+
+    return returningTraveledPathData
 
 ### This class handles the connection and each call to and from the database.
 class FirebaseClient:
