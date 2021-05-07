@@ -20,13 +20,20 @@ class FirebaseClient:
         firebase = pyrebase.initialize_app(firebaseConfig)
 
         self.db = firebase.database()
-        
         self.path = collectionName
-        #self._documentTraveledPath = self.db.child(str(collectionName))
 
         print("Connected to client.")
 
     ## This function is used to insert an item into the database.
-    def InsertItem(self, dataDict):        
-        self.db.child(self.path).push(dataDict)
+    def insertItem(self, dataDict):
+        self.db.child(self.path).child(self.sessionId).push(dataDict)
         print("Inserted item.")
+
+    ## Returns a flag from the mower to check if the mower just started a new session.
+    def getSession(self, buffer):
+        return buffer[4]
+
+    ## This function checks if the mower just started a new session. If it did, a new session key is generated.
+    def checkIfNewSession(self, session):
+        if(session == 1):
+            self.sessionId = self.db.generate_key()

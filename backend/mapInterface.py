@@ -1,6 +1,7 @@
 from data.traveledPath import TraveledPathData
-import pathSession
+import pathSession, pyrebase
 from bottle import route, run, template, static_file
+
 
 HOST_PROPERTIES = {
     "port":8080,
@@ -8,20 +9,23 @@ HOST_PROPERTIES = {
 }
 
 # 10 CM bak
+def getCurrentPoints():
+    testSession = pathSession.PathSession()
+    return [
+        testSession.getPointByTraveledData(TraveledPathData(None, True, 20, 10, True)),
+        testSession.getPointByTraveledData(TraveledPathData([True, 20, 10, True])),
+        testSession.getPointByTraveledData(TraveledPathData([True, 20, 10, True])),
+        testSession.getPointByTraveledData(TraveledPathData([True, 20, 10, True])),
+        testSession.getPointByTraveledData(TraveledPathData([False, 274, 13, False])),
+        testSession.getPointByTraveledData(TraveledPathData([False, 50, 30, False]))
+    ]
 
 @route('/')
 def index():
-    testSession = pathSession.PathSession()
-
     templateKeyValue = dict(
         # Where has the mower gone in chronological order.
         # (X, Y, ByObstacle)
-        points = [
-            testSession.getPointByTraveledData(TraveledPathData([True, 0, 30, True])),
-            testSession.getPointByTraveledData(TraveledPathData([False, 0, 30, False])),
-            testSession.getPointByTraveledData(TraveledPathData([False, 0, 30, False])),
-            testSession.getPointByTraveledData(TraveledPathData([True, 0, 30, False]))
-        ]
+        points = getCurrentPoints()
     )
 
     return template('index', templateKeyValue)
