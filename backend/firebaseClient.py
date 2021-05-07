@@ -12,9 +12,9 @@ def parseSessionToDataClass(sessionItem):
     stoppedByObstacle = sessionItem['StoppedByObstacle'] == 1
     traveledDistance = sessionItem['TraveledDistance']
 
-    turnedLeft = angleChange < 0
-
-    returningTraveledPathData = tp.TraveledPathData(None, turnedLeft=turnedLeft, angleChange=angleChange, traveledDistance=traveledDistance, stoppedByObstacle=stoppedByObstacle)
+    returningTraveledPathData = tp.TraveledPathData(None, turnedLeft=False, angleChange=0, traveledDistance=traveledDistance, stoppedByObstacle=stoppedByObstacle)
+    
+    returningTraveledPathData.overrideAngle(angleChange)
     returningTraveledPathData.overrideTimeStamp(endTimeDateTime)
 
     return returningTraveledPathData
@@ -60,5 +60,3 @@ class FirebaseClient:
             parseSessionToDataClass(item) for key, item in retrievedDictionary.items()
         ]
         return returningList
-
-print(FirebaseClient("TraveledPath").getLatestSessionChildren())

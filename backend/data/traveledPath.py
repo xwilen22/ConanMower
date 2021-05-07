@@ -23,7 +23,8 @@ class TraveledPathData:
 
     def overrideTimeStamp(self, dateTimeStamp):
         self.endTime = dateTimeStamp
-
+    def overrideAngle(self, newAngle):
+        self.currentAngle = newAngle
     ## This function returns a dictionary consisting of each attribute used in the traveled path document in the database.
     def getDictionary(self):
         return {

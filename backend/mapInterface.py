@@ -1,6 +1,7 @@
 from data.traveledPath import TraveledPathData
-import pathSession, pyrebase
+import pathSession, pyrebase, firebaseClient
 from bottle import route, run, template, static_file
+
 import webbrowser
 
 HOST_PROPERTIES = {
@@ -10,13 +11,15 @@ HOST_PROPERTIES = {
 
 # 10 CM bak
 def getCurrentPoints():
-    testSession = pathSession.PathSession()
-    return [
-        testSession.getPointByTraveledData(TraveledPathData(None, True, 90, 10, True)),
-        testSession.getPointByTraveledData(TraveledPathData([True, 90, 10, True])),
-        testSession.getPointByTraveledData(TraveledPathData([True, 90, 10, True])),
-        testSession.getPointByTraveledData(TraveledPathData([True, 90, 10, True]))
-    ]
+    currentSessionNodes = firebaseClient.FirebaseClient("TraveledPath").getLatestSessionChildren()
+
+    localSession = pathSession.PathSession()
+    allPoints = []
+
+    for traveledPathNode in currentSessionNodes:
+        allPoints.append(localSession.getPointByTraveledData(traveledPathNode))
+
+    return allPoints
 
 @route('/')
 def index():
@@ -32,5 +35,5 @@ def index():
 def send_static(filename):
     return static_file(filename, root='./public')
 
-webbrowser.open('http://localhost:8080', new=1)
+# webbrowser.open('http://localhost:8080', new=1)
 run(host=HOST_PROPERTIES["name"], port=HOST_PROPERTIES["port"], debug=True, reloader=True, interval=1)
