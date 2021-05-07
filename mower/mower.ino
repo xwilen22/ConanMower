@@ -95,7 +95,7 @@ void loop() {
     readBT(&btCommand , &bluetooth);
   }
 
-  pathTaker(btCommand);
+  setState(btCommand);
 
 
   if (bluetoothHeartbeat.isTimeout()) {   // Bluetooth is not connected
@@ -115,7 +115,7 @@ void loop() {
 }
 
 
-void pathTaker(Commands command) {
+void setState(Commands command) {
 
   static unsigned char prevType = ' ';
 
