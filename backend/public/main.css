@@ -21,6 +21,11 @@ h1 {
     text-align: center;
     font-family: 'Roboto';
 }
+p {
+    color: white;
+    text-align: center;
+    font-family: 'Roboto';
+}
 #map {
     /*background-image: url("bg.gif");*/
     background-color: var(--map-background-color);
@@ -29,4 +34,28 @@ h1 {
 
     margin-left: auto;
     margin-right: auto;
+}
+p#timer-paragraph {
+    display: inline-block;
+    width: 15em;
+}
+#loading-bar {
+    display: block;
+    width: max-content;
+    margin-left: auto;
+    margin-right: auto;
+}
+#loading-bar .list-loading-bar {
+    text-decoration: none;
+    list-style: none;
+    display: inline-block;
+
+    padding: 0;
+}
+#loading-bar .list-loading-bar .element-load-block {
+    height: 1em;
+    width: 3em;
+    background-color: white;
+
+    display: inline-block;
 }

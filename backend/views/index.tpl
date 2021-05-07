@@ -17,7 +17,19 @@
         <div id="map">
             <svg viewBox="{{mapCenterPoint[0]}} {{mapCenterPoint[1]}} {{mapSize[0]}} {{mapSize[1]}}" id="map-lines"></svg>
         </div>
-        <p>Refreshing map in <span id="logic-time-left"></span> sec.</p>
+        <div id="loading-bar">
+            <ul class="list-loading-bar">
+                <li class="element-load-block"></li>
+                <li class="element-load-block"></li>
+                <li class="element-load-block"></li>
+            </ul>
+            <p id="timer-paragraph">Refreshing map in <span id="logic-time-left"></span> sec.</p>
+            <ul class="list-loading-bar">
+                <li class="element-load-block"></li>
+                <li class="element-load-block"></li>
+                <li class="element-load-block"></li>
+            </ul>
+        </div>
     </main>
 </body>
 
