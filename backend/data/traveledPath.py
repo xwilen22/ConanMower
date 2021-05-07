@@ -13,7 +13,7 @@ class TraveledPathData:
         turnedLeft = turnedLeft if turnedLeft is not None else data[0]
         angleChange = angleChange if angleChange is not None else data[1]
         # Positive if mower turned left. Negative when turning right.
-        currentAngle = angleChange if turnedLeft else angleChange * -1 
+        currentAngle = angleChange * -1 if turnedLeft else angleChange
 
         # Set parameters
         self.endTime = datetime.datetime.now()

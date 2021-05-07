@@ -11,7 +11,7 @@ class PathSession:
         self.lastPoint = INITIAL_POINT_TUPLE
     def getPointByTraveledData(self, traveledPathData):
         self.currentAngle = (self.currentAngle + traveledPathData.currentAngle) % 360
-        
+
         currentAngleSin = math.sin(math.radians(self.currentAngle))
         currentAngleCos = math.cos(math.radians(self.currentAngle))
 
