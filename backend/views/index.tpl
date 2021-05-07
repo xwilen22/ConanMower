@@ -14,7 +14,7 @@
     </header>
     <main>
         <div id="map">
-            <svg viewBox="0 0 100 100" id="map-lines">
+            <svg viewBox="0 0 300 300" id="map-lines">
                 
             </svg>
         </div>

@@ -17,10 +17,10 @@ def index():
         # Where has the mower gone in chronological order.
         # (X, Y, ByObstacle)
         points = [
-            testSession.getPointByTraveledData(TraveledPathData([True, 90, 20, False])),
-            testSession.getPointByTraveledData(TraveledPathData([True, 90, 20, True])),
-            testSession.getPointByTraveledData(TraveledPathData([True, 90, 20, False])),
-            testSession.getPointByTraveledData(TraveledPathData([True, 90, 20, True]))
+            testSession.getPointByTraveledData(TraveledPathData([True, 0, 30, True])),
+            testSession.getPointByTraveledData(TraveledPathData([False, 0, 30, False])),
+            testSession.getPointByTraveledData(TraveledPathData([False, 0, 30, False])),
+            testSession.getPointByTraveledData(TraveledPathData([True, 0, 30, False]))
         ]
     )
 
