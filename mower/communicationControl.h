@@ -52,8 +52,6 @@ void readBT(struct Commands *command, MeBluetooth *bluetooth) {
   while (bluetooth->available()) {
     bluetooth->read();
   }
-  
-
 }
 
 void sendToRbp(MeSerial *piSerial, boolean turnLeft, int degree, uint16_t distance, boolean obstacle, boolean newSession) {
@@ -69,6 +67,8 @@ void sendToRbp(MeSerial *piSerial, boolean turnLeft, int degree, uint16_t distan
   piSerial->write(newSession);
 
 }
+
+
 
 void debugOnRpi(MeSerial *piSerial, String msg) {
   piSerial->println(msg);

@@ -14,14 +14,14 @@
 #define MREVERSE 'B'
 #define HEARTBEAT 'd'
 
+#define HEARTBEATTIMEOUT 4000
+
 #include "heartbeat.h"
 #include "motor.h"
 #include "ledRing.h"
-#include "manualControl.h"
-#include "Encoder.h"
+#include "communicationControl.h"
+#include "motorEncoder.h"
 
-
-#define degreeTime 14 // calculated on 150 speed. 12v.  OLD
 
 const int reverseLength = -10;
 const int minObstacleDistance = 5;
@@ -29,23 +29,19 @@ const int minObstacleDistance = 5;
 bool newSession = false;
 bool turnLeft = true;
 bool obstacle = false;
-
-#define HEARTBEATTIMEOUT 4000
+int motorSpeed = 75;
 
 MeEncoderOnBoard Encoder_1(SLOT1);
 MeEncoderOnBoard Encoder_2(SLOT2);
-Encoder encoder = Encoder();
+MotorEncoder motorEncoder = MotorEncoder();
 
 Motor motor(11, 49, 48, 10, 47, 46);
-int motorSpeed = 75;
 
 MeBluetooth bluetooth(PORT_16);
 MeSerial piSerial(PORT_5);
 
 MeLineFollower lineFinder(PORT_10);
 MeUltrasonicSensor ultraSensor(PORT_9);
-//MeGyro gyro(1,0x69);
-//MeBuzzer buzzer;
 
 MeRGBLed led( 0, LEDNUM );
 LedRing ledRing(&led);
@@ -61,22 +57,21 @@ autonomousSM_t autonomousSM = FORWARD;
 
 struct Commands btCommand = {AUTONOMOUS, MSTOP};
 
-
 void isr_process_encoder1(void) {
   if (digitalRead(Encoder_1.getPortB()) == 0) {
-    encoder.addPulseRight();
+    motorEncoder.addPulseRight();
   }
   else {
-    encoder.subtractPulseRight();
+    motorEncoder.subtractPulseRight();
   }
 }
 
 void isr_process_encoder2(void) {
   if (digitalRead(Encoder_2.getPortB()) == 0) {
-    encoder.subtractPulseLeft();
+    motorEncoder.subtractPulseLeft();
   }
   else {
-    encoder.addPulseLeft();
+    motorEncoder.addPulseLeft();
   }
 }
 
@@ -90,12 +85,7 @@ void setup() {
   bluetooth.begin(115200);    //The factory default baud rate is 115200
   piSerial.begin(9600);
 
-  //buzzer.setpin(45);
-
-  //Serial2.begin(9600);
-
   ledRing.startUpBlink(50, 50 , 0);
-
 }
 
 
@@ -108,23 +98,20 @@ void loop() {
   pathTaker(btCommand);
 
 
-  if (bluetoothHeartbeat.isTimeout()) {
-    // Bluetooth is not connected
+  if (bluetoothHeartbeat.isTimeout()) {   // Bluetooth is not connected
     ledRing.fullCirlce(100, 0, 100);
     btCommand.command = MSTOP;
   }
-  else {
-    //Bluetooth is connected
+  else {                                  //Bluetooth is connected
     ledRing.fullCirlce(0, 0, 100);
   }
   if (btCommand.heartBeat) {
     bluetoothHeartbeat.beat();
     btCommand.heartBeat = false;
-    
+
   }
 
-  delay(20); //Without delay bt commands are not handled right
-
+  delay(20);                              //Without delay bt commands are not handled right
 }
 
 
@@ -136,14 +123,13 @@ void pathTaker(Commands command) {
 
     case MANUAL:
       manualController(command.command);
-
       break;
 
     case AUTONOMOUS:
       if (command.type != prevType) {
         newSession = true;
         autonomousSM = FORWARD;
-        startMeasuring();
+        motorEncoder.startMeasuring();
       }
       autonomousStateMachine();
       break;
@@ -168,27 +154,22 @@ void manualController(char command) {
   if (command != prevCommand) {
     switch (command) {
       case MFORWARD:
-        //ledRing.fullCirlce(100, 100, 100); // White
         motor.moveSpeed(motorSpeed);
         break;
 
       case MREVERSE:
-        //ledRing.fullCirlce(0, 0, 0); // Off
         motor.moveSpeed(-motorSpeed);
         break;
 
       case MLEFT:
-        //ledRing.fullCirlce(0, 0, 100); // Blue
         motor.turnLeft(motorSpeed);
         break;
 
       case MRIGHT:
-        //ledRing.fullCirlce(100, 100, 0); // Yellow
         motor.turnRight(motorSpeed);
         break;
 
       case MSTOP:
-        //ledRing.fullCirlce(100, 0, 0); // Red
         motor.brake();
         break;
 
@@ -204,42 +185,32 @@ void manualController(char command) {
 void autonomousStateMachine() {
 
   static int turnAngle = 30;
-  
   static int distance = 0;
   static int angleTurned = 0;
 
   switch (autonomousSM) {
     case FORWARD:
       motor.moveSpeed(motorSpeed);
-  
       if ( (obstacle = isObstacle()) || isLine()) {
         motor.brake();
         delay(50);
-        distance = getDistance();
-        //bluetooth.println(String(distance) + "\tcm");
-        
-        startMeasuring();
+        distance = motorEncoder.getDistance();
 
+        motorEncoder.startMeasuring();
+        
         autonomousSM = REVERSE;
         delay(50);
 
         motor.moveSpeed(-motorSpeed);
-
       }
       break;
 
     case REVERSE:
-      //      if (isLine() || isObstacle()) {
-      //        motor.brake();
-      //        autonomousSM = FORWARD;
-      //      }
-      
-      if (getDistance() <= reverseLength) {
+      if (motorEncoder.getDistance() <= reverseLength) {
         motor.brake();
         delay(50);
-        //int reverseDistance = getDistance();
-        //bluetooth.println(String(distance) + "\tcm");
-        startMeasuring();
+
+        motorEncoder.startMeasuring();
         autonomousSM = TURN;
         delay(50);
 
@@ -249,49 +220,29 @@ void autonomousStateMachine() {
       break;
 
     case TURN:
-      //      if (isLine() || isObstacle()) {
-      //        motor.brake();
-      //        autonomousSM = REVERSE;
-      //      }
-
-
-      if ((angleTurned = getAngle()) >= turnAngle) {
-
+      if ((angleTurned = motorEncoder.getAngle()) >= turnAngle) {
         motor.brake();
         delay(50);
-        startMeasuring();
+        
+        motorEncoder.startMeasuring();
         autonomousSM = FORWARD;
 
         sendToRbp(&piSerial, turnLeft, angleTurned, distance, obstacle, newSession);
         newSession = false;
-
       }
       break;
   }
 }
 
 
-void startMeasuring() {
-  encoder.startMeasureLeft();
-  encoder.startMeasureRight();
-}
 
-int getDistance() {
-  return ( encoder.getDistanceLeft() + encoder.getDistanceRight() ) / 2;
-}
-
-int getAngle() {
-  return ( encoder.getAngleLeft() + encoder.getAngleRight() ) / 2;
-}
 
 bool isLine() {
-  bool line = (lineFinder.readSensors() == S1_IN_S2_IN);
-  return line;
+  return (lineFinder.readSensors() == S1_IN_S2_IN);
 }
 
 bool isObstacle() {
-  bool obs = (ultraSensor.distanceCm() < minObstacleDistance);
-  return obs;
+  return (ultraSensor.distanceCm() < minObstacleDistance);
 }
 
 
