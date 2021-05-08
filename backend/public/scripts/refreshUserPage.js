@@ -1,4 +1,4 @@
-const TIME_UNTIL_REFRESH_SECONDS = 5
+const TIME_UNTIL_REFRESH_SECONDS = 6
 
 const LOADING_BLOCKS_PER_SIDE = 3
 
@@ -14,20 +14,34 @@ function refreshPageEvent(event) {
     
     const intervalHandle = setInterval(function() {
         secondsLeftSpan.innerText = --secondsLeft
+        
+        let precentageDone = secondsLeft / TIME_UNTIL_REFRESH_SECONDS
+        let barAmountGoal = Math.trunc(precentageDone * LOADING_BLOCKS_PER_SIDE)
 
-        //Removes one child from each loadingbar
-        for(let i = 0; i < loadingBarLists.length; i++) {
-            if(loadingBarLists[i].children.length > 0) {
-                loadingBarLists[i].removeChild(loadingBarLists[i].lastElementChild)
-            }
+        console.log(barAmountGoal)
+        while(loadingBarLists[0].children.length > barAmountGoal) {
+            removePointFromLoadingBar(loadingBarLists)
         }
         
         if(secondsLeft <= 0) {
+            // Removes the last one
+            removePointFromLoadingBar(loadingBarLists)
+            
             location = '/'
             clearInterval(intervalHandle)
             timerParagraph.innerText = "Refreshing..."
         }
     }, 1000)
+}
+
+// Removes one bar from the graphical loading indicator
+function removePointFromLoadingBar(loadingBarLists) {
+    //Removes one child from each loadingbar
+    for(let i = 0; i < loadingBarLists.length; i++) {
+        if(loadingBarLists[i].children.length > 0) {
+            loadingBarLists[i].removeChild(loadingBarLists[i].lastElementChild)
+        }
+    }
 }
 
 window.addEventListener("load", refreshPageEvent)
