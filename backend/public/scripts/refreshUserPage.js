@@ -8,22 +8,23 @@ function refreshPageEvent(event) {
     const loadingBarLists = document.getElementsByClassName("list-loading-bar")
     
     let secondsLeft = TIME_UNTIL_REFRESH_SECONDS
-    const blockSeconds = secondsLeft / LOADING_BLOCKS_PER_SIDE
 
     secondsLeftSpan.innerText = secondsLeft
     
-    setInterval(function() {
+    const intervalHandle = setInterval(function() {
         secondsLeft--
         secondsLeftSpan.innerText = secondsLeft
 
         //Removes one child from each loadingbar
-        if(loadingBarLists[0].children.length > 0 && loadingBarLists[1].children.length > 0) {
-            loadingBarLists[0].removeChild(loadingBarLists[0].lastElementChild)
-            loadingBarLists[1].removeChild(loadingBarLists[1].lastElementChild)
+        for(let i = 0; i < loadingBarLists.length; i++) {
+            if(loadingBarLists[i].children.length > 0) {
+                loadingBarLists[i].removeChild(loadingBarLists[i].lastElementChild)
+            }
         }
-
+        
         if(secondsLeft <= 0) {
             location = '/'
+            clearInterval(intervalHandle)
         }
     }, 1000)
 }
