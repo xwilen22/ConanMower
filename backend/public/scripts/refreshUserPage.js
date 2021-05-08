@@ -15,10 +15,9 @@ function refreshPageEvent(event) {
     const intervalHandle = setInterval(function() {
         secondsLeftSpan.innerText = --secondsLeft
         
-        let precentageDone = secondsLeft / TIME_UNTIL_REFRESH_SECONDS
-        let barAmountGoal = Math.trunc(precentageDone * LOADING_BLOCKS_PER_SIDE)
+        const percentageDone = secondsLeft / TIME_UNTIL_REFRESH_SECONDS
+        const barAmountGoal = Math.trunc(percentageDone * LOADING_BLOCKS_PER_SIDE)
 
-        console.log(barAmountGoal)
         while(loadingBarLists[0].children.length > barAmountGoal) {
             removePointFromLoadingBar(loadingBarLists)
         }
