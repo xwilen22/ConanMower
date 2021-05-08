@@ -6,14 +6,14 @@ const LOADING_BLOCKS_PER_SIDE = 3
 function refreshPageEvent(event) {
     const secondsLeftSpan = document.getElementById("logic-time-left")
     const loadingBarLists = document.getElementsByClassName("list-loading-bar")
-    
+    const timerParagraph = document.getElementById("timer-paragraph")
+
     let secondsLeft = TIME_UNTIL_REFRESH_SECONDS
 
     secondsLeftSpan.innerText = secondsLeft
     
     const intervalHandle = setInterval(function() {
-        secondsLeft--
-        secondsLeftSpan.innerText = secondsLeft
+        secondsLeftSpan.innerText = --secondsLeft
 
         //Removes one child from each loadingbar
         for(let i = 0; i < loadingBarLists.length; i++) {
@@ -25,6 +25,7 @@ function refreshPageEvent(event) {
         if(secondsLeft <= 0) {
             location = '/'
             clearInterval(intervalHandle)
+            timerParagraph.innerText = "Refreshing..."
         }
     }, 1000)
 }
