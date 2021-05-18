@@ -4,7 +4,6 @@ import android.R
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.Observer
 
@@ -22,7 +21,7 @@ class PathCanvas(context: Context, attributeSet: AttributeSet?) : View(context) 
     private var oldAngle = 0
 
 
-    /*The boarder from the edges we do not want to cross*/
+    /*The border from the edges we do not want to cross*/
     private var eventHorizon = 300
 
 
@@ -39,12 +38,10 @@ class PathCanvas(context: Context, attributeSet: AttributeSet?) : View(context) 
         paint.strokeWidth = 12f
         paint.style = Paint.Style.STROKE
 
-        val pathSessionsObserver = Observer<MutableList<TraveledPathSession>> {
-            drawPathOnCanvas()
+        val changedSessionSelection = Observer<Int> { position ->
+            drawPathOnCanvas(position)
         }
-
-        Globals.pathViewModel.traveledPathSessions.observe(Globals.pathLifeCycleOwner, pathSessionsObserver)
-        Globals.pathViewModel.readDataFromRealtimeDatabase()
+        Globals.pathViewModel.changedSessionSelection.observe(Globals.pathLifeCycleOwner, changedSessionSelection)
     }
 
 /*
@@ -76,10 +73,17 @@ class PathCanvas(context: Context, attributeSet: AttributeSet?) : View(context) 
         }
     }
 
+    private fun clearCanvas(){
+        obstacles.clear()
+        path.reset()
+        invalidate()
+    }
 
-    private fun drawPathOnCanvas(){
+    private fun drawPathOnCanvas(position: Int){
+        clearCanvas()
+
         var startCoordinates = Coordinates(width.toFloat()/2, height.toFloat()/2)
-        Globals.traveledPathSessionList[1].traveledPaths.forEach {
+        Globals.traveledPathSessionList[position].traveledPaths.forEach {
             // Parse each data point
             val stopCoordinates = parseToCoordinates(
                 startCoordinates.xCoordinate,
@@ -145,7 +149,4 @@ class PathCanvas(context: Context, attributeSet: AttributeSet?) : View(context) 
         }
 
     }
-
-
-
-    }
+}

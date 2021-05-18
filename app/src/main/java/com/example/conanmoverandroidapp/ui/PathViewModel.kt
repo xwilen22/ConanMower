@@ -17,6 +17,10 @@ class PathViewModel : ViewModel() {
         MutableLiveData<MutableList<TraveledPathSession>>()
     }
 
+    val changedSessionSelection: MutableLiveData<Int> by lazy {
+        MutableLiveData<Int>()
+    }
+
      fun readDataFromRealtimeDatabase () {
         val database = FirebaseDatabase.getInstance().reference
         database.addValueEventListener(object: ValueEventListener {
@@ -25,7 +29,7 @@ class PathViewModel : ViewModel() {
                     val data = snapshot.child("TraveledPath").children
 
                     data.forEach {
-                        val traveledPathSession = TraveledPathSession(mutableListOf())
+                        val traveledPathSession = TraveledPathSession(it.key!!, mutableListOf())
                         val traveledPaths = it.children
                         traveledPaths.forEach{ pathData ->
                             val traveledPath = pathData.getValue(TraveledPath::class.java)
@@ -36,7 +40,7 @@ class PathViewModel : ViewModel() {
                     traveledPathSessions.value = Globals.traveledPathSessionList
                 }
                 else{
-                    Log.d("ReadData", "snapshot does not exist")
+                    Log.d("ReadData", "Snapshot does not exist")
                 }
             }
 

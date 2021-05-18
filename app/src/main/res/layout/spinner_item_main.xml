@@ -1,0 +1,9 @@
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textSize="@dimen/text_button"
+    android:gravity="center_vertical|center_horizontal"
+    android:textColor="@color/white"
+    app:drawableRightCompat="@drawable/ic_arrow_drop_down_white" />

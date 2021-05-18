@@ -11,7 +11,7 @@ data class TraveledPath(
 )
 
 data class TraveledPathSession(
-    // TODO: Add more info about session
+    var sessionName: String,
     var traveledPaths: MutableList<TraveledPath>
 )
 
