@@ -2,11 +2,13 @@ from data.traveledPath import TraveledPathData
 import pathSession, pyrebase, firebaseClient, math
 from bottle import route, run, template, static_file
 
+from operator import itemgetter
+
 import webbrowser
 
 HOST_PROPERTIES = {
     "port":8080,
-    "name":"localhost"
+    "name":"localhost" #"192.168.43.8" # Raspberry IP for Honor 9 hotstop
 }
 
 # 10 CM bak
@@ -28,16 +30,12 @@ def getMapSizeTuple(allPoints):
 
     lowestLargestY = [allPoints[0][1], allPoints[0][1]]
     lowestLargestX = [allPoints[0][0], allPoints[0][0]]
+
+    lowestLargestX[0] = min(allPoints, key=itemgetter(0))[0]
+    lowestLargestX[1] = max(allPoints, key=itemgetter(0))[0]
     
-    for point in allPoints:
-        if point[0] < lowestLargestX[0]:
-            lowestLargestX[0] = point[0]
-        if point[0] > lowestLargestX[1]:
-            lowestLargestX[1] = point[0]
-        if point[1] < lowestLargestY[0]:
-            lowestLargestY[0] = point[1]
-        if point[1] > lowestLargestY[1]:
-            lowestLargestY[1] = point[1]
+    lowestLargestY[0] = min(allPoints, key=itemgetter(1))[1]
+    lowestLargestY[1] = max(allPoints, key=itemgetter(1))[1]
     
     mapWidth = abs(lowestLargestX[0] * MAP_SIZE_MARGIN_FACTOR) + abs(lowestLargestX[1] * MAP_SIZE_MARGIN_FACTOR)
     mapHeight = abs(lowestLargestY[0] * MAP_SIZE_MARGIN_FACTOR) + abs(lowestLargestY[1] * MAP_SIZE_MARGIN_FACTOR)
