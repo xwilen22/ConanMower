@@ -85,7 +85,7 @@ void setup() {
   bluetooth.begin(115200);    //The factory default baud rate is 115200
   piSerial.begin(9600);
 
-  ledRing.startUpBlink(50, 50 , 0);
+  ledRing.startUpBlink(0, 100 , 0);
 }
 
 
@@ -99,11 +99,11 @@ void loop() {
 
 
   if (bluetoothHeartbeat.isTimeout()) {   // Bluetooth is not connected
-    ledRing.fullCirlce(100, 0, 100);
+    ledRing.fullCirlce(150, 150, 0);
     btCommand.command = MSTOP;
   }
   else {                                  //Bluetooth is connected
-    ledRing.fullCirlce(0, 0, 100);
+    ledRing.fullCirlce(0, 0, 150);
   }
   if (btCommand.heartBeat) {
     bluetoothHeartbeat.beat();
