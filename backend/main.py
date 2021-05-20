@@ -12,7 +12,6 @@ serialConnection = ms.SerialConnection(serialPort)
 # Used to store data in memory until connection returns
 unsentMowerData = []
 
-
 while True:
     buffer = serialConnection.getBytesOnRecieve()
     if buffer != None:
