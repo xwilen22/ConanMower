@@ -60,6 +60,7 @@ class PathCanvas(context: Context, attributeSet: AttributeSet?) : View(context) 
             changedSessionSelection
         )
 
+        clearCanvas()
     }
 
     private fun setUpDrawables() {

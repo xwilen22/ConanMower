@@ -8,14 +8,12 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
-import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import com.example.conanmoverandroidapp.Globals
 import com.example.conanmoverandroidapp.R
 import com.example.conanmoverandroidapp.TraveledPathSession
-import com.google.protobuf.Empty
 import kotlinx.android.synthetic.main.path_fragment.*
 
 
@@ -29,8 +27,6 @@ class PathFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
-        // TODO: Make sure PathCanvas is cleared before showing this fragment
 
         setUpNavigationButton()
 
