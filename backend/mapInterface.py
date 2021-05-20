@@ -11,7 +11,7 @@ HOST_PROPERTIES = {
     "name":"localhost" #"192.168.43.8" # Raspberry IP for Honor 9 hotspot
 }
 
-MAP_SIZE_MARGIN_FACTOR = 3
+MAP_SIZE_MARGIN_FACTOR = 3.5
 
 def getCurrentPoints():
     currentSessionNodes = firebaseClient.FirebaseClient("TraveledPath").getLatestSessionChildren()
@@ -41,9 +41,7 @@ def getMapSizeTuple(allPoints):
 
     return (mapWidth, mapHeight)
 
-# 26.34859943472657 32.635340740183985
-
-def getMapCenterPoint(allPoints):
+def getMapCenterPoint(allPoints, height, width):
     lowestLargestY = [allPoints[0][1], allPoints[0][1]]
     lowestLargestX = [allPoints[0][0], allPoints[0][0]]
 
@@ -53,13 +51,13 @@ def getMapCenterPoint(allPoints):
     lowestLargestY[0] = min(allPoints, key=itemgetter(1))[1]
     lowestLargestY[1] = max(allPoints, key=itemgetter(1))[1]
     
-    return (-MAP_SIZE_MARGIN_FACTOR * abs(lowestLargestX[0] - lowestLargestX[1]) / 2, -MAP_SIZE_MARGIN_FACTOR * abs(lowestLargestY[0] - lowestLargestY[1]) / 2)
+    return (-((height + lowestLargestX[0] + lowestLargestX[1]) / 2), -((width + lowestLargestY[0] + lowestLargestY[1]) / 2))
 
 @route('/')
 def index():
     currentPointList = getCurrentPoints()
     currentMapSize = getMapSizeTuple(currentPointList)
-    currentMapCenterPoint = getMapCenterPoint(currentPointList)
+    currentMapCenterPoint = getMapCenterPoint(currentPointList, currentMapSize[0], currentMapSize[1])
 
     print("Center point: ", currentMapCenterPoint)
 
@@ -79,4 +77,4 @@ def send_static(filename):
     return static_file(filename, root='./public')
 
 # webbrowser.open('http://localhost:8080', new=1)
-run(host=HOST_PROPERTIES["name"], port=HOST_PROPERTIES["port"], debug=True, reloader=True, interval=1)
+run(host=HOST_PROPERTIES["name"], port=HOST_PROPERTIES["port"], debug=True, reloader=False, interval=1)
