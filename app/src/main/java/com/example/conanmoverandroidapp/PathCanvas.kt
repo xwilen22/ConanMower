@@ -56,7 +56,6 @@ class PathCanvas(context: Context, attributeSet: AttributeSet?) : View(context) 
             drawPathOnCanvas(position)
         }
 
-        Globals.pathViewModel.readDataFromRealtimeDatabase()
         Globals.pathViewModel.changedSessionSelection.observe(
             Globals.pathLifeCycleOwner,
             changedSessionSelection
@@ -107,7 +106,7 @@ class PathCanvas(context: Context, attributeSet: AttributeSet?) : View(context) 
         clearCanvas()
         var startCoordinates = Coordinates(width.toFloat() / 2, height.toFloat() / 2)
         drawStartIcon(startCoordinates.xCoordinate, startCoordinates.yCoordinate)
-        Globals.traveledPathSessionList[position].traveledPaths.forEach {
+        Globals.traveledPathSessionList.asReversed()[position].traveledPaths.forEach {
             // Parse each data point
             val stopCoordinates = parseToCoordinates(
                 startCoordinates.xCoordinate,

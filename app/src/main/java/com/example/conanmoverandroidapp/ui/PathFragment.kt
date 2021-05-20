@@ -28,7 +28,7 @@ class PathFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        // TODO: Make PathCanvas is cleared before showing this fragment
+        // TODO: Make sure PathCanvas is cleared before showing this fragment
 
         btn_close.setOnClickListener {
             val direction = PathFragmentDirections.actionPathFragmentToAutoFragment()
@@ -37,10 +37,12 @@ class PathFragment : Fragment() {
 
         val pathSessionsObserver = Observer<MutableList<TraveledPathSession>> { sessions ->
             val sessionList = mutableListOf<String>()
-            sessions.forEach { session ->
-                sessionList.add(session.traveledPaths[0].EndTime.split(".")[0])
+            sessions.asReversed().forEach { session ->
+                val lastIndex = session.traveledPaths.count() - 1
+                val start = session.traveledPaths[0].EndTime.split(".")[0]
+                val end = session.traveledPaths[lastIndex].EndTime.split(".")[0]
+                sessionList.add("$start - $end")
             }
-            // TODO: Make sure data is ordered in correct way
             initiateSessionSpinner(sessionList)
         }
         Globals.pathViewModel.traveledPathSessions.observe(viewLifecycleOwner, pathSessionsObserver)
