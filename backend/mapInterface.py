@@ -8,10 +8,11 @@ import webbrowser
 
 HOST_PROPERTIES = {
     "port":8080,
-    "name":"localhost" #"192.168.43.8" # Raspberry IP for Honor 9 hotstop
+    "name":"localhost" #"192.168.43.8" # Raspberry IP for Honor 9 hotspot
 }
 
-# 10 CM bak
+MAP_SIZE_MARGIN_FACTOR = 3
+
 def getCurrentPoints():
     currentSessionNodes = firebaseClient.FirebaseClient("TraveledPath").getLatestSessionChildren()
 
@@ -26,8 +27,6 @@ def getCurrentPoints():
     return allPoints
 
 def getMapSizeTuple(allPoints):
-    MAP_SIZE_MARGIN_FACTOR = 3
-
     lowestLargestY = [allPoints[0][1], allPoints[0][1]]
     lowestLargestX = [allPoints[0][0], allPoints[0][0]]
 
@@ -47,18 +46,14 @@ def getMapSizeTuple(allPoints):
 def getMapCenterPoint(allPoints):
     lowestLargestY = [allPoints[0][1], allPoints[0][1]]
     lowestLargestX = [allPoints[0][0], allPoints[0][0]]
+
+    lowestLargestX[0] = min(allPoints, key=itemgetter(0))[0]
+    lowestLargestX[1] = max(allPoints, key=itemgetter(0))[0]
     
-    for point in allPoints:
-        if point[0] < lowestLargestX[0]:
-            lowestLargestX[0] = point[0]
-        if point[0] > lowestLargestX[1]:
-            lowestLargestX[1] = point[0]
-        if point[1] < lowestLargestY[0]:
-            lowestLargestY[0] = point[1]
-        if point[1] > lowestLargestY[1]:
-            lowestLargestY[1] = point[1]
+    lowestLargestY[0] = min(allPoints, key=itemgetter(1))[1]
+    lowestLargestY[1] = max(allPoints, key=itemgetter(1))[1]
     
-    return (-3 * abs(lowestLargestX[0] - lowestLargestX[1]) / 2, -3 * abs(lowestLargestY[0] - lowestLargestY[1]) / 2)
+    return (-MAP_SIZE_MARGIN_FACTOR * abs(lowestLargestX[0] - lowestLargestX[1]) / 2, -MAP_SIZE_MARGIN_FACTOR * abs(lowestLargestY[0] - lowestLargestY[1]) / 2)
 
 @route('/')
 def index():
@@ -71,7 +66,9 @@ def index():
     templateKeyValue = dict(
         # Where has the mower has gone in chronological order.
         points = currentPointList,
+        # What coordinate should the map camera point at
         mapCenterPoint = currentMapCenterPoint,
+        # Size of map, defined by height and width
         mapSize = currentMapSize
     )
 
