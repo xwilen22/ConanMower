@@ -8,7 +8,6 @@ import android.view.View
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.Observer
 
-
 data class Obstacle(
     val bitmap: Bitmap,
     val x: Float,
@@ -23,18 +22,20 @@ class PathCanvas(context: Context, attributeSet: AttributeSet?) : View(context) 
     private var oldAngle = 0
     private lateinit var wallDrawable: Drawable
     private lateinit var objectsDrawable: Drawable
-
+    private lateinit var startDrawable: Drawable
 
     /*The border from the edges we do not want to cross*/
     private var eventHorizon = 300
 
+    //Easy size change of icons variables
+    private val multiplySize = 1.5
+
     //WALL
-    //Width="25.061384dp" Height="22.697dp"
-    private val wallSize = arrayListOf(25, 23)
+    private val wallSize = arrayListOf((25 * multiplySize).toInt(), (23 * multiplySize).toInt())
 
     //OBJECT
-    //Width="20.9204dp" Height="25.247"
-    private val objectsSize = arrayListOf(21, 25)
+    private val objectsSize = arrayListOf((36 * multiplySize).toInt(), (25 * multiplySize).toInt())
+    private val startSize = arrayListOf((25 * multiplySize).toInt(), (25 * multiplySize).toInt())
 
     /*TODO MOVE TO GLOBALS*/
     private val WALL_OBSTACLE = 0
@@ -48,6 +49,7 @@ class PathCanvas(context: Context, attributeSet: AttributeSet?) : View(context) 
         paint.strokeJoin = Paint.Join.ROUND
         paint.strokeWidth = 12f
         paint.style = Paint.Style.STROKE
+        paint.pathEffect = DashPathEffect(floatArrayOf(10f, 10f), 0f)
         setUpDrawables()
 
         val changedSessionSelection = Observer<Int> { position ->
@@ -55,21 +57,23 @@ class PathCanvas(context: Context, attributeSet: AttributeSet?) : View(context) 
         }
 
         Globals.pathViewModel.readDataFromRealtimeDatabase()
-
-        Globals.pathViewModel.changedSessionSelection.observe(Globals.pathLifeCycleOwner, changedSessionSelection)
+        Globals.pathViewModel.changedSessionSelection.observe(
+            Globals.pathLifeCycleOwner,
+            changedSessionSelection
+        )
 
     }
 
-    private fun setUpDrawables()
-    {
+    private fun setUpDrawables() {
+        val startResourceId =
+            resources.getIdentifier("ic_start", "drawable", context.packageName)
         val wallResourcesId =
             resources.getIdentifier("ic_obstacle_wall", "drawable", context.packageName)
         val objectsResourcesId =
             resources.getIdentifier("ic_obstacle_object", "drawable", context.packageName)
         wallDrawable = context.getDrawable(wallResourcesId)!!
         objectsDrawable = context.getDrawable(objectsResourcesId)!!
-        //startDrawble = context.getDrawable(objectsResourcesId)
-
+        startDrawable = context.getDrawable(startResourceId)!!
     }
 
     private fun onUpdatePath(
@@ -93,17 +97,17 @@ class PathCanvas(context: Context, attributeSet: AttributeSet?) : View(context) 
         }
     }
 
-    private fun clearCanvas(){
+    private fun clearCanvas() {
         obstacles.clear()
         path.reset()
         invalidate()
     }
 
-    private fun drawPathOnCanvas(position: Int){
+    private fun drawPathOnCanvas(position: Int) {
         clearCanvas()
-        var startCoordinates = Coordinates(width.toFloat()/2, height.toFloat()/2)
+        var startCoordinates = Coordinates(width.toFloat() / 2, height.toFloat() / 2)
+        drawStartIcon(startCoordinates.xCoordinate, startCoordinates.yCoordinate)
         Globals.traveledPathSessionList[position].traveledPaths.forEach {
-
             // Parse each data point
             val stopCoordinates = parseToCoordinates(
                 startCoordinates.xCoordinate,
@@ -129,6 +133,11 @@ class PathCanvas(context: Context, attributeSet: AttributeSet?) : View(context) 
         }
     }
 
+    private fun drawStartIcon(startX: Float, startY: Float){
+        obstacles.add(Obstacle(getBitMap(-1), startX - startSize[0]/2, startY - startSize[1]/2))
+        invalidate()
+    }
+
     /*Returns bitmap depending on obstacle*/
     private fun getBitMap(obstacle: Int): Bitmap {
         return when (obstacle) {
@@ -142,7 +151,7 @@ class PathCanvas(context: Context, attributeSet: AttributeSet?) : View(context) 
                 objectsSize[1],
                 config = null
             )
-            else -> objectsDrawable!!.toBitmap(objectsSize[0], objectsSize[0], config = null)
+            else -> startDrawable!!.toBitmap(startSize[0], startSize[1], config = null)
         }
     }
 
