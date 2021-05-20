@@ -25,7 +25,7 @@ class PathCanvas(context: Context, attributeSet: AttributeSet?) : View(context) 
     private lateinit var objectsDrawable: Drawable
 
 
-    /*The boarder from the edges we do not want to cross*/
+    /*The border from the edges we do not want to cross*/
     private var eventHorizon = 300
 
     //WALL
@@ -50,31 +50,15 @@ class PathCanvas(context: Context, attributeSet: AttributeSet?) : View(context) 
         paint.style = Paint.Style.STROKE
         setUpDrawables()
 
-        val pathSessionsObserver = Observer<MutableList<TraveledPathSession>> {
-            drawPathOnCanvas()
+        val changedSessionSelection = Observer<Int> { position ->
+            drawPathOnCanvas(position)
         }
 
-
-        Globals.pathViewModel.traveledPathSessions.observe(
-            Globals.pathLifeCycleOwner,
-            pathSessionsObserver
-        )
         Globals.pathViewModel.readDataFromRealtimeDatabase()
+
+        Globals.pathViewModel.changedSessionSelection.observe(Globals.pathLifeCycleOwner, changedSessionSelection)
+
     }
-
-/*
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        val x = event!!.x
-        val y = event.y
-
-        when(event.action){
-            MotionEvent.ACTION_DOWN -> test()//path.moveTo(x,y)
-           // MotionEvent.ACTION_MOVE -> path.lineTo(x, y)
-            else -> return false
-        }
-        invalidate()
-        return true
-    }*/
 
     private fun setUpDrawables()
     {
@@ -109,10 +93,17 @@ class PathCanvas(context: Context, attributeSet: AttributeSet?) : View(context) 
         }
     }
 
+    private fun clearCanvas(){
+        obstacles.clear()
+        path.reset()
+        invalidate()
+    }
 
-    private fun drawPathOnCanvas() {
-        var startCoordinates = Coordinates(width.toFloat() / 2, height.toFloat() / 2)
-        Globals.traveledPathSessionList[1].traveledPaths.forEach {
+    private fun drawPathOnCanvas(position: Int){
+        clearCanvas()
+        var startCoordinates = Coordinates(width.toFloat()/2, height.toFloat()/2)
+        Globals.traveledPathSessionList[position].traveledPaths.forEach {
+
             // Parse each data point
             val stopCoordinates = parseToCoordinates(
                 startCoordinates.xCoordinate,
@@ -138,7 +129,7 @@ class PathCanvas(context: Context, attributeSet: AttributeSet?) : View(context) 
         }
     }
 
-
+    /*Returns bitmap depending on obstacle*/
     private fun getBitMap(obstacle: Int): Bitmap {
         return when (obstacle) {
             WALL_OBSTACLE -> wallDrawable!!.toBitmap(
@@ -151,10 +142,9 @@ class PathCanvas(context: Context, attributeSet: AttributeSet?) : View(context) 
                 objectsSize[1],
                 config = null
             )
-            else -> objectsDrawable!!.toBitmap(wallSize[0], wallSize[0], config = null)
+            else -> objectsDrawable!!.toBitmap(objectsSize[0], objectsSize[0], config = null)
         }
     }
-
 
     private fun parseToCoordinates(
         oldX: Float,
@@ -191,6 +181,4 @@ class PathCanvas(context: Context, attributeSet: AttributeSet?) : View(context) 
         }
 
     }
-
-
 }

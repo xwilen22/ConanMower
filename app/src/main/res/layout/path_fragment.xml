@@ -33,35 +33,42 @@
 
     </ImageButton>
 
-    <TextView
-        android:id="@+id/session_spinner"
+    <LinearLayout
+        android:id="@+id/session_layout"
         app:layout_constraintTop_toBottomOf="@id/btn_close"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/distance_small"
-        android:textColor="@color/white"
-        android:text="@string/sessions"
-        android:textSize="@dimen/text_button"
-        android:textAllCaps="true"/>
+        android:layout_weight=".28"
+        android:orientation="vertical"
+        android:gravity="center">
 
-    <Spinner
-        app:layout_constraintTop_toBottomOf="@id/btn_close"
-        app:layout_constraintStart_toEndOf="@id/session_spinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:theme="@style/SpinnerTheme"
-        tools:listitem="@layout/item_session"
-        android:scaleX="1.3"
-        android:scaleY="1.3"
-        android:id="@+id/spinner" />
+        <TextView
+            android:id="@+id/session_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:text="@string/sessions"
+            android:textSize="@dimen/text_button"
+            android:textAlignment="center"
+            android:textAllCaps="true"/>
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:background="@null" />
+            <!--android:theme="@style/SpinnerTheme"-->
+
+    </LinearLayout>
+
 
 
     <com.example.conanmoverandroidapp.PathCanvas
         android:id="@+id/canvas_area"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/session_spinner"
+        app:layout_constraintTop_toBottomOf="@id/session_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
