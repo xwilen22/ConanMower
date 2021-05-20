@@ -37,6 +37,7 @@ class FirebaseClient:
 
         self.db = firebase.database()
         self.path = collectionName
+        self.session = None
 
         print("Connected to client.")
 
