@@ -29,12 +29,11 @@ class PathCanvas(context: Context, attributeSet: AttributeSet?) : View(context) 
 
     //Easy size change of icons variables
     private val multiplySize = 1.5
-
     //WALL
     private val wallSize = arrayListOf((25 * multiplySize).toInt(), (23 * multiplySize).toInt())
-
     //OBJECT
     private val objectsSize = arrayListOf((36 * multiplySize).toInt(), (25 * multiplySize).toInt())
+    //START
     private val startSize = arrayListOf((25 * multiplySize).toInt(), (25 * multiplySize).toInt())
 
     /*TODO MOVE TO GLOBALS*/

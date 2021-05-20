@@ -57,6 +57,7 @@ class AutoFragment : Fragment() {
 
     }
 
+    /*For future use if needed*/
     private fun playMowerAnimation(anim: Int) {
         when (anim) {
             ANIM_MOWER_DRIVE -> anim_mower.setAnimation(R.raw.anim_mower_drive)
