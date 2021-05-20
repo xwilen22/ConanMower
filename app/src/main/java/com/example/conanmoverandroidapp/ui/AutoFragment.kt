@@ -1,15 +1,14 @@
 package com.example.conanmoverandroidapp.ui
 
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import com.example.conanmoverandroidapp.R
 import kotlinx.android.synthetic.main.auto_fragment.*
-import kotlin.random.Random
 
 
 class AutoFragment : Fragment() {
@@ -44,8 +43,7 @@ class AutoFragment : Fragment() {
 
     }
 
-    private fun setUpNavigationButtons()
-    {
+    private fun setUpNavigationButtons() {
         btn_path.setOnClickListener {
             val direction = AutoFragmentDirections.actionAutoFragmentToPathFragment()
             it.findNavController().navigate(direction)
@@ -59,10 +57,10 @@ class AutoFragment : Fragment() {
 
     }
 
-    private fun playMowerAnimation(anim: Int){
-        when(anim) {
-            ANIM_MOWER_DRIVE ->  anim_mower.setAnimation(R.raw.anim_mower_drive)
-            ANIM_OBJ_DETECTED ->  anim_mower.setAnimation(R.raw.anim_obj_detected)
+    private fun playMowerAnimation(anim: Int) {
+        when (anim) {
+            ANIM_MOWER_DRIVE -> anim_mower.setAnimation(R.raw.anim_mower_drive)
+            ANIM_OBJ_DETECTED -> anim_mower.setAnimation(R.raw.anim_obj_detected)
             ANIM_OBJ_TURN_LEFT -> anim_mower.setAnimation(R.raw.anim_obj_turn_left)
             ANIM_OBJ_TURN_RIGHT -> anim_mower.setAnimation(R.raw.anim_obj_turn_right)
             ANIM_WALL_TURN_LEFT -> anim_mower.setAnimation(R.raw.anim_wall_turn_left)

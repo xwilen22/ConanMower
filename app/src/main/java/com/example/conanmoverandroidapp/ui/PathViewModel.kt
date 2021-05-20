@@ -17,9 +17,9 @@ class PathViewModel : ViewModel() {
         MutableLiveData<MutableList<TraveledPathSession>>()
     }
 
-     fun readDataFromRealtimeDatabase () {
+    fun readDataFromRealtimeDatabase() {
         val database = FirebaseDatabase.getInstance().reference
-        database.addValueEventListener(object: ValueEventListener {
+        database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
                     val data = snapshot.child("TraveledPath").children
@@ -27,21 +27,24 @@ class PathViewModel : ViewModel() {
                     data.forEach {
                         val traveledPathSession = TraveledPathSession(mutableListOf())
                         val traveledPaths = it.children
-                        traveledPaths.forEach{ pathData ->
+                        traveledPaths.forEach { pathData ->
                             val traveledPath = pathData.getValue(TraveledPath::class.java)
                             traveledPathSession.traveledPaths.add(traveledPath!!)
                         }
                         Globals.traveledPathSessionList.add(traveledPathSession)
                     }
                     traveledPathSessions.value = Globals.traveledPathSessionList
-                }
-                else{
+                } else {
                     Log.d("ReadData", "snapshot does not exist")
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(Globals.currentActivity, "Could not read from database", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    Globals.currentActivity,
+                    "Could not read from database",
+                    Toast.LENGTH_LONG
+                ).show()
             }
         })
     }

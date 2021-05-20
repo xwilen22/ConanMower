@@ -10,11 +10,14 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
-import com.example.conanmoverandroidapp.*
+import com.example.conanmoverandroidapp.BluetoothConnectionHandler
+import com.example.conanmoverandroidapp.Globals
+import com.example.conanmoverandroidapp.PermissionHandler
+import com.example.conanmoverandroidapp.R
 import kotlinx.android.synthetic.main.manual_fragment.*
 
 
-class ManualFragment: Fragment() {
+class ManualFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -29,7 +32,7 @@ class ManualFragment: Fragment() {
         val connectObserver = Observer<Boolean> { success ->
             // Update the UI
             changeBluetoothConnectionUi(success)
-            if(!success){
+            if (!success) {
                 Toast.makeText(
                     Globals.currentActivity,
                     R.string.bluetooth_unable_to_connect,
@@ -45,14 +48,14 @@ class ManualFragment: Fragment() {
 
         checkIfBluetoothLESupported()
         // If not connected to bluetooth, try to connect
-        if(!Globals.bluetoothConnectedStatus && !Globals.bluetoothDiscoveringStatus){
+        if (!Globals.bluetoothConnectedStatus && !Globals.bluetoothDiscoveringStatus) {
             PermissionHandler.handleBluetoothPermissionStatus {
                 Globals.bluetoothViewModel.tryToConnectBluetoothToArduino()
             }
         }
 
         bt_connection.setOnClickListener {
-            if(!Globals.bluetoothConnectedStatus && !Globals.bluetoothDiscoveringStatus){
+            if (!Globals.bluetoothConnectedStatus && !Globals.bluetoothDiscoveringStatus) {
                 Globals.bluetoothViewModel.tryToConnectBluetoothToArduino()
             }
         }
@@ -84,7 +87,7 @@ class ManualFragment: Fragment() {
         checkIfBluetoothLESupported()
 
         // If not connected to bluetooth, try to connect
-        if(!Globals.bluetoothConnectedStatus && !Globals.bluetoothDiscoveringStatus){
+        if (!Globals.bluetoothConnectedStatus && !Globals.bluetoothDiscoveringStatus) {
             PermissionHandler.handleBluetoothPermissionStatus {
                 Globals.bluetoothViewModel.tryToConnectBluetoothToArduino()
             }
@@ -94,14 +97,18 @@ class ManualFragment: Fragment() {
     override fun onDestroy() {
         super.onDestroy()
 
-        if(Globals.bluetoothConnectedStatus) {
+        if (Globals.bluetoothConnectedStatus) {
             BluetoothConnectionHandler.initiateAutoMowerControl()
         }
     }
 
     private fun checkIfBluetoothLESupported() {
-        if(!Globals.currentActivity.packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
-            Toast.makeText(Globals.currentActivity, getString(R.string.bluetooth_le_not_supported), Toast.LENGTH_SHORT).show()
+        if (!Globals.currentActivity.packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+            Toast.makeText(
+                Globals.currentActivity,
+                getString(R.string.bluetooth_le_not_supported),
+                Toast.LENGTH_SHORT
+            ).show()
             parentFragmentManager.popBackStack()
         }
     }
@@ -115,19 +122,18 @@ class ManualFragment: Fragment() {
     }
 
 
-
-    private fun changeBluetoothConnectionUi(couldConnect: Boolean? = null){
-        if(anim_bt != null && anim_bt.isAnimating){
+    private fun changeBluetoothConnectionUi(couldConnect: Boolean? = null) {
+        if (anim_bt != null && anim_bt.isAnimating) {
             anim_bt.visibility = View.GONE
             anim_bt.cancelAnimation()
-            if(couldConnect!!){
+            if (couldConnect!!) {
                 bt_indicator.visibility = View.VISIBLE
                 bt_indicator.setImageResource(R.drawable.ic_bluetooth_connected)
             } else {
                 bt_indicator.visibility = View.VISIBLE
                 bt_indicator.setImageResource(R.drawable.ic_bluetooth_disconnected)
             }
-        } else if(anim_bt != null){
+        } else if (anim_bt != null) {
             bt_indicator.visibility = View.GONE
             anim_bt.visibility = View.VISIBLE
             anim_bt.playAnimation()
