@@ -39,6 +39,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight=".28"
+        android:textAlignment="center"
         android:orientation="vertical"
         android:gravity="center">
 
@@ -49,14 +50,14 @@
             android:textColor="@color/white"
             android:text="@string/sessions"
             android:textSize="@dimen/text_button"
-            android:textAlignment="center"
+            android:gravity="center_horizontal"
             android:textAllCaps="true"/>
 
         <Spinner
             android:id="@+id/spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:padding="2dp"
             android:background="@null" />
             <!--android:theme="@style/SpinnerTheme"-->
 
@@ -72,7 +73,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

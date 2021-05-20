@@ -47,51 +47,20 @@ class ManualFragment : Fragment() {
         setUpNavigationButtons()
 
         checkIfBluetoothLESupported()
+
         // If not connected to bluetooth, try to connect
-        if (!Globals.bluetoothConnectedStatus && !Globals.bluetoothDiscoveringStatus) {
-            PermissionHandler.handleBluetoothPermissionStatus {
-                Globals.bluetoothViewModel.tryToConnectBluetoothToArduino()
-            }
-        }
+        connectIfNotConnected()
 
-        bt_connection.setOnClickListener {
-            if (!Globals.bluetoothConnectedStatus && !Globals.bluetoothDiscoveringStatus) {
-                Globals.bluetoothViewModel.tryToConnectBluetoothToArduino()
-            }
-        }
-
-        forward_button.setOnTouchListener { _, event ->
-            Globals.bluetoothViewModel.setDirectionOnAction(event.action, "Forward")
-            true
-        }
-
-        reverse_button.setOnTouchListener { _, event ->
-            Globals.bluetoothViewModel.setDirectionOnAction(event.action, "Reverse")
-            true
-        }
-
-        left_button.setOnTouchListener { _, event ->
-            Globals.bluetoothViewModel.setDirectionOnAction(event.action, "Left")
-            true
-        }
-
-        right_button.setOnTouchListener { _, event ->
-            Globals.bluetoothViewModel.setDirectionOnAction(event.action, "Right")
-            true
-        }
+        setUpBluetoothButton()
+        /*If driving doesn't work move them out of the function and place them here*/
+        setUpDriveButtons()
     }
 
     override fun onResume() {
         super.onResume()
-
         checkIfBluetoothLESupported()
-
         // If not connected to bluetooth, try to connect
-        if (!Globals.bluetoothConnectedStatus && !Globals.bluetoothDiscoveringStatus) {
-            PermissionHandler.handleBluetoothPermissionStatus {
-                Globals.bluetoothViewModel.tryToConnectBluetoothToArduino()
-            }
-        }
+        connectIfNotConnected()
     }
 
     override fun onDestroy() {
@@ -99,6 +68,14 @@ class ManualFragment : Fragment() {
 
         if (Globals.bluetoothConnectedStatus) {
             BluetoothConnectionHandler.initiateAutoMowerControl()
+        }
+    }
+
+    private fun connectIfNotConnected(){
+        if (!Globals.bluetoothConnectedStatus && !Globals.bluetoothDiscoveringStatus) {
+            PermissionHandler.handleBluetoothPermissionStatus {
+                Globals.bluetoothViewModel.tryToConnectBluetoothToArduino()
+            }
         }
     }
 
@@ -137,6 +114,37 @@ class ManualFragment : Fragment() {
             bt_indicator.visibility = View.GONE
             anim_bt.visibility = View.VISIBLE
             anim_bt.playAnimation()
+        }
+    }
+
+    private fun setUpBluetoothButton() {
+        bt_connection.setOnClickListener {
+            if (!Globals.bluetoothConnectedStatus && !Globals.bluetoothDiscoveringStatus) {
+                Globals.bluetoothViewModel.tryToConnectBluetoothToArduino()
+            }
+        }
+    }
+
+    private fun setUpDriveButtons() {
+
+        forward_button.setOnTouchListener { _, event ->
+            Globals.bluetoothViewModel.setDirectionOnAction(event.action, "Forward")
+            true
+        }
+
+        reverse_button.setOnTouchListener { _, event ->
+            Globals.bluetoothViewModel.setDirectionOnAction(event.action, "Reverse")
+            true
+        }
+
+        left_button.setOnTouchListener { _, event ->
+            Globals.bluetoothViewModel.setDirectionOnAction(event.action, "Left")
+            true
+        }
+
+        right_button.setOnTouchListener { _, event ->
+            Globals.bluetoothViewModel.setDirectionOnAction(event.action, "Right")
+            true
         }
     }
 }

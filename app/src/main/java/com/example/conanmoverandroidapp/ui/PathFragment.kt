@@ -1,6 +1,7 @@
 package com.example.conanmoverandroidapp.ui
 
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,7 @@ import androidx.navigation.findNavController
 import com.example.conanmoverandroidapp.Globals
 import com.example.conanmoverandroidapp.R
 import com.example.conanmoverandroidapp.TraveledPathSession
+import com.google.protobuf.Empty
 import kotlinx.android.synthetic.main.path_fragment.*
 
 
@@ -30,10 +32,7 @@ class PathFragment : Fragment() {
 
         // TODO: Make PathCanvas is cleared before showing this fragment
 
-        btn_close.setOnClickListener {
-            val direction = PathFragmentDirections.actionPathFragmentToAutoFragment()
-            it.findNavController().navigate(direction)
-        }
+        setUpNavigationButton()
 
         val pathSessionsObserver = Observer<MutableList<TraveledPathSession>> { sessions ->
             val sessionList = mutableListOf<String>()
@@ -50,8 +49,17 @@ class PathFragment : Fragment() {
         }
     }
 
+    private fun setUpNavigationButton(){
+        btn_close.setOnClickListener {
+            val direction = PathFragmentDirections.actionPathFragmentToAutoFragment()
+            it.findNavController().navigate(direction)
+        }
+    }
+
     private fun initiateSessionSpinner(sessions: MutableList<String>){
-        val spinner: Spinner = spinner
+        spinner.adapter = null
+        spinner.setPadding(10,10,10,10)
+        spinner.gravity = Gravity.CENTER_HORIZONTAL
         ArrayAdapter(
             Globals.currentActivity,
             R.layout.spinner_item_main,
@@ -78,5 +86,4 @@ class PathFragment : Fragment() {
             }
         }
     }
-
 }
