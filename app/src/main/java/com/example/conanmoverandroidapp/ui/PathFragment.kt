@@ -29,8 +29,6 @@ class PathFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        // TODO: Make sure PathCanvas is cleared before showing this fragment
-
         setUpNavigationButton()
 
         val pathSessionsObserver = Observer<MutableList<TraveledPathSession>> { sessions ->
