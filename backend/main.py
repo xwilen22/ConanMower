@@ -2,8 +2,6 @@ import firebaseClient as fc
 import mowerSerialiser as ms
 import data.traveledPath as tpd
 
-import time
-
 ### Initialize client firebase client and serial connection.
 
 traveledPathClient = fc.FirebaseClient("TraveledPath")
