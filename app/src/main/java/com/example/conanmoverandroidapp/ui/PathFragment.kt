@@ -1,5 +1,6 @@
 package com.example.conanmoverandroidapp.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -8,14 +9,12 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
-import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import com.example.conanmoverandroidapp.Globals
 import com.example.conanmoverandroidapp.R
 import com.example.conanmoverandroidapp.TraveledPathSession
-import com.google.protobuf.Empty
 import kotlinx.android.synthetic.main.path_fragment.*
 
 
@@ -44,10 +43,10 @@ class PathFragment : Fragment() {
             }
             initiateSessionSpinner(sessionList)
         }
-        Globals.pathViewModel.traveledPathSessions.observe(viewLifecycleOwner, pathSessionsObserver)
+        Globals.dataBaseViewModel.traveledPathSessions.observe(viewLifecycleOwner, pathSessionsObserver)
 
         if(Globals.traveledPathSessionList.isEmpty()){
-            Globals.pathViewModel.readDataFromRealtimeDatabase()
+            Globals.dataBaseViewModel.readDataFromRealtimeDatabase()
         }
     }
 
@@ -79,7 +78,7 @@ class PathFragment : Fragment() {
                 id: Long
             ) {
                 if(position >= 0){
-                    Globals.pathViewModel.changedSessionSelection.value = position
+                    Globals.dataBaseViewModel.changedSessionSelection.value = position
                 }
             }
 

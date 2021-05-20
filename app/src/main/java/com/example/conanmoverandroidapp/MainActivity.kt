@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import com.example.conanmoverandroidapp.ui.PathViewModel
+import com.example.conanmoverandroidapp.ui.DataBaseViewModel
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
 
         Globals.currentActivity = this
         Globals.bluetoothViewModel = ViewModelProvider(this).get(BluetoothViewModel::class.java)
-        Globals.pathViewModel = ViewModelProvider(this).get(PathViewModel::class.java)
+        Globals.dataBaseViewModel = ViewModelProvider(this).get(DataBaseViewModel::class.java)
         Globals.pathLifeCycleOwner = this
 
     }

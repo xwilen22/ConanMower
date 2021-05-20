@@ -55,7 +55,7 @@ class PathCanvas(context: Context, attributeSet: AttributeSet?) : View(context) 
             drawPathOnCanvas(position)
         }
 
-        Globals.pathViewModel.changedSessionSelection.observe(
+        Globals.dataBaseViewModel.changedSessionSelection.observe(
             Globals.pathLifeCycleOwner,
             changedSessionSelection
         )

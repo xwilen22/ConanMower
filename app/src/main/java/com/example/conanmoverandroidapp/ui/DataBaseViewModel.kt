@@ -7,10 +7,14 @@ import com.example.conanmoverandroidapp.Globals
 import com.example.conanmoverandroidapp.TraveledPath
 import com.example.conanmoverandroidapp.TraveledPathSession
 import com.google.firebase.database.*
+import java.util.*
 
 
-class PathViewModel : ViewModel() {
+class DataBaseViewModel : ViewModel() {
     private lateinit var database: DatabaseReference
+
+    private lateinit var obstacleEventListener: ChildEventListener
+
 
     val traveledPathSessions: MutableLiveData<MutableList<TraveledPathSession>> by lazy {
         MutableLiveData<MutableList<TraveledPathSession>>()
@@ -18,6 +22,45 @@ class PathViewModel : ViewModel() {
 
     val changedSessionSelection: MutableLiveData<Int> by lazy {
         MutableLiveData<Int>()
+    }
+
+    val objectionDetection: MutableLiveData<Int> by lazy {
+        MutableLiveData<Int>()
+    }
+
+    fun initListenForObstacles(){
+        database = FirebaseDatabase.getInstance().reference
+        obstacleEventListener = object : ChildEventListener {
+            override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
+                val traveledPath = TraveledPath(dataSnapshot.key!!)
+                objectionDetection.value = traveledPath.StoppedByObstacle
+            }
+
+            override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
+                val traveledPath = TraveledPath(dataSnapshot.key!!)
+                objectionDetection.value = traveledPath.StoppedByObstacle
+            }
+
+            override fun onChildRemoved(dataSnapshot: DataSnapshot) {}
+
+            override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {}
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(
+                    Globals.currentActivity,
+                    "Could not read from database",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+    }
+
+   fun startListenForObstacles(){
+        database.addChildEventListener(obstacleEventListener)
+    }
+
+    fun stopListenForObstacles(){
+        database.removeEventListener(obstacleEventListener)
     }
 
     fun readDataFromRealtimeDatabase () {
@@ -31,8 +74,10 @@ class PathViewModel : ViewModel() {
                     val traveledPath = pathData.getValue(TraveledPath::class.java)
                     traveledPathSession.traveledPaths.add(traveledPath!!)
                 }
+
                 Globals.traveledPathSessionList.add(traveledPathSession)
                 traveledPathSessions.value = Globals.traveledPathSessionList
+
             }
 
             override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
@@ -78,4 +123,6 @@ class PathViewModel : ViewModel() {
         }
         sessions.addChildEventListener(childEventListener)
     }
+
 }
+

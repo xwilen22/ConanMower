@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ConanMoverAndroidApp</string>
+    <string name="app_name">Conan Mover</string>
     <string name="auto">Auto</string>
     <string name="manual">Manual</string>
     <string name="path">Path</string>
