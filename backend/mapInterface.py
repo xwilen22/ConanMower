@@ -1,4 +1,5 @@
 from data.traveledPath import TraveledPathData
+
 import pathSession, pyrebase, firebaseClient, math
 from bottle import route, run, template, static_file
 
@@ -6,13 +7,21 @@ from operator import itemgetter
 
 import webbrowser
 
+
+
 HOST_PROPERTIES = {
     "port":8080,
     "name":"localhost" #"192.168.43.8" # Raspberry IP for Honor 9 hotspot
 }
 
 MAP_SIZE_MARGIN_FACTOR = 3.5
+X = 0
+Y = 1
+MIN = 0
+MAX = 1
 
+
+## get latest session points from the database
 def getCurrentPoints():
     currentSessionNodes = firebaseClient.FirebaseClient("TraveledPath").getLatestSessionChildren()
 
@@ -26,32 +35,35 @@ def getCurrentPoints():
 
     return allPoints
 
-def getMapSizeTuple(allPoints):
-    lowestLargestY = [allPoints[0][1], allPoints[0][1]]
-    lowestLargestX = [allPoints[0][0], allPoints[0][0]]
+## Get the min and max points
+def getMinMaxPoints(allPoints):
+    # Declare empty list with necessary indexes to later be defined.
+    minMaxPoints = ([allPoints[0][0], allPoints[0][0]], [allPoints[0][1], allPoints[0][1]])
 
-    lowestLargestX[0] = min(allPoints, key=itemgetter(0))[0]
-    lowestLargestX[1] = max(allPoints, key=itemgetter(0))[0]
+    minMaxPoints[X][MIN] = min(allPoints, key=itemgetter(0))[0]
+    minMaxPoints[X][MAX] = max(allPoints, key=itemgetter(0))[0]
     
-    lowestLargestY[0] = min(allPoints, key=itemgetter(1))[1]
-    lowestLargestY[1] = max(allPoints, key=itemgetter(1))[1]
-    
-    mapWidth = abs(lowestLargestX[0] * MAP_SIZE_MARGIN_FACTOR) + abs(lowestLargestX[1] * MAP_SIZE_MARGIN_FACTOR)
-    mapHeight = abs(lowestLargestY[0] * MAP_SIZE_MARGIN_FACTOR) + abs(lowestLargestY[1] * MAP_SIZE_MARGIN_FACTOR)
+    minMaxPoints[Y][MIN] = min(allPoints, key=itemgetter(1))[1]
+    minMaxPoints[Y][MAX] = max(allPoints, key=itemgetter(1))[1]
+
+    return minMaxPoints
+
+## Get the points with highest & lowest x/y values, and return an average size for the map as tuple.
+def getMapSizeTuple(allPoints):
+
+    minMaxPoints = getMinMaxPoints(allPoints)
+
+    mapWidth = abs(minMaxPoints[X][MIN] * MAP_SIZE_MARGIN_FACTOR) + abs(minMaxPoints[X][MAX] * MAP_SIZE_MARGIN_FACTOR)
+    mapHeight = abs(minMaxPoints[Y][MIN] * MAP_SIZE_MARGIN_FACTOR) + abs(minMaxPoints[Y][MAX] * MAP_SIZE_MARGIN_FACTOR)
 
     return (mapWidth, mapHeight)
 
+## 
 def getMapCenterPoint(allPoints, height, width):
-    lowestLargestY = [allPoints[0][1], allPoints[0][1]]
-    lowestLargestX = [allPoints[0][0], allPoints[0][0]]
+    
+    minMaxPoints = getMinMaxPoints(allPoints)
 
-    lowestLargestX[0] = min(allPoints, key=itemgetter(0))[0]
-    lowestLargestX[1] = max(allPoints, key=itemgetter(0))[0]
-    
-    lowestLargestY[0] = min(allPoints, key=itemgetter(1))[1]
-    lowestLargestY[1] = max(allPoints, key=itemgetter(1))[1]
-    
-    return (-((height + lowestLargestX[0] + lowestLargestX[1]) / 2), -((width + lowestLargestY[0] + lowestLargestY[1]) / 2))
+    return (-((width + minMaxPoints[X][MIN] - minMaxPoints[X][MAX]) / 2), -((height + minMaxPoints[Y][MIN] - minMaxPoints[Y][MAX]) / 2))
 
 @route('/')
 def index():
@@ -76,5 +88,4 @@ def index():
 def send_static(filename):
     return static_file(filename, root='./public')
 
-# webbrowser.open('http://localhost:8080', new=1)
 run(host=HOST_PROPERTIES["name"], port=HOST_PROPERTIES["port"], debug=True, reloader=False, interval=1)
