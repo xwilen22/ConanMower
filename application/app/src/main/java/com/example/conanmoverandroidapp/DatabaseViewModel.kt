@@ -25,7 +25,7 @@ class DatabaseViewModel : ViewModel() {
         MutableLiveData<Int>()
     }
 
-    fun initListenForObstacles(){
+    fun initListenForObstacles() {
         database = FirebaseDatabase.getInstance().reference
         obstacleEventListener = object : ChildEventListener {
             override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
@@ -43,29 +43,30 @@ class DatabaseViewModel : ViewModel() {
                 val path = lastPath.getValue(TraveledPath::class.java)
                 objectionDetection.value = path!!.StoppedByObstacle
             }
+
             override fun onChildRemoved(dataSnapshot: DataSnapshot) {}
 
             override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {}
 
             override fun onCancelled(error: DatabaseError) {
                 Toast.makeText(
-                    Globals.currentActivity,
-                    "Could not read from database",
-                    Toast.LENGTH_LONG
+                        Globals.currentActivity,
+                        "Could not read from database",
+                        Toast.LENGTH_LONG
                 ).show()
             }
         }
     }
 
-   fun startListenForObstacles(){
-       database.addChildEventListener(obstacleEventListener)
+    fun startListenForObstacles() {
+        database.addChildEventListener(obstacleEventListener)
     }
 
-    fun stopListenForObstacles(){
+    fun stopListenForObstacles() {
         database.removeEventListener(obstacleEventListener)
     }
 
-    fun readDataFromRealtimeDatabase () {
+    fun readDataFromRealtimeDatabase() {
         database = FirebaseDatabase.getInstance().reference
 
         val sessions = database.child("TraveledPath").limitToLast(5)
@@ -90,7 +91,8 @@ class DatabaseViewModel : ViewModel() {
 
                 // Read updated values
                 val traveledPathSession = TraveledPathSession(dataSnapshot.key!!, mutableListOf())
-                dataSnapshot.children.forEach { it
+                dataSnapshot.children.forEach {
+                    it
                     val traveledPath = it.getValue(TraveledPath::class.java)
                     traveledPathSession.traveledPaths.add(traveledPath!!)
                 }
@@ -104,7 +106,7 @@ class DatabaseViewModel : ViewModel() {
 
                 // Copy all sessions except the removed session
                 Globals.traveledPathSessionList.forEach {
-                    if(it.sessionName != dataSnapshot.key!!){
+                    if (it.sessionName != dataSnapshot.key!!) {
                         traveledPathSessionList.add(it)
                     }
                 }
@@ -117,9 +119,9 @@ class DatabaseViewModel : ViewModel() {
 
             override fun onCancelled(databaseError: DatabaseError) {
                 Toast.makeText(
-                    Globals.currentActivity,
-                    "Could not read from database",
-                    Toast.LENGTH_LONG
+                        Globals.currentActivity,
+                        "Could not read from database",
+                        Toast.LENGTH_LONG
                 ).show()
             }
         }
