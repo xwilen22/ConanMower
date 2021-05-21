@@ -5,8 +5,6 @@ import android.app.Application
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import androidx.lifecycle.LifecycleOwner
-import com.example.conanmoverandroidapp.ui.DataBaseViewModel
-
 
 
 class Globals: Application() {
@@ -20,7 +18,7 @@ class Globals: Application() {
         lateinit var appContext: Context
         lateinit var currentActivity: Activity
         lateinit var bluetoothViewModel: BluetoothViewModel
-        lateinit var dataBaseViewModel: DataBaseViewModel
+        lateinit var databaseViewModel: DatabaseViewModel
         lateinit var pathLifeCycleOwner: LifecycleOwner
 
     }

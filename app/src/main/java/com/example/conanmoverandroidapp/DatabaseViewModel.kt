@@ -1,16 +1,12 @@
-package com.example.conanmoverandroidapp.ui
+package com.example.conanmoverandroidapp
 
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.conanmoverandroidapp.Globals
-import com.example.conanmoverandroidapp.TraveledPath
-import com.example.conanmoverandroidapp.TraveledPathSession
 import com.google.firebase.database.*
-import java.util.*
 
 
-class DataBaseViewModel : ViewModel() {
+class DatabaseViewModel : ViewModel() {
     private lateinit var database: DatabaseReference
 
     private lateinit var obstacleEventListener: ChildEventListener

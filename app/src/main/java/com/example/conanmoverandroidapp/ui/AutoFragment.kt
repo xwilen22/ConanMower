@@ -1,7 +1,6 @@
 package com.example.conanmoverandroidapp.ui
 
 import android.animation.Animator
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -10,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import com.airbnb.lottie.LottieDrawable
 import com.example.conanmoverandroidapp.Globals
@@ -47,20 +45,20 @@ class AutoFragment : Fragment() {
             }
             uglyFlagVariable = true
         }
-        Globals.dataBaseViewModel.objectionDetection.observe(viewLifecycleOwner, objectDetected)
+        Globals.databaseViewModel.objectionDetection.observe(viewLifecycleOwner, objectDetected)
         setUpNavigationButtons()
     }
 
     override fun onResume() {
         super.onResume()
         uglyFlagVariable = false
-        Globals.dataBaseViewModel.initListenForObstacles()
-        Globals.dataBaseViewModel.startListenForObstacles()
+        Globals.databaseViewModel.initListenForObstacles()
+        Globals.databaseViewModel.startListenForObstacles()
     }
 
     override fun onPause() {
         super.onPause()
-        Globals.dataBaseViewModel.stopListenForObstacles()
+        Globals.databaseViewModel.stopListenForObstacles()
     }
 
     private fun setUpNavigationButtons() {

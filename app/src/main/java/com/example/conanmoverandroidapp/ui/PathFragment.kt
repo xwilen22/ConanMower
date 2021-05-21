@@ -1,6 +1,5 @@
 package com.example.conanmoverandroidapp.ui
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -41,10 +40,10 @@ class PathFragment : Fragment() {
             }
             initiateSessionSpinner(sessionList)
         }
-        Globals.dataBaseViewModel.traveledPathSessions.observe(viewLifecycleOwner, pathSessionsObserver)
+        Globals.databaseViewModel.traveledPathSessions.observe(viewLifecycleOwner, pathSessionsObserver)
 
         if(Globals.traveledPathSessionList.isEmpty()){
-            Globals.dataBaseViewModel.readDataFromRealtimeDatabase()
+            Globals.databaseViewModel.readDataFromRealtimeDatabase()
         }
     }
 
@@ -76,7 +75,7 @@ class PathFragment : Fragment() {
                 id: Long
             ) {
                 if(position >= 0){
-                    Globals.dataBaseViewModel.changedSessionSelection.value = position
+                    Globals.databaseViewModel.changedSessionSelection.value = position
                 }
             }
 

@@ -44,7 +44,4 @@ class BluetoothViewModel : ViewModel() {
             ).show()
         }
     }
-
-
-    // TODO: Implement the ViewModel
 }
