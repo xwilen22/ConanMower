@@ -18,8 +18,7 @@ import kotlinx.android.synthetic.main.auto_fragment.*
 
 class AutoFragment : Fragment() {
 
-    /*TODO find out if there's a better solution, if not give flag better name*/
-    private var uglyFlagVariable = false
+    private var readyToReciveObstacleData = false
 
     private val ANIM_MOWER_DRIVE: Int = -2
     private val ANIM_OBJ_DETECTED: Int = -1
@@ -40,10 +39,10 @@ class AutoFragment : Fragment() {
 
         val objectDetected = Observer<Int> { collisionObject ->
             // Update the UI
-            if(uglyFlagVariable){
+            if(readyToReciveObstacleData){
                 playAnimationSequence(collisionObject)
             }
-            uglyFlagVariable = true
+            readyToReciveObstacleData = true
         }
         Globals.databaseViewModel.objectionDetection.observe(viewLifecycleOwner, objectDetected)
         setUpNavigationButtons()
@@ -51,7 +50,7 @@ class AutoFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        uglyFlagVariable = false
+        readyToReciveObstacleData = false
         Globals.databaseViewModel.initListenForObstacles()
         Globals.databaseViewModel.startListenForObstacles()
     }
