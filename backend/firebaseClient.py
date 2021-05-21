@@ -3,22 +3,8 @@ import datetime
 
 import data.traveledPath as tp
 
+import util.dbParser as dbParser
 
-def parseSessionToDataClass(sessionItem):
-    angleChange = sessionItem['CurrentAngle']
-
-    stringFormat = "%Y-%m-%d %H:%M:%S"
-    endTimeDateTime = datetime.datetime.strptime(sessionItem['EndTime'][0:19], stringFormat)
-    
-    stoppedByObstacle = sessionItem['StoppedByObstacle'] == 1
-    traveledDistance = sessionItem['TraveledDistance']
-
-    returningTraveledPathData = tp.TraveledPathData(None, turnedLeft=False, angleChange=0, traveledDistance=traveledDistance, stoppedByObstacle=stoppedByObstacle)
-    
-    returningTraveledPathData.overrideAngle(angleChange)
-    returningTraveledPathData.overrideTimeStamp(endTimeDateTime)
-
-    return returningTraveledPathData
 
 ### This class handles the connection and each call to and from the database.
 class FirebaseClient:
@@ -60,6 +46,6 @@ class FirebaseClient:
     def getLatestSessionChildren(self):
         retrievedDictionary = list(self.db.child(self.path).get().val().items())[-1][1] # [-1] = latest session in database. [1] = value in key (which is the traveled path ID on [0])
         returningList = [
-            parseSessionToDataClass(item) for key, item in retrievedDictionary.items()
+            dbParser.parseSessionToDataClass(item) for key, item in retrievedDictionary.items()
         ]
         return returningList
