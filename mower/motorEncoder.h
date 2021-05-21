@@ -4,7 +4,7 @@
 #include "Arduino.h"
 
 #define CMPULSES 17
-#define DEGREEPULSES 2.2
+#define DEGREEPULSES 2.4
 
 class MotorEncoder
 {

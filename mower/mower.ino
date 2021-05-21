@@ -29,7 +29,7 @@ const int minObstacleDistance = 5;
 bool newSession = false;
 bool turnLeft = true;
 bool obstacle = false;
-int motorSpeed = 75;
+int motorSpeed = 40;
 
 MeEncoderOnBoard Encoder_1(SLOT1);
 MeEncoderOnBoard Encoder_2(SLOT2);
