@@ -3,6 +3,7 @@ import datetime
 
 import data.traveledPath as tp
 
+
 def parseSessionToDataClass(sessionItem):
     angleChange = sessionItem['CurrentAngle']
 
@@ -55,8 +56,9 @@ class FirebaseClient:
         if(session == 1):
             self.sessionId = self.db.generate_key()
     
+    # Get the latest session in the database. 
     def getLatestSessionChildren(self):
-        retrievedDictionary = list(self.db.child(self.path).get().val().items())[-2][1]
+        retrievedDictionary = list(self.db.child(self.path).get().val().items())[-1][1] # [-1] = latest session in database. [1] = value in key (which is the traveled path ID on [0])
         returningList = [
             parseSessionToDataClass(item) for key, item in retrievedDictionary.items()
         ]
