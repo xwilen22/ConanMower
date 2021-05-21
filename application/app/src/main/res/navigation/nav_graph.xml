@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph.xml"
+    app:startDestination="@id/autoFragment">
+    <fragment
+        android:id="@+id/autoFragment"
+        android:name="com.example.conanmoverandroidapp.ui.AutoFragment"
+        android:label="auto_fragment"
+        tools:layout="@layout/auto_fragment" >
+        <action
+            android:id="@+id/action_autoFragment_to_manualFragment"
+            app:destination="@id/manualFragment"
+            app:popUpTo="@id/manualFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_autoFragment_to_pathFragment"
+            app:destination="@id/pathFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/manualFragment"
+        android:name="com.example.conanmoverandroidapp.ui.ManualFragment"
+        android:label="manual_fragment"
+        tools:layout="@layout/manual_fragment" >
+        <action
+            android:id="@+id/action_manualFragment_to_autoFragment"
+            app:destination="@id/autoFragment"
+            app:popUpTo="@id/autoFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/pathFragment"
+        android:name="com.example.conanmoverandroidapp.ui.PathFragment"
+        android:label="path_fragment"
+        tools:layout="@layout/path_fragment" >
+        <action
+            android:id="@+id/action_pathFragment_to_autoFragment"
+            app:destination="@id/autoFragment"
+            app:popUpTo="@id/autoFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+</navigation>
