@@ -8,13 +8,20 @@ INITIAL_START_ANGLE = 0
 
 REVERSE_MARGIN_CENTIMETERS = 10
 
+### Handles one session with coordinates used in the map. 
 class PathSession:
+
+    ## Initialize required datatypes used to calculate the path.
     def __init__(self):
         self.lastTraveledPathData = traveledPath.TraveledPathData([False, 0, 0, False])
         self.currentAngle = INITIAL_START_ANGLE
         self.lastPoint = INITIAL_POINT_TUPLE
+
+    ## Returns an initial point. 
     def getFirstPoint(self):
         return (INITIAL_X, INITIAL_Y, False)
+
+    ## This function calculates where the new point will be. Returns the new point.
     def getPointByTraveledData(self, traveledPathData=None):
 
         self.currentAngle = (self.currentAngle - traveledPathData.currentAngle) % 360

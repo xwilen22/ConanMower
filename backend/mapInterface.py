@@ -7,8 +7,6 @@ from operator import itemgetter
 
 import webbrowser
 
-
-
 HOST_PROPERTIES = {
     "port":8080,
     "name":"localhost" #"192.168.43.8" # Raspberry IP for Honor 9 hotspot
@@ -35,7 +33,7 @@ def getCurrentPoints():
 
     return allPoints
 
-## Get the min and max points
+## Get the min and max coordinates from the points in a session.
 def getMinMaxPoints(allPoints):
     # Declare empty list with necessary indexes to later be defined.
     minMaxPoints = ([allPoints[0][0], allPoints[0][0]], [allPoints[0][1], allPoints[0][1]])
@@ -58,13 +56,14 @@ def getMapSizeTuple(allPoints):
 
     return (mapWidth, mapHeight)
 
-## 
+## return centered coordinates of the map
 def getMapCenterPoint(allPoints, height, width):
     
     minMaxPoints = getMinMaxPoints(allPoints)
 
     return (-((width + minMaxPoints[X][MIN] - minMaxPoints[X][MAX]) / 2), -((height + minMaxPoints[Y][MIN] - minMaxPoints[Y][MAX]) / 2))
 
+## Runs when a user enters the home page. Renders the points and map to be correctly placed on the page.
 @route('/')
 def index():
     currentPointList = getCurrentPoints()
@@ -84,6 +83,7 @@ def index():
 
     return template('index', templateKeyValue)
 
+## When a call is made to a file in the public folder, that file is fetched.
 @route('/public/<filename:path>')
 def send_static(filename):
     return static_file(filename, root='./public')

@@ -2,7 +2,7 @@ const TIME_UNTIL_REFRESH_SECONDS = 6
 
 const LOADING_BLOCKS_PER_SIDE = 3
 
-// Function that refreshes the page every 5 seconds.
+// Function that refreshes the page every 6 seconds.
 function refreshPageEvent(event) {
     const secondsLeftSpan = document.getElementById("logic-time-left")
     const loadingBarLists = document.getElementsByClassName("list-loading-bar")
