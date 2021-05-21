@@ -9,6 +9,7 @@ import com.google.firebase.database.*
 class DatabaseViewModel : ViewModel() {
     private lateinit var database: DatabaseReference
 
+
     private lateinit var obstacleEventListener: ChildEventListener
 
 
@@ -28,15 +29,20 @@ class DatabaseViewModel : ViewModel() {
         database = FirebaseDatabase.getInstance().reference
         obstacleEventListener = object : ChildEventListener {
             override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
-                val traveledPath = TraveledPath(dataSnapshot.key!!)
-                objectionDetection.value = traveledPath.StoppedByObstacle
+                val sessions = dataSnapshot.children.toMutableList()
+                val lastSession = sessions.last()
+                val lastPath = lastSession.children.last()
+                val path = lastPath.getValue(TraveledPath::class.java)
+                objectionDetection.value = path!!.StoppedByObstacle
             }
 
             override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
-                val traveledPath = TraveledPath(dataSnapshot.key!!)
-                objectionDetection.value = traveledPath.StoppedByObstacle
+                val sessions = dataSnapshot.children.toMutableList()
+                val lastSession = sessions.last()
+                val lastPath = lastSession.children.last()
+                val path = lastPath.getValue(TraveledPath::class.java)
+                objectionDetection.value = path!!.StoppedByObstacle
             }
-
             override fun onChildRemoved(dataSnapshot: DataSnapshot) {}
 
             override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {}
@@ -52,7 +58,7 @@ class DatabaseViewModel : ViewModel() {
     }
 
    fun startListenForObstacles(){
-        database.addChildEventListener(obstacleEventListener)
+       database.addChildEventListener(obstacleEventListener)
     }
 
     fun stopListenForObstacles(){

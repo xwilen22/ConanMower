@@ -77,19 +77,9 @@ class AutoFragment : Fragment() {
 
     private fun playAnimationSequence(collisionObject: Int){
         if(collisionObject == ANIM_WALL_TURN_LEFT || collisionObject == ANIM_OBJ_TURN_LEFT){
-            playMowerAnimation(ANIM_OBJ_DETECTED)
-            anim_mower.repeatCount = 1
-            anim_mower.addAnimatorListener(object : Animator.AnimatorListener{
-                override fun onAnimationRepeat(animation: Animator?) {}
-                override fun onAnimationCancel(animation: Animator?) {}
-                override fun onAnimationStart(animation: Animator?) {}
-
-                override fun onAnimationEnd(animation: Animator?) {
-                    anim_mower.pauseAnimation()
-                    Handler(Looper.getMainLooper()).postDelayed(Runnable { playMowerAnimation(collisionObject) }, 600)
-                    Handler(Looper.getMainLooper()).postDelayed(Runnable { playMowerAnimation(ANIM_MOWER_DRIVE) }, 4000)
-                }
-            })
+            Handler(Looper.getMainLooper()).postDelayed(Runnable { playMowerAnimation(ANIM_OBJ_DETECTED) }, 0)
+            Handler(Looper.getMainLooper()).postDelayed(Runnable { playMowerAnimation(collisionObject) }, 500)
+            Handler(Looper.getMainLooper()).postDelayed(Runnable { playMowerAnimation(ANIM_MOWER_DRIVE) }, 1200)
         } else {
             playMowerAnimation(ANIM_MOWER_DRIVE)
         }
@@ -104,8 +94,8 @@ class AutoFragment : Fragment() {
                 ANIM_MOWER_DRIVE -> anim_mower.setAnimation(R.raw.anim_mower_drive)
                 ANIM_OBJ_DETECTED -> anim_mower.setAnimation(R.raw.anim_obj_detected)
                 ANIM_OBJ_TURN_LEFT -> anim_mower.setAnimation(R.raw.anim_obj_turn_left)
-                //ANIM_OBJ_TURN_RIGHT -> anim_mower.setAnimation(R.raw.anim_obj_turn_right)
                 ANIM_WALL_TURN_LEFT -> anim_mower.setAnimation(R.raw.anim_wall_turn_left)
+                //ANIM_OBJ_TURN_RIGHT -> anim_mower.setAnimation(R.raw.anim_obj_turn_right)
                //ANIM_WALL_TURN_RIGHT -> anim_mower.setAnimation(R.raw.anim_wall_turn_right)
             }
             anim_mower.playAnimation()

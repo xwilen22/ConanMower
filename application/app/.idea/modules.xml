@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1515567577/ConanMoverAndroidApp.iml" filepath="$PROJECT_DIR$/.idea/modules/-1515567577/ConanMoverAndroidApp.iml" group="ConanMoverAndroidApp" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app.iml" filepath="$PROJECT_DIR$/.idea/modules/app.iml" group="ConanMoverAndroidApp/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1515567577/ConanMoverAndroidApp.iml" filepath="$PROJECT_DIR$/.idea/modules/-1515567577/ConanMoverAndroidApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ConanMoverAndroidApp.app.iml" filepath="$PROJECT_DIR$/.idea/modules/ConanMoverAndroidApp.app.iml" />
     </modules>
   </component>
 </project>
