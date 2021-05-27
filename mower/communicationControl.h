@@ -5,9 +5,6 @@ struct Commands {
   bool heartBeat;
 };
 
-void debugOnRpi(String msg) {
-  Serial2.print(msg);
-}
 
 void readBT(struct Commands *command, MeBluetooth *bluetooth) {
 
@@ -53,10 +50,4 @@ void sendToRbp(MeSerial *piSerial, boolean turnLeft, int degree, uint16_t distan
   piSerial->write(obstacle);
   piSerial->write(newSession);
 
-}
-
-
-
-void debugOnRpi(MeSerial *piSerial, String msg) {
-  piSerial->println(msg);
 }
