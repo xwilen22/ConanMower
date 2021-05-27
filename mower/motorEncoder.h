@@ -28,8 +28,8 @@ class MotorEncoder
   private:
     void startMeasureLeft();
     void startMeasureRight();
-    long getDistanceLeft();
-    long getDistanceRight();
+    double getDistanceLeft();
+    double getDistanceRight();
     int getAngleLeft();
     int getAngleRight();
     long posLeft;

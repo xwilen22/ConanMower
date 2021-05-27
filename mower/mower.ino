@@ -29,7 +29,7 @@ const int minObstacleDistance = 5;
 bool newSession = false;
 bool turnLeft = true;
 bool obstacle = false;
-int motorSpeed = 40;
+int motorSpeed = 50;
 
 MeEncoderOnBoard Encoder_1(SLOT1);
 MeEncoderOnBoard Encoder_2(SLOT2);
@@ -214,7 +214,13 @@ void autonomousStateMachine() {
         autonomousSM = TURN;
         delay(50);
 
-        turnAngle = motor.turnAngle(30, 70);
+        if (obstacle) {
+          turnAngle = motor.turnAngle(90, 100);
+        } 
+        else {
+          turnAngle = motor.turnAngle(30, 70);
+        }
+        
         motor.turnLeft(motorSpeed);
       }
       break;
