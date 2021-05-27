@@ -21,10 +21,14 @@ class TraveledPathData:
         self.traveledDistance = traveledDistance if traveledDistance is not None else data[2]
         self.stoppedByObstacle = stoppedByObstacle if stoppedByObstacle is not None else data[3]
 
+    ## Override with the newly fetched datetime.
     def overrideTimeStamp(self, dateTimeStamp):
         self.endTime = dateTimeStamp
+
+    ## Override with the newly fetched angle.
     def overrideAngle(self, newAngle):
         self.currentAngle = newAngle
+
     ## This function returns a dictionary consisting of each attribute used in the traveled path document in the database.
     def getDictionary(self):
         return {

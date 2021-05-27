@@ -1,5 +1,6 @@
 const SVG_NAMESPACE = "http://www.w3.org/2000/svg"
 
+// Place the points on the map.
 function placeAllPoints(pointList) {
     const lineElement = document.getElementById("map-lines")
     
@@ -43,6 +44,7 @@ function placeAllPoints(pointList) {
     }
 }
 
+// Get a point graphic from the SVG namespace. 
 function getPointGraphic(xPosition, yPosition, isObstaclePoint) {
     let point = document.createElementNS(SVG_NAMESPACE, "circle")
     
@@ -54,7 +56,8 @@ function getPointGraphic(xPosition, yPosition, isObstaclePoint) {
 
     return point
 }
-// Constructs a triangle to represents the mower
+
+// Constructs a triangle to represent the mower
 function getMowerGraphic(xPosition, yPosition) {
     let mowerPoint = document.createElementNS(SVG_NAMESPACE, "polygon")
 
@@ -78,6 +81,7 @@ function getMowerGraphic(xPosition, yPosition) {
     return mowerPoint
 }
 
+// Get the start coordinate, which is the dot in green.
 function getStartGraphic(xPosition, yPosition) {
     let point = document.createElementNS(SVG_NAMESPACE, "circle")
     
