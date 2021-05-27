@@ -16,11 +16,9 @@ void readBT(struct Commands *command, MeBluetooth *bluetooth) {
 
   unsigned char data = ' ';
 
-  if (nrOfBytes == 1) { // kolla så att det är en giltig type också?
+  if (nrOfBytes == 1) { // kolla så att det är en giltig type också
 
     data = bluetooth->read();
-    //debugOnRpi(String(data) + "\n");
-    //delay(10);
     if (data == HEARTBEAT) {
       command->heartBeat = true;
     }
@@ -32,12 +30,10 @@ void readBT(struct Commands *command, MeBluetooth *bluetooth) {
 
     data = bluetooth->read(); // kolla så att det är en giltig type också?
     command->type = data;
-    //debugOnRpi(String(data) + ' ');
-    //delay(10);
+
     data = bluetooth->read(); // kolla så att det är en giltigt command också?
     command->command = data;
-    //debugOnRpi(String(data) + "\n");
-    //delay(10);
+
   }
 
   while (bluetooth->available()) {
