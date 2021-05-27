@@ -57,7 +57,7 @@ def getMapSizeTuple(allPoints):
     return (mapWidth, mapHeight)
 
 ## return centered coordinates of the map
-def getMapCenterPoint(allPoints, height, width):
+def getMapCenterPoint(allPoints, width, height):
     
     minMaxPoints = getMinMaxPoints(allPoints)
 
