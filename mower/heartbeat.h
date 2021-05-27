@@ -8,34 +8,8 @@ class Heartbeat
   public:
     Heartbeat(int timeout);
 
-    /**
-        \Function
-
-        \Description
-
-        \Param[in]
-
-        \Ouput
-
-        \Return
-
-        \Others
-    **/
     void beat();
 
-    /**
-        \Function
-
-        \Description
-
-        \Param[in]
-
-        \Ouput
-
-        \Return
-
-        \Others
-    **/
     bool isTimeout();
 
   private:

@@ -5,18 +5,6 @@ struct Commands {
   bool heartBeat;
 };
 
-/**
-    \Function
-      readBT
-    \Description
-    reads the bluetooth and writes the data to the btBuffer
-    \Param[in]
-    btBuffer *, MeBluetooth
-**/
-
-void debugOnRpi(String msg) {
-  Serial2.print(msg);
-}
 
 void readBT(struct Commands *command, MeBluetooth *bluetooth) {
 
@@ -25,11 +13,9 @@ void readBT(struct Commands *command, MeBluetooth *bluetooth) {
 
   unsigned char data = ' ';
 
-  if (nrOfBytes == 1) { // kolla så att det är en giltig type också?
+  if (nrOfBytes == 1) { // kolla så att det är en giltig type också
 
     data = bluetooth->read();
-    //debugOnRpi(String(data) + "\n");
-    //delay(10);
     if (data == HEARTBEAT) {
       command->heartBeat = true;
     }
@@ -41,12 +27,10 @@ void readBT(struct Commands *command, MeBluetooth *bluetooth) {
 
     data = bluetooth->read(); // kolla så att det är en giltig type också?
     command->type = data;
-    //debugOnRpi(String(data) + ' ');
-    //delay(10);
+
     data = bluetooth->read(); // kolla så att det är en giltigt command också?
     command->command = data;
-    //debugOnRpi(String(data) + "\n");
-    //delay(10);
+
   }
 
   while (bluetooth->available()) {
@@ -66,10 +50,4 @@ void sendToRbp(MeSerial *piSerial, boolean turnLeft, int degree, uint16_t distan
   piSerial->write(obstacle);
   piSerial->write(newSession);
 
-}
-
-
-
-void debugOnRpi(MeSerial *piSerial, String msg) {
-  piSerial->println(msg);
 }

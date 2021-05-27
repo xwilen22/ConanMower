@@ -36,12 +36,12 @@ void MotorEncoder::startMeasureRight() {
 }
 
 
-long MotorEncoder::getDistanceLeft() {
+double MotorEncoder::getDistanceLeft() {
   return posLeft / CMPULSES;
 }
 
 
-long MotorEncoder::getDistanceRight() {
+double MotorEncoder::getDistanceRight() {
   return posRight / CMPULSES;
 }
 
@@ -60,7 +60,7 @@ void MotorEncoder::startMeasuring() {
 }
 
 int MotorEncoder::getDistance() {
-  return (getDistanceLeft() + getDistanceRight() ) / 2;
+  return round((getDistanceLeft() + getDistanceRight() ) / 2.0);
 }
 
 int MotorEncoder::getAngle() {
