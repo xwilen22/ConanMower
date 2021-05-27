@@ -51,17 +51,19 @@ def getMapSizeTuple(allPoints):
 
     minMaxPoints = getMinMaxPoints(allPoints)
 
-    mapWidth = abs(minMaxPoints[X][MIN] * MAP_SIZE_MARGIN_FACTOR) + abs(minMaxPoints[X][MAX] * MAP_SIZE_MARGIN_FACTOR)
-    mapHeight = abs(minMaxPoints[Y][MIN] * MAP_SIZE_MARGIN_FACTOR) + abs(minMaxPoints[Y][MAX] * MAP_SIZE_MARGIN_FACTOR)
+    mapWidth = abs(minMaxPoints[X][MIN]) + abs(minMaxPoints[X][MAX]) + 10 * MAP_SIZE_MARGIN_FACTOR
+    mapHeight = abs(minMaxPoints[Y][MIN]) + abs(minMaxPoints[Y][MAX]) + 10 *  MAP_SIZE_MARGIN_FACTOR
 
     return (mapWidth, mapHeight)
 
 ## return centered coordinates of the map
 def getMapCenterPoint(allPoints, width, height):
-    
     minMaxPoints = getMinMaxPoints(allPoints)
+    
+    xPos = -(width / 2) + -((minMaxPoints[X][MAX] - minMaxPoints[X][MIN]) / 2)
+    yPos = -(height / 2)
 
-    return (-((width + minMaxPoints[X][MIN] - minMaxPoints[X][MAX]) / 2), -((height + minMaxPoints[Y][MIN] - minMaxPoints[Y][MAX]) / 2))
+    return (xPos, yPos)
 
 ## Runs when a user enters the home page. Renders the points and map to be correctly placed on the page.
 @route('/')
