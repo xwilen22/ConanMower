@@ -5,15 +5,6 @@ struct Commands {
   bool heartBeat;
 };
 
-/**
-    \Function
-      readBT
-    \Description
-    reads the bluetooth and writes the data to the btBuffer
-    \Param[in]
-    btBuffer *, MeBluetooth
-**/
-
 void debugOnRpi(String msg) {
   Serial2.print(msg);
 }

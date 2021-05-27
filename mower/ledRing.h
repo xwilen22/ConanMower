@@ -32,20 +32,6 @@ class LedRing
     **/
     void fullCirlce(int r, int g, int b);
 
-    /**
-        \Function
-
-        \Description
-
-        \Param[in]
-
-        \Ouput
-
-        \Return
-
-        \Others
-        Is blocking
-    **/
     void startUpBlink(int r, int g, int b);
 
   private:
